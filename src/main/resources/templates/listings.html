@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listings – STOCKLAND</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        :root {
+            --brand-primary: #1f3c88;
+            --brand-primary-dark: #162b5c;
+            --brand-accent: #4a6cf7;
+            --bg-light: #f5f5f5;
+            --bg-white: #ffffff;
+            --text-dark: #222;
+            --text-light: #666;
+            --radius: 8px;
+            --shadow: 0 2px 6px rgba(0,0,0,0.08);
+            --transition: 0.25s ease;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        a {
+            color: var(--brand-primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--brand-accent);
+        }
+
+        .navbar {
+            background: var(--brand-primary);
+            color: #fff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar .logo {
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .navbar nav a {
+            color: #fff;
+            margin-left: 18px;
+            font-size: 14px;
+        }
+
+        .navbar nav a:hover {
+            color: #dfe6ff;
+        }
+
+        @media (max-width: 700px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .navbar nav {
+                margin-top: 10px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 26px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .filters {
+            background: var(--bg-white);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .filters h2 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+
+        .filters label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .filters input,
+        .filters select {
+            width: 100%;
+            padding: 10px;
+            border-radius: var(--radius);
+            border: 1px solid #ccc;
+            margin-bottom: 12px;
+        }
+
+        .filters button {
+            width: 100%;
+            padding: 10px;
+            background: var(--brand-primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filters button:hover {
+            background: var(--brand-primary-dark);
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+        }
+
+        .card {
+            background: var(--bg-white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-img {
+            height: 150px;
+            background: #d0d6ff;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-body h3 {
+            margin: 0 0 6px;
+            font-size: 16px;
+        }
+
+        .card-body p {
+            margin: 3px 0;
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        .card-footer {
+            padding: 10px 15px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            border-top: 1px solid #eee;
+        }
+
+        .card-footer a {
+            padding: 6px 10px;
+            background: var(--brand-primary);
+            color: #fff;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .card-footer a:hover {
+            background: var(--brand-primary-dark);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<header class="navbar">
+    <div class="logo">STOCKLAND</div>
+    <nav>
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/listings}">Listings</a>
+        <a th:href="@{/dashboard}" th:if="${#authentication?.principal != null}">Dashboard</a>
+        <a th:href="@{/create}" th:if="${#authentication?.principal != null}">Post property</a>
+        <a th:href="@{/login}" th:if="${#authentication?.principal == null}">Login</a>
+        <a th:href="@{/register}" th:if="${#authentication?.principal == null}">Sign up</a>
+        <a th:href="@{/logout}" th:if="${#authentication?.principal != null}">Logout</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h1>Property Listings</h1>
+
+    <div class="layout">
+        <aside class="filters">
+            <h2>Filter</h2>
+            <form th:action="@{/listings}" method="get">
+                <label>City</label>
+                <input type="text" name="city" th:value="${city}">
+
+                <label>Type</label>
+                <select name="type">
+                    <option value="">Any</option>
+                    <option>Apartment</option>
+                    <option>House</option>
+                    <option>Commercial</option>
+                    <option>Land</option>
+                </select>
+
+                <label>Min price</label>
+                <input type="number" name="min" th:value="${min}">
+
+                <label>Max price</label>
+                <input type="number" name="max" th:value="${max}">
+
+                <button type="submit">Apply filters</button>
+            </form>
+        </aside>
+
+        <section>
+            <div class="results-header">
+                <span th:text="${properties.size()} + ' results found'">0 results</span>
+
+                <span>
+                    Sort:
+                    <select style="padding:6px 8px; border-radius:6px;">
+                        <option>Newest</option>
+                        <option>Price: low to high</option>
+                        <option>Price: high to low</option>
+                    </select>
+                </span>
+            </div>
+
+            <div class="cards">
+                <article class="card" th:each="p : ${properties}">
+                    <div class="card-img"></div>
+
+                    <div class="card-body">
+                        <h3 th:text="${p.title}">Title</h3>
+                        <p th:text="${p.city}">City</p>
+                        <p th:text="${p.type}">Type</p>
+                        <p th:text="${p.price}">€0</p>
+                    </div>
+
+                    <div class="card-footer">
+                        <span th:text="${p.agentName}">Agent</span>
+                        <a th:href="@{/property/{id}(id=${p.id})}">View</a>
+                    </div>
+                </article>
+
+                <p th:if="${#lists.isEmpty(properties)}">
+                    No properties match your filters.
+                </p>
+            </div>
+        </section>
+    </div>
+</div>
+
+<footer>
+    STOCKLAND - Real Estate Property Listing & Management System
+</footer>
+
+</body>
+</html>

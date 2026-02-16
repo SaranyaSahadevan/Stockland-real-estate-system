@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">STOCKLAND – Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        :root {
+            --brand-primary: #1f3c88;
+            --brand-primary-dark: #162b5c;
+            --brand-accent: #4a6cf7;
+            --bg-light: #f5f5f5;
+            --bg-white: #ffffff;
+            --text-dark: #222;
+            --text-light: #666;
+            --radius: 8px;
+            --shadow: 0 2px 6px rgba(0,0,0,0.08);
+            --transition: 0.25s ease;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        a {
+            color: var(--brand-primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--brand-accent);
+        }
+
+        .navbar {
+            background: var(--brand-primary);
+            color: #fff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar .logo {
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .navbar nav a {
+            color: #fff;
+            margin-left: 18px;
+            font-size: 14px;
+        }
+
+        .navbar nav a:hover {
+            color: #dfe6ff;
+        }
+
+        @media (max-width: 700px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .navbar nav {
+                margin-top: 10px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        .hero {
+            background: var(--bg-white);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+
+        .hero h1 {
+            margin-top: 0;
+            font-size: 28px;
+        }
+
+        .hero p {
+            margin-top: 8px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .search-box {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .search-box input,
+        .search-box select {
+            padding: 10px;
+            border-radius: var(--radius);
+            border: 1px solid #ccc;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .search-box button {
+            background: var(--brand-primary);
+            color: #fff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .search-box button:hover {
+            background: var(--brand-primary-dark);
+        }
+
+        h2.section-title {
+            margin: 20px 0 10px;
+            font-size: 20px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+        }
+
+        .card {
+            background: var(--bg-white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-img {
+            height: 150px;
+            background: #d0d6ff;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-body h3 {
+            margin: 0 0 6px;
+            font-size: 16px;
+        }
+
+        .card-body p {
+            margin: 3px 0;
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        .card-footer {
+            padding: 10px 15px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            border-top: 1px solid #eee;
+        }
+
+        .card-footer a {
+            padding: 6px 10px;
+            background: var(--brand-primary);
+            color: #fff;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .card-footer a:hover {
+            background: var(--brand-primary-dark);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<header class="navbar">
+    <div class="logo">STOCKLAND</div>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="listings.html">Listings</a>
+        <a href="dashboard.html" th:if="${#authentication?.principal != null}">Dashboard</a>
+        <a href="create-listing.html" th:if="${#authentication?.principal != null}">Post property</a>
+        <a href="login.html" th:if="${#authentication?.principal == null}">Login</a>
+        <a href="register.html" th:if="${#authentication?.principal == null}">Sign up</a>
+        <a th:href="@{/logout}" th:if="${#authentication?.principal != null}">Logout</a>
+    </nav>
+</header>
+
+<div class="container">
+    <section class="hero">
+        <h1>Find, list and manage properties in Latvia</h1>
+        <p>
+            Centralized real estate platform for guests, registered users and admins.
+            Browse listings, save favorites and publish your own properties.
+        </p>
+
+        <form th:action="@{/listings}" method="get" class="search-box">
+            <input type="text" name="q" placeholder="City, street or keyword" th:value="${q}">
+            <select name="type">
+                <option value="">Any type</option>
+                <option th:value="'Apartment'">Apartment</option>
+                <option th:value="'House'">House</option>
+                <option th:value="'Commercial'">Commercial</option>
+                <option th:value="'Land'">Land</option>
+            </select>
+            <button type="submit">Search</button>
+        </form>
+    </section>
+
+    <h2 class="section-title">Featured listings</h2>
+
+    <div class="cards">
+        <article class="card" th:each="p : ${featuredProperties}">
+            <div class="card-img"></div>
+            <div class="card-body">
+                <h3 th:text="${p.title}">Property title</h3>
+                <p th:text="${p.city}">City</p>
+                <p th:text="${p.type}">Type</p>
+                <p th:text="${p.price}">€0</p>
+            </div>
+            <div class="card-footer">
+                <span th:text="${p.agentName}">Agent name</span>
+                <a th:href="@{/property/{id}(id=${p.id})}">View</a>
+            </div>
+        </article>
+
+        <p th:if="${#lists.isEmpty(featuredProperties)}">
+            No featured properties yet.
+        </p>
+    </div>
+</div>
+
+<footer>
+    STOCKLAND - Real Estate Property Listing & Management System
+</footer>
+
+</body>
+</html>
