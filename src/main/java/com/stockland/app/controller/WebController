@@ -1,0 +1,22 @@
+package com.stockland.app.controller;
+
+import com.stockland.app.service.PropertyService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class WebController {
+
+    private final PropertyService propertyService;
+
+    public WebController(PropertyService propertyService) {
+        this.propertyService = propertyService;
+    }
+
+    @GetMapping("/index")
+    public String showHomePage(Model model) {
+        model.addAttribute("properties", propertyService.getAllProperties());
+        return "index";
+    }
+}
