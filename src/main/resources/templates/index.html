@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Stockland - Home</title>
+</head>
+<body>
+
+<h1>Stockland Real Estate</h1>
+
+<nav>
+    <a th:href="@{/}">Home</a> |
+    <a th:href="@{/login}">Login</a> |
+    <a th:href="@{/register}">Register</a> |
+    <a th:href="@{/logout}">Logout</a>
+</nav>
+
+<hr>
+
+<h2>Properties</h2>
+
+<div th:if="${properties != null}">
+    <div th:each="p : ${properties}">
+        <h3 th:text="${p.title}">Title</h3>
+        <p>
+            <span th:text="${p.location}">Location</span> |
+            <span th:text="${p.price}">Price</span>
+        </p>
+        <hr>
+    </div>
+</div>
+
+<p th:if="${properties == null}">No properties available.</p>
+
+</body>
+</html>
