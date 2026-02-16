@@ -92,7 +92,7 @@ public class PropertyService {
         return responseList;
     }
 
-    List<PropertyResponseDTO> findByPrice(Double price){
+    public List<PropertyResponseDTO> findByPrice(Double price){
         List<Property> propertyList = propertyRepository.findByPrice(price);
 
         List<PropertyResponseDTO> responseList = new ArrayList<>();
@@ -106,7 +106,7 @@ public class PropertyService {
         return responseList;
     }
 
-    List<PropertyResponseDTO> findByPriceLessThanEqual(Double price){
+    public List<PropertyResponseDTO> findByPriceLessThanEqual(Double price){
         List<Property> propertyList = propertyRepository.findByPriceLessThanEqual(price);
 
         List<PropertyResponseDTO> responseList = new ArrayList<>();
@@ -120,7 +120,7 @@ public class PropertyService {
         return responseList;
     }
 
-    List<PropertyResponseDTO> findByPriceGreaterThanEqual(Double price){
+    public List<PropertyResponseDTO> findByPriceGreaterThanEqual(Double price){
         List<Property> propertyList = propertyRepository.findByPriceGreaterThanEqual(price);
 
         List<PropertyResponseDTO> responseList = new ArrayList<>();
@@ -134,7 +134,7 @@ public class PropertyService {
         return responseList;
     }
 
-    List<PropertyResponseDTO> findByPriceBetween(Double min, Double max){
+    public List<PropertyResponseDTO> findByPriceBetween(Double min, Double max){
         List<Property> propertyList = propertyRepository.findByPriceBetween(min, max);
 
         List<PropertyResponseDTO> responseList = new ArrayList<>();
@@ -149,7 +149,7 @@ public class PropertyService {
     }
 
     // Finds by property type: BUY, SELL
-    List<PropertyResponseDTO> findByPropertyType(String propertyType){
+    public List<PropertyResponseDTO> findByPropertyType(String propertyType){
         boolean valid = isValid(propertyType);
 
         if(!valid){
@@ -171,7 +171,7 @@ public class PropertyService {
         return responseList;
     }
 
-    List<PropertyResponseDTO> findByStatus(String status){
+    public List<PropertyResponseDTO> findByStatus(String status){
         List<Property> propertyList = propertyRepository.findByStatus(status);
 
         List<PropertyResponseDTO> responseList = new ArrayList<>();
@@ -185,7 +185,7 @@ public class PropertyService {
         return responseList;
     }
 
-    List<PropertyResponseDTO> findAll(){
+    public List<PropertyResponseDTO> findAll(){
         List<Property> propertyList = propertyRepository.findAll();
 
         List<PropertyResponseDTO> responseList = new ArrayList<>();
