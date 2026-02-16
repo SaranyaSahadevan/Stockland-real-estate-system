@@ -1,23 +1,22 @@
-package com.stockland.app.model;
+package com.stockland.app.dto;
 
+import com.stockland.app.model.PropertyType;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Property {
-    @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+public class PropertyRequestDTO {
     private Long property_id;
     private String title;
     private String location;
     private Double price;
-    @Column(columnDefinition = "TEXT")
     private String description;
-    @Enumerated(EnumType.STRING)
     private PropertyType propertyType;
     private String status;
 }
