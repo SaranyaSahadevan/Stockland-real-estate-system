@@ -14,8 +14,8 @@ public class WebController {
         this.propertyService = propertyService;
     }
 
-    @GetMapping("/index")
-    public String showHomePage(Model model) {
+    @GetMapping({"/", "/index"})
+    public String home(Model model) {
         model.addAttribute("properties", propertyService.getAllProperties());
         return "index";
     }
