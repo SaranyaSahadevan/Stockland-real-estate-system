@@ -4,6 +4,7 @@ import com.stockland.app.dto.PropertyRequestDTO;
 import com.stockland.app.dto.PropertyResponseDTO;
 import com.stockland.app.model.Property;
 import com.stockland.app.model.PropertyRepository;
+import com.stockland.app.model.PropertyType;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,10 +44,22 @@ public class PropertyService {
                 .build();
     }
 
-    public Property saveProperty(PropertyRequestDTO propertyRequestDTO) {
+    private boolean isValid(String input){
+        for(var type : PropertyType.values()){
+            if(type.name().equalsIgnoreCase(input)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public PropertyResponseDTO saveProperty(PropertyRequestDTO propertyRequestDTO) {
         Property newProperty = PropertyBuilder(propertyRequestDTO);
 
-        return propertyRepository.save(newProperty);
+        propertyRepository.save(newProperty);
+
+        return PropertyResponseDTOBuilder(newProperty);
     }
 
     public PropertyResponseDTO findById(long id) {
@@ -135,5 +148,54 @@ public class PropertyService {
         return responseList;
     }
 
+    // Finds by property type: BUY, SELL
+    List<PropertyResponseDTO> findByPropertyType(String propertyType){
+        boolean valid = isValid(propertyType);
 
+        if(!valid){
+            return List.of();
+        }
+
+        PropertyType type = PropertyType.valueOf(propertyType.toUpperCase());
+
+        List<Property> propertyList = propertyRepository.findByPropertyType(type);
+
+        List<PropertyResponseDTO> responseList = new ArrayList<>();
+
+        for(var property :  propertyList){
+            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
+
+            responseList.add(newProperty);
+        }
+
+        return responseList;
+    }
+
+    List<PropertyResponseDTO> findByStatus(String status){
+        List<Property> propertyList = propertyRepository.findByStatus(status);
+
+        List<PropertyResponseDTO> responseList = new ArrayList<>();
+
+        for(var property :  propertyList){
+            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
+
+            responseList.add(newProperty);
+        }
+
+        return responseList;
+    }
+
+    List<PropertyResponseDTO> findAll(){
+        List<Property> propertyList = propertyRepository.findAll();
+
+        List<PropertyResponseDTO> responseList = new ArrayList<>();
+
+        for(var property :  propertyList){
+            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
+
+            responseList.add(newProperty);
+        }
+
+        return responseList;
+    }
 }
