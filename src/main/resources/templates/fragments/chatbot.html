@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="chatbot">
+
+    <style>
+        /* --- Help Button --- */
+        #helpFab {
+          position: fixed;
+          right: 20px;
+          bottom: 20px;
+          background: #1f3c88;
+          color: #fff;
+          border: none;
+          padding: 12px 18px;
+          border-radius: 999px;
+          font-size: 14px;
+          font-weight: 700;
+          cursor: pointer;
+          box-shadow: 0 10px 30px rgba(0,0,0,.2);
+          z-index: 2147483647;
+        }
+        #helpFab:hover { background: #162b5c; }
+
+        /* --- Chat Box --- */
+        #chatWidget {
+          position: fixed;
+          right: 20px;
+          bottom: 78px;
+          width: 360px;
+          max-width: calc(100vw - 40px);
+          height: 480px;
+          background: #fff;
+          border-radius: 14px;
+          box-shadow: 0 18px 45px rgba(0,0,0,.25);
+          overflow: hidden;
+          display: none;
+          z-index: 2147483647;
+          font-family: Arial, sans-serif;
+        }
+
+        #chatHeader {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 12px 12px;
+          background: #1f3c88;
+          color: #fff;
+        }
+
+        #chatHeader .title { font-weight: 700; }
+        #chatHeader .sub { font-size: 12px; opacity: .9; margin-top: 2px; }
+
+        #chatClose {
+          background: transparent;
+          border: none;
+          color: #fff;
+          font-size: 16px;
+          cursor: pointer;
+          font-weight: 700;
+        }
+
+        #chatBody {
+          height: calc(480px - 58px - 64px - 92px);
+          padding: 12px;
+          overflow-y: auto;
+          background: #f6f6f6;
+        }
+
+        .msg {
+          max-width: 90%;
+          padding: 10px 12px;
+          border-radius: 12px;
+          margin: 8px 0;
+          line-height: 1.3;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          font-size: 14px;
+        }
+        .user { margin-left: auto; background: #d9fdd3; }
+        .ai { margin-right: auto; background: #fff; }
+
+        /* --- Quick Questions --- */
+        #quickActions {
+          padding: 10px;
+          background: #fff;
+          border-top: 1px solid #eee;
+        }
+        #quickActions .label {
+          font-size: 12px;
+          color: #666;
+          margin-bottom: 8px;
+          font-weight: 700;
+        }
+        .chips {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+        .chip {
+          border: 1px solid #d9e2ff;
+          background: #eef1ff;
+          color: #1f3c88;
+          padding: 7px 10px;
+          border-radius: 999px;
+          font-size: 12px;
+          cursor: pointer;
+          user-select: none;
+        }
+        .chip:hover { background: #dfe6ff; }
+
+        /* --- Input Row --- */
+        #chatForm {
+          display: flex;
+          gap: 8px;
+          padding: 10px;
+          background: #fff;
+          border-top: 1px solid #e8e8e8;
+        }
+        #chatInput {
+          flex: 1;
+          padding: 10px 12px;
+          border-radius: 10px;
+          border: 1px solid #ddd;
+          outline: none;
+          font-size: 14px;
+        }
+        #chatSend {
+          padding: 10px 14px;
+          border-radius: 10px;
+          border: none;
+          cursor: pointer;
+          background: #1f3c88;
+          color: #fff;
+          font-weight: 700;
+        }
+        #chatSend:hover { background: #162b5c; }
+
+        /* Small screens */
+        @media (max-width: 420px) {
+          #chatWidget { width: calc(100vw - 40px); height: 520px; }
+          #chatBody { height: calc(520px - 58px - 64px - 92px); }
+        }
+    </style>
+
+    <!-- Blue Help button -->
+    <button id="helpFab" type="button" aria-label="Help" title="Help">Help ?</button>
+
+    <!-- Chat widget -->
+    <div id="chatWidget" role="dialog" aria-label="Help Chat">
+        <div id="chatHeader">
+            <div>
+                <div class="title">AI Help</div>
+                <div class="sub">Choose a question or type below</div>
+            </div>
+            <button id="chatClose" type="button" aria-label="Close">✕</button>
+        </div>
+
+        <div id="chatBody"></div>
+
+        <div id="quickActions">
+            <div class="label">Quick questions</div>
+            <div class="chips" id="chips"></div>
+        </div>
+
+        <form id="chatForm">
+            <input id="chatInput" type="text" placeholder="Type your question…" autocomplete="off" />
+            <button id="chatSend" type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        (function () {
+          const helpFab = document.getElementById("helpFab");
+          const chatWidget = document.getElementById("chatWidget");
+          const chatClose = document.getElementById("chatClose");
+          const chatBody = document.getElementById("chatBody");
+          const chatForm = document.getElementById("chatForm");
+          const chatInput = document.getElementById("chatInput");
+          const chipsWrap = document.getElementById("chips");
+
+          if (!helpFab || !chatWidget || !chatClose || !chatBody || !chatForm || !chatInput || !chipsWrap) return;
+
+          const FAQ = [
+            {
+              q: "How to register?",
+              a: "Go to **Sign up** in the top menu → fill in username & password → submit. Then login from the **Login** page."
+            },
+            {
+              q: "How to login?",
+              a: "Click **Login** in the top menu → enter your username and password → press **Login**."
+            },
+            {
+              q: "How to list a property?",
+              a: "Login first → open **Post property** → fill title, city, type, deal type, price and description → click **Save Listing**."
+            },
+            {
+              q: "How to add photos?",
+              a: "On **Post property**, use **Images (static demo)** upload field. (If you want real saving to database/cloud, we can add it next.)"
+            },
+            {
+              q: "How to edit a listing?",
+              a: "Open **Dashboard** → in **My Listings**, click **Edit**. (If Edit is not wired yet, we can connect it to backend next.)"
+            },
+            {
+              q: "How to delete a listing?",
+              a: "Open **Dashboard** → in **My Listings**, click **Delete**. (If Delete is not wired yet, we can connect it to backend next.)"
+            },
+            {
+              q: "How to search properties?",
+              a: "Use the search box on Home or use filters on **Listings** (city, min/max price)."
+            },
+            {
+              q: "How to contact an agent?",
+              a: "Open any property → use **Contact agent** form to send an inquiry."
+            },
+            {
+              q: "How to save favorites?",
+              a: "Open a property → click **Save to favorites** (if not implemented yet, we can add it next)."
+            },
+            {
+              q: "Schedule a call",
+              a: "✅ Our concerned person will contact you within 24hrs."
+            }
+          ];
+
+          function addMsg(text, who) {
+            const div = document.createElement("div");
+            div.className = "msg " + who;
+            div.innerText = text.replace(/\*\*/g, ""); // simple safe display
+            chatBody.appendChild(div);
+            chatBody.scrollTop = chatBody.scrollHeight;
+            return div;
+          }
+
+          function openChat() {
+            chatWidget.style.display = "block";
+            if (chatBody.childElementCount === 0) {
+              addMsg("Hi! I’m your AI helper. Choose a question below or type your question.", "ai");
+            }
+            setTimeout(() => chatInput.focus(), 50);
+          }
+
+          function closeChat() {
+            chatWidget.style.display = "none";
+          }
+
+          // Build chips
+          FAQ.forEach(item => {
+            const b = document.createElement("button");
+            b.type = "button";
+            b.className = "chip";
+            b.textContent = item.q;
+            b.addEventListener("click", () => {
+              addMsg(item.q, "user");
+              addMsg(item.a, "ai");
+            });
+            chipsWrap.appendChild(b);
+          });
+
+          helpFab.addEventListener("click", () => {
+            const isOpen = chatWidget.style.display === "block";
+            isOpen ? closeChat() : openChat();
+          });
+
+          chatClose.addEventListener("click", closeChat);
+
+          // Typed message: match FAQ or fallback
+          chatForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const text = (chatInput.value || "").trim();
+            if (!text) return;
+
+            addMsg(text, "user");
+            chatInput.value = "";
+
+            const found = FAQ.find(x => x.q.toLowerCase() === text.toLowerCase())
+              || FAQ.find(x => text.toLowerCase().includes(x.q.toLowerCase().replace("?", "")));
+
+            if (found) {
+              addMsg(found.a, "ai");
+            } else {
+              addMsg("I can help with registration, listing properties, adding photos, searching, and scheduling a call. Try one of the quick questions.", "ai");
+            }
+          });
+        })();
+    </script>
+
+</div>
+</body>
+</html>
