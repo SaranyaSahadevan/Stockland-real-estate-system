@@ -17,6 +17,10 @@ public class Property {
     private Double price;
     @Column(columnDefinition = "TEXT")
     private String description;
+    //Values: RENT, BUY
+    @Enumerated(EnumType.STRING)
+    private ActionType actionType;
+    //Values: HOUSE, CONDO, MULTIFAMILY, LAND, APARTMENTS, COMMERCIAL
     @Enumerated(EnumType.STRING)
     private PropertyType propertyType;
     private String status;

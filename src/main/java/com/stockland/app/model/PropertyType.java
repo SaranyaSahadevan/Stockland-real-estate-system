@@ -1,6 +1,10 @@
 package com.stockland.app.model;
 
 public enum PropertyType {
-    BUY,
-    RENT
+    HOUSE,
+    CONDO,
+    MULTIFAMILY,
+    LAND,
+    APARTMENTS,
+    COMMERCIAL
 }

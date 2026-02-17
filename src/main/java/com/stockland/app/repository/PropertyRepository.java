@@ -1,7 +1,7 @@
 package com.stockland.app.repository;
 
+import com.stockland.app.model.ActionType;
 import com.stockland.app.model.Property;
-import com.stockland.app.model.PropertyType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
 
     List<Property> findByPriceBetween(Double min, Double max);
 
-    List<Property> findByPropertyType(PropertyType propertyType);
+    List<Property> findByActionType(ActionType actionType);
 
     List<Property> findByLocationContainingIgnoreCase(String location);
 

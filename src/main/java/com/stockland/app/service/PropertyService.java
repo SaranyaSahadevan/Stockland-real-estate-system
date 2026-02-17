@@ -5,7 +5,7 @@ import com.stockland.app.dto.PropertyResponseDTO;
 import com.stockland.app.model.Property;
 import com.stockland.app.model.User;
 import com.stockland.app.repository.PropertyRepository;
-import com.stockland.app.model.PropertyType;
+import com.stockland.app.model.ActionType;
 import com.stockland.app.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +31,7 @@ public class PropertyService {
                 .location(propertyRequestDTO.getLocation())
                 .price(propertyRequestDTO.getPrice())
                 .description(propertyRequestDTO.getDescription())
+                .actionType(propertyRequestDTO.getActionType())
                 .propertyType(propertyRequestDTO.getPropertyType())
                 .status(propertyRequestDTO.getStatus())
                 .build();
@@ -45,6 +46,7 @@ public class PropertyService {
                 .location(property.getLocation())
                 .price(property.getPrice())
                 .description(property.getDescription())
+                .actionType(property.getActionType())
                 .propertyType(property.getPropertyType())
                 .status(property.getStatus())
                 .userID(user.getId())
@@ -53,7 +55,7 @@ public class PropertyService {
     }
 
     private boolean isValid(String input){
-        for(var type : PropertyType.values()){
+        for(var type : ActionType.values()){
             if(type.name().equalsIgnoreCase(input)){
                 return true;
             }
@@ -195,16 +197,16 @@ public class PropertyService {
     }
 
     // Finds by property type: BUY, SELL
-    public List<PropertyResponseDTO> findByPropertyType(String propertyType){
+    public List<PropertyResponseDTO> findByActionType(String propertyType){
         boolean valid = isValid(propertyType);
 
         if(!valid){
             return List.of();
         }
 
-        PropertyType type = PropertyType.valueOf(propertyType.toUpperCase());
+        ActionType type = ActionType.valueOf(propertyType.toUpperCase());
 
-        List<Property> propertyList = propertyRepository.findByPropertyType(type);
+        List<Property> propertyList = propertyRepository.findByActionType(type);
 
         List<PropertyResponseDTO> responseList = new ArrayList<>();
 
@@ -245,7 +247,7 @@ public class PropertyService {
         return responseList;
     }
 
-    public List<PropertyResponseDTO> searchPropertiesWithFilterSortAndPagination(){
-
-    }
+//    public List<PropertyResponseDTO> searchPropertiesWithFilterSortAndPagination(){
+//
+//    }
 }
