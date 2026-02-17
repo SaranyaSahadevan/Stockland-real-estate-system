@@ -256,7 +256,7 @@ public class PropertyService {
             PropertyFilterRequestDTO filters,
             Pageable pageable
     ){
-        Specification<Property> spec = Specification.where((Specification<Property>) null);
+        Specification<Property> spec = Specification.where((root, query, cb) -> cb.conjunction());
 
         if (filters.getLocation() != null) {
             spec = spec.and((root, query, cb) ->
