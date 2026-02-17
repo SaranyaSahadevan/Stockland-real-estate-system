@@ -1,12 +1,17 @@
 package com.stockland.app.service;
 
+import com.stockland.app.dto.PropertyFilterRequestDTO;
 import com.stockland.app.dto.PropertyRequestDTO;
 import com.stockland.app.dto.PropertyResponseDTO;
 import com.stockland.app.model.Property;
+import com.stockland.app.model.PropertyType;
 import com.stockland.app.model.User;
 import com.stockland.app.repository.PropertyRepository;
 import com.stockland.app.model.ActionType;
 import com.stockland.app.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -54,7 +59,7 @@ public class PropertyService {
                 .build();
     }
 
-    private boolean isValid(String input){
+    private boolean isValidActionType(String input){
         for(var type : ActionType.values()){
             if(type.name().equalsIgnoreCase(input)){
                 return true;
@@ -198,7 +203,7 @@ public class PropertyService {
 
     // Finds by property type: BUY, SELL
     public List<PropertyResponseDTO> findByActionType(String propertyType){
-        boolean valid = isValid(propertyType);
+        boolean valid = isValidActionType(propertyType);
 
         if(!valid){
             return List.of();
@@ -247,7 +252,44 @@ public class PropertyService {
         return responseList;
     }
 
-//    public List<PropertyResponseDTO> searchPropertiesWithFilterSortAndPagination(){
-//
-//    }
+    public Page<PropertyResponseDTO> searchPropertiesWithFilterSortAndPagination(
+            PropertyFilterRequestDTO filters,
+            Pageable pageable
+    ){
+        Specification<Property> spec = Specification.where((Specification<Property>) null);
+
+        if (filters.getLocation() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.like(cb.lower(root.get("location")), "%" + filters.getLocation().toLowerCase() + "%"));
+        }
+
+        if (filters.getMinPrice() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.greaterThanOrEqualTo(root.get("price"), filters.getMinPrice()));
+        }
+
+        if (filters.getMaxPrice() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.lessThanOrEqualTo(root.get("price"), filters.getMaxPrice()));
+        }
+
+        if(filters.getActionType() != null){
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("actionType"), filters.getActionType()));
+        }
+
+        if(filters.getPropertyType() != null){
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("propertyType"), filters.getPropertyType()));
+        }
+
+        if (filters.getStatus() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.like(cb.lower(root.get("status")), "%" + filters.getStatus().toLowerCase() + "%"));
+        }
+
+        Page<Property> entities = propertyRepository.findAll(spec, pageable);
+
+        return entities.map(entity -> PropertyResponseDTOBuilder(entity));
+    }
 }
