@@ -215,13 +215,13 @@
 <header class="navbar">
     <div class="logo">STOCKLAND</div>
     <nav>
-        <a th:href="@{/}">Home</a>
-        <a th:href="@{/listings}">Listings</a>
-        <a th:href="@{/dashboard}" th:if="${#authentication?.principal != null}">Dashboard</a>
-        <a th:href="@{/create}" th:if="${#authentication?.principal != null}">Post property</a>
-        <a th:href="@{/login}" th:if="${#authentication?.principal == null}">Login</a>
-        <a th:href="@{/register}" th:if="${#authentication?.principal == null}">Sign up</a>
-        <a th:href="@{/logout}" th:if="${#authentication?.principal != null}">Logout</a>
+        <a href="index.html">Home</a>
+        <a href="listings.html">Listings</a>
+        <a href="dashboard.html" th:if="${#authentication?.principal != null}">Dashboard</a>
+        <a href="create-listing.html" th:if="${#authentication?.principal != null}">Post property</a>
+        <a href="login.html" th:if="${#authentication?.principal == null}">Login</a>
+        <a href="register.html" th:if="${#authentication?.principal == null}">Sign up</a>
+        <a href="logout-success.html" th:if="${#authentication?.principal != null}">Logout</a>
     </nav>
 </header>
 

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Logged Out – STOCKLAND</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    /* Твои стили */
+    :root {
+        --brand-primary: #1f3c88;
+        --bg-light: #f5f5f5;
+        --bg-white: #ffffff;
+        --radius: 8px;
+        --shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    body {
+        margin:0;
+        font-family:Arial;
+        background:var(--bg-light);
+    }
+
+    .navbar {
+        background:var(--brand-primary);
+        color:#fff; padding:15px 30px;
+        display:flex;
+        justify-content:space-between;
+    }
+
+    .navbar a {
+        color:#fff;
+        margin-left:18px;
+        text-decoration:none;
+    }
+
+    .container {
+        max-width:500px;
+        margin:60px auto;
+        padding:0 15px;
+    }
+
+    .card {
+        background:var(--bg-white);
+        padding:30px;
+        border-radius:var(--radius);
+        box-shadow:var(--shadow);
+        text-align:center;
+    }
+  </style>
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">STOCKLAND</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="login.html">Login</a>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h1>You have been logged out</h1>
+    <p>See you soon!</p>
+  </div>
+</div>
+
+</body>
+</html>

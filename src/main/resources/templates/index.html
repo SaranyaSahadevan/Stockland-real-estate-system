@@ -210,7 +210,7 @@
         <a href="create-listing.html" th:if="${#authentication?.principal != null}">Post property</a>
         <a href="login.html" th:if="${#authentication?.principal == null}">Login</a>
         <a href="register.html" th:if="${#authentication?.principal == null}">Sign up</a>
-        <a th:href="@{/logout}" th:if="${#authentication?.principal != null}">Logout</a>
+        <a href="logout-success.html" th:if="${#authentication?.principal != null}">Logout</a>
     </nav>
 </header>
 

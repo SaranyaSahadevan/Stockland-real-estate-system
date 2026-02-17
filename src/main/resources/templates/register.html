@@ -149,23 +149,23 @@
     <div class="card">
         <h1>Create Account</h1>
 
-        <form action="login.html">
+        <!-- вывод ошибок -->
+        <div th:if="${error}" style="color:red; margin-bottom:10px;">
+            <p th:text="${error}"></p>
+        </div>
+
+        <form th:action="@{/register}" th:object="${user}" method="post">
+
             <label>Full Name</label>
-            <input type="text" placeholder="Your name">
+            <input th:field="*{username}" placeholder="Your name" required>
 
             <label>Email</label>
-            <input type="email" placeholder="you@example.com">
-
-            <label>Username</label>
-            <input type="text" placeholder="username">
+            <input th:field="*{email}" type="email" placeholder="you@example.com" required>
 
             <label>Password</label>
-            <input type="password" placeholder="••••••••">
+            <input th:field="*{password}" type="password" placeholder="••••••••" required>
 
-            <label>Confirm Password</label>
-            <input type="password" placeholder="••••••••">
-
-            <button class="btn-primary">Sign Up</button>
+            <button class="btn-primary" type="submit">Sign Up</button>
         </form>
 
         <div class="helper">

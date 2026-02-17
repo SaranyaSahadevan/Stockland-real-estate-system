@@ -1,5 +1,6 @@
 package com.stockland.app.config;
 
+import com.stockland.app.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -43,19 +44,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("admin")
-                .password(passwordEncoder.encode("admin"))
-                .roles("ADMIN")
-                .build());
-        manager.createUser(User.withUsername("user")
-                .password(passwordEncoder.encode("user"))
-                .roles("USER")
-                .build());
-        return manager;
+    public UserDetailsService userDetailsService() {
+        return new CustomUserDetailsService();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

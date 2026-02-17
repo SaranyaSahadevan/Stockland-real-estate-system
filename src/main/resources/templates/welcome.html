@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome – STOCKLAND</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    /* Твои стили — полностью сохранены */
+    :root {
+        --brand-primary: #1f3c88;
+        --brand-primary-dark: #162b5c;
+        --bg-light: #f5f5f5;
+        --bg-white: #ffffff;
+        --text-dark: #222;
+        --radius: 8px;
+        --shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    body {
+        margin:0;
+        font-family:Arial;
+        background:var(--bg-light);
+    }
+
+    .navbar {
+        background:var(--brand-primary);
+        color:#fff;
+        padding:15px 30px;
+        display:flex;
+        justify-content:space-between;
+    }
+
+    .navbar a {
+        color:#fff;
+        margin-left:18px;
+        text-decoration:none;
+    }
+
+    .container {
+        max-width:600px;
+        margin:60px auto;
+        padding:0 15px;
+    }
+
+    .card {
+        background:var(--bg-white);
+        padding:30px;
+        border-radius:var(--radius);
+        box-shadow:var(--shadow);
+    }
+
+    h1 {
+        color:var(--brand-primary);
+        text-align:center;
+    }
+
+  </style>
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">STOCKLAND</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="listings.html">Listings</a>
+    <a href="register.html">Sign up</a>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h1>Welcome, <span th:text="${#authentication.name}"></span>!</h1>
+    <p style="text-align:center;">You are now logged in.</p>
+  </div>
+</div>
+
+</body>
+</html>
