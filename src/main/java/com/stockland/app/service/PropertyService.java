@@ -245,5 +245,7 @@ public class PropertyService {
         return responseList;
     }
 
+    public List<PropertyResponseDTO> searchPropertiesWithFilterSortAndPagination(){
 
+    }
 }
