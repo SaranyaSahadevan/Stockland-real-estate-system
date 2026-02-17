@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Listings – STOCKLAND</title>
+    <title>Create Listing – STOCKLAND</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
@@ -19,197 +19,42 @@
             --transition: 0.25s ease;
         }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: var(--bg-light);
-            color: var(--text-dark);
+        body { margin:0; font-family: Arial, sans-serif; background: var(--bg-light); color: var(--text-dark); }
+        a { color: var(--brand-primary); text-decoration:none; transition: var(--transition); }
+        a:hover { color: var(--brand-accent); }
+
+        .navbar { background: var(--brand-primary); color:#fff; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; }
+        .navbar .logo { font-size:22px; font-weight:bold; letter-spacing:1px; }
+        .navbar nav a { color:#fff; margin-left:18px; font-size:14px; }
+        .navbar nav a:hover { color:#dfe6ff; }
+
+        @media (max-width:700px){
+            .navbar { flex-direction:column; align-items:flex-start; }
+            .navbar nav { margin-top:10px; display:flex; flex-wrap:wrap; gap:10px; }
         }
 
-        a {
-            color: var(--brand-primary);
-            text-decoration: none;
-            transition: var(--transition);
-        }
+        .container { max-width:900px; margin:25px auto; padding:0 15px; }
+        h1 { margin-top:0; font-size:26px; }
 
-        a:hover {
-            color: var(--brand-accent);
-        }
+        .card { background: var(--bg-white); padding:25px; border-radius: var(--radius); box-shadow: var(--shadow); }
 
-        .navbar {
-            background: var(--brand-primary);
-            color: #fff;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        form { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+        form .full { grid-column:1 / -1; }
 
-        .navbar .logo {
-            font-size: 22px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
+        label { display:block; margin-bottom:4px; font-size:14px; }
+        input, select, textarea { width:100%; padding:10px; border-radius: var(--radius); border:1px solid #ccc; box-sizing:border-box; font-size:14px; }
+        textarea { resize: vertical; min-height:100px; }
 
-        .navbar nav a {
-            color: #fff;
-            margin-left: 18px;
-            font-size: 14px;
-        }
+        .actions { margin-top:20px; }
+        .btn-primary { padding:10px 18px; background: var(--brand-primary); color:#fff; border-radius: var(--radius); font-size:15px; border:none; cursor:pointer; transition: var(--transition); }
+        .btn-primary:hover { background: var(--brand-primary-dark); }
 
-        .navbar nav a:hover {
-            color: #dfe6ff;
-        }
+        .btn-secondary { padding:10px 18px; background:#ddd; color:#333; border-radius: var(--radius); font-size:15px; border:none; cursor:pointer; margin-left:10px; }
+        .btn-secondary:hover { background:#ccc; }
 
-        @media (max-width: 700px) {
-            .navbar {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .navbar nav {
-                margin-top: 10px;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-        }
+        footer { text-align:center; padding:20px; font-size:13px; color: var(--text-light); margin-top:40px; }
 
-        .container {
-            max-width: 1100px;
-            margin: 25px auto;
-            padding: 0 15px;
-        }
-
-        h1 {
-            margin-top: 0;
-            font-size: 26px;
-        }
-
-        .layout {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 900px) {
-            .layout {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .filters {
-            background: var(--bg-white);
-            padding: 20px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-        }
-
-        .filters h2 {
-            margin-top: 0;
-            font-size: 18px;
-        }
-
-        .filters label {
-            display: block;
-            margin-bottom: 4px;
-            font-size: 14px;
-        }
-
-        .filters input,
-        .filters select {
-            width: 100%;
-            padding: 10px;
-            border-radius: var(--radius);
-            border: 1px solid #ccc;
-            margin-bottom: 12px;
-        }
-
-        .filters button {
-            width: 100%;
-            padding: 10px;
-            background: var(--brand-primary);
-            color: #fff;
-            border: none;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .filters button:hover {
-            background: var(--brand-primary-dark);
-        }
-
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 18px;
-        }
-
-        .card {
-            background: var(--bg-white);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card-img {
-            height: 150px;
-            background: #d0d6ff;
-        }
-
-        .card-body {
-            padding: 15px;
-        }
-
-        .card-body h3 {
-            margin: 0 0 6px;
-            font-size: 16px;
-        }
-
-        .card-body p {
-            margin: 3px 0;
-            color: var(--text-light);
-            font-size: 13px;
-        }
-
-        .card-footer {
-            padding: 10px 15px 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-            border-top: 1px solid #eee;
-        }
-
-        .card-footer a {
-            padding: 6px 10px;
-            background: var(--brand-primary);
-            color: #fff;
-            border-radius: 4px;
-            font-size: 13px;
-        }
-
-        .card-footer a:hover {
-            background: var(--brand-primary-dark);
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 13px;
-            color: var(--text-light);
-            margin-top: 40px;
-        }
+        @media (max-width:700px){ form { grid-template-columns:1fr; } }
     </style>
 </head>
 <body>
@@ -219,79 +64,94 @@
     <nav>
         <a th:href="@{/}">Home</a>
         <a th:href="@{/listings}">Listings</a>
-        <a th:href="@{/dashboard}" th:if="${#authentication?.principal != null}">Dashboard</a>
-        <a th:href="@{/create}" th:if="${#authentication?.principal != null}">Post property</a>
-        <a th:href="@{/login}" th:if="${#authentication?.principal == null}">Login</a>
-        <a th:href="@{/register}" th:if="${#authentication?.principal == null}">Sign up</a>
-        <a th:href="@{/logout}" th:if="${#authentication?.principal != null}">Logout</a>
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/create-listing}">Post property</a>
+        <a th:href="@{/logout}">Logout</a>
     </nav>
 </header>
 
 <div class="container">
-    <h1>Property Listings</h1>
+    <h1>Create New Listing</h1>
 
-    <div class="layout">
-        <aside class="filters">
-            <h2>Filter</h2>
-            <form th:action="@{/listings}" method="get">
+    <div class="card">
+        <form>
+
+            <div class="full">
+                <label>Title</label>
+                <input type="text" placeholder="Modern apartment in Riga center" required>
+            </div>
+
+            <div>
                 <label>City</label>
-                <input type="text" name="city" th:value="${city}">
+                <input type="text" placeholder="Riga" required>
+            </div>
 
-                <label>Type</label>
-                <select name="type">
-                    <option value="">Any</option>
+            <div>
+                <label>Address</label>
+                <input type="text" placeholder="Street, house number">
+            </div>
+
+            <div>
+                <label>Property Type</label>
+                <select required>
+                    <option value="">Select type</option>
                     <option>Apartment</option>
                     <option>House</option>
                     <option>Commercial</option>
                     <option>Land</option>
                 </select>
-
-                <label>Min price</label>
-                <input type="number" name="min" th:value="${min}">
-
-                <label>Max price</label>
-                <input type="number" name="max" th:value="${max}">
-
-                <button type="submit">Apply filters</button>
-            </form>
-        </aside>
-
-        <section>
-            <div class="results-header">
-                <span th:text="${properties.size()} + ' results found'">0 results</span>
-
-                <span>
-                    Sort:
-                    <select style="padding:6px 8px; border-radius:6px;">
-                        <option>Newest</option>
-                        <option>Price: low to high</option>
-                        <option>Price: high to low</option>
-                    </select>
-                </span>
             </div>
 
-            <div class="cards">
-                <article class="card" th:each="p : ${properties}">
-                    <div class="card-img"></div>
-
-                    <div class="card-body">
-                        <h3 th:text="${p.title}">Title</h3>
-                        <p th:text="${p.city}">City</p>
-                        <p th:text="${p.type}">Type</p>
-                        <p th:text="${p.price}">€0</p>
-                    </div>
-
-                    <div class="card-footer">
-                        <span th:text="${p.agentName}">Agent</span>
-                        <a th:href="@{/property/{id}(id=${p.id})}">View</a>
-                    </div>
-                </article>
-
-                <p th:if="${#lists.isEmpty(properties)}">
-                    No properties match your filters.
-                </p>
+            <div>
+                <label>Deal Type</label>
+                <select required>
+                    <option value="">Select</option>
+                    <option>For sale</option>
+                    <option>For rent</option>
+                </select>
             </div>
-        </section>
+
+            <div>
+                <label>Price (€)</label>
+                <input type="number" min="0" placeholder="150000" required>
+            </div>
+
+            <div>
+                <label>Area (m²)</label>
+                <input type="number" min="0" placeholder="50">
+            </div>
+
+            <div>
+                <label>Rooms</label>
+                <input type="number" min="0" placeholder="2">
+            </div>
+
+            <div class="full">
+                <label>Description</label>
+                <textarea placeholder="Describe the property..."></textarea>
+            </div>
+
+            <div class="full">
+                <label>Images (static demo)</label>
+                <input type="file" multiple>
+            </div>
+
+            <div class="full">
+                <label>Contact Phone</label>
+                <input type="text" placeholder="+371 ...">
+            </div>
+
+            <div class="full">
+                <label>Contact Email</label>
+                <input type="email" placeholder="agent@example.com">
+            </div>
+
+        </form>
+
+        <div class="actions">
+            <button class="btn-primary" type="button">Save Listing</button>
+            <button class="btn-secondary" type="button" onclick="window.location.href='/dashboard'">Cancel</button>
+        </div>
     </div>
 </div>
 
@@ -299,5 +159,6 @@
     STOCKLAND - Real Estate Property Listing & Management System
 </footer>
 
+<div th:replace="fragments/chatbot :: chatbot"></div>
 </body>
 </html>
