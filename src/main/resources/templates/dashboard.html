@@ -19,178 +19,46 @@
             --transition: 0.25s ease;
         }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: var(--bg-light);
-            color: var(--text-dark);
+        body { margin:0; font-family:Arial, sans-serif; background:var(--bg-light); color:var(--text-dark); }
+        a { color: var(--brand-primary); text-decoration:none; transition: var(--transition); }
+        a:hover { color: var(--brand-accent); }
+
+        .navbar { background: var(--brand-primary); color:#fff; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; }
+        .navbar .logo { font-size:22px; font-weight:bold; letter-spacing:1px; }
+        .navbar nav a { color:#fff; margin-left:18px; font-size:14px; }
+        .navbar nav a:hover { color:#dfe6ff; }
+
+        @media (max-width:700px){
+            .navbar { flex-direction:column; align-items:flex-start; }
+            .navbar nav { margin-top:10px; display:flex; flex-wrap:wrap; gap:10px; }
         }
 
-        a {
-            color: var(--brand-primary);
-            text-decoration: none;
-            transition: var(--transition);
-        }
+        .container { max-width:1100px; margin:25px auto; padding:0 15px; }
+        h1 { margin-top:0; font-size:26px; }
 
-        a:hover {
-            color: var(--brand-accent);
-        }
+        .layout { display:grid; grid-template-columns:260px 1fr; gap:20px; }
+        @media (max-width:900px){ .layout { grid-template-columns:1fr; } }
 
-        .navbar {
-            background: var(--brand-primary);
-            color: #fff;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .sidebar { background:var(--bg-white); padding:20px; border-radius:var(--radius); box-shadow:var(--shadow); }
+        .sidebar h2 { margin-top:0; font-size:18px; }
+        .sidebar p { margin:6px 0; font-size:14px; }
+        .btn-logout { display:inline-block; margin-top:10px; padding:8px 12px; background:#eee; border-radius:6px; font-size:13px; color:#444; }
+        .btn-logout:hover { background:#ddd; }
 
-        .navbar .logo {
-            font-size: 22px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
+        .card { background:var(--bg-white); padding:20px; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:20px; }
+        .card h2 { margin-top:0; font-size:20px; }
 
-        .navbar nav a {
-            color: #fff;
-            margin-left: 18px;
-            font-size: 14px;
-        }
+        table { width:100%; border-collapse:collapse; background:var(--bg-white); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+        th { background:#eef1ff; padding:12px; text-align:left; font-size:14px; }
+        td { padding:12px; border-bottom:1px solid #eee; font-size:14px; }
+        tr:hover td { background:#fafbff; }
 
-        .navbar nav a:hover {
-            color: #dfe6ff;
-        }
+        .actions a { margin-right:10px; font-size:13px; }
 
-        @media (max-width: 700px) {
-            .navbar {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .navbar nav {
-                margin-top: 10px;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-        }
+        .btn-primary { padding:8px 14px; background:var(--brand-primary); color:#fff; border-radius:6px; font-size:14px; }
+        .btn-primary:hover { background:var(--brand-primary-dark); }
 
-        .container {
-            max-width: 1100px;
-            margin: 25px auto;
-            padding: 0 15px;
-        }
-
-        h1 {
-            margin-top: 0;
-            font-size: 26px;
-        }
-
-        .layout {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 900px) {
-            .layout {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .sidebar {
-            background: var(--bg-white);
-            padding: 20px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-        }
-
-        .sidebar h2 {
-            margin-top: 0;
-            font-size: 18px;
-        }
-
-        .sidebar p {
-            margin: 6px 0;
-            font-size: 14px;
-        }
-
-        .btn-logout {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 12px;
-            background: #eee;
-            border-radius: 6px;
-            font-size: 13px;
-            color: #444;
-        }
-
-        .btn-logout:hover {
-            background: #ddd;
-        }
-
-        .card {
-            background: var(--bg-white);
-            padding: 20px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 20px;
-        }
-
-        .card h2 {
-            margin-top: 0;
-            font-size: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--bg-white);
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        th {
-            background: #eef1ff;
-            padding: 12px;
-            text-align: left;
-            font-size: 14px;
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-            font-size: 14px;
-        }
-
-        tr:hover td {
-            background: #fafbff;
-        }
-
-        .actions a {
-            margin-right: 10px;
-            font-size: 13px;
-        }
-
-        .btn-primary {
-            padding: 8px 14px;
-            background: var(--brand-primary);
-            color: #fff;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .btn-primary:hover {
-            background: var(--brand-primary-dark);
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 13px;
-            color: var(--text-light);
-            margin-top: 40px;
-        }
+        footer { text-align:center; padding:20px; font-size:13px; color:var(--text-light); margin-top:40px; }
     </style>
 </head>
 <body>
@@ -198,11 +66,11 @@
 <header class="navbar">
     <div class="logo">STOCKLAND</div>
     <nav>
-        <a href="index.html">Home</a>
-        <a href="listings.html">Listings</a>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="create-listing.html">Post property</a>
-        <a href="login.html">Logout</a>
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/listings}">Listings</a>
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/create-listing}">Post property</a>
+        <a th:href="@{/logout}">Logout</a>
     </nav>
 </header>
 
@@ -217,7 +85,7 @@
             <p><strong>Email:</strong> <span th:text="${user.email}">demo@example.com</span></p>
             <p><strong>Role:</strong> User</p>
 
-            <a class="btn-logout" href="login.html">Logout</a>
+            <a class="btn-logout" th:href="@{/logout}">Logout</a>
         </aside>
 
         <section>
@@ -241,7 +109,7 @@
                         <td th:text="${f.city}">City</td>
                         <td th:text="${f.price}">€0</td>
                         <td class="actions">
-                            <a th:href="@{'property.html?id=' + ${f.id}}">Open</a>
+                            <a th:href="@{/property/{id}(id=${f.id})}">Open</a>
                             <a href="#">Remove</a>
                         </td>
                     </tr>
@@ -256,7 +124,7 @@
             <div class="card">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <h2>My Listings</h2>
-                    <a class="btn-primary" href="create-listing.html">+ Create Listing</a>
+                    <a class="btn-primary" th:href="@{/create-listing}">+ Create Listing</a>
                 </div>
 
                 <table>
@@ -275,8 +143,8 @@
                         <td th:text="${l.status}">Status</td>
                         <td th:text="${l.price}">€0</td>
                         <td class="actions">
-                            <a th:href="@{'property.html?id=' + ${l.id}}">View</a>
-                            <a href="create-listing.html">Edit</a>
+                            <a th:href="@{/property/{id}(id=${l.id})}">View</a>
+                            <a th:href="@{/create-listing}">Edit</a>
                             <a href="#">Delete</a>
                         </td>
                     </tr>
@@ -296,5 +164,6 @@
     STOCKLAND - Real Estate Property Listing & Management System
 </footer>
 
+<div th:replace="fragments/chatbot :: chatbot"></div>
 </body>
 </html>
