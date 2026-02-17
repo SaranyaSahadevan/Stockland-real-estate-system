@@ -3,8 +3,10 @@ package com.stockland.app.service;
 import com.stockland.app.dto.PropertyRequestDTO;
 import com.stockland.app.dto.PropertyResponseDTO;
 import com.stockland.app.model.Property;
-import com.stockland.app.model.PropertyRepository;
+import com.stockland.app.model.User;
+import com.stockland.app.repository.PropertyRepository;
 import com.stockland.app.model.PropertyType;
+import com.stockland.app.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,9 +17,11 @@ import java.util.Optional;
 public class PropertyService {
 
     private final PropertyRepository propertyRepository;
+    private final UserRepository userRepository;
 
-    public PropertyService(PropertyRepository propertyRepository){
+    public PropertyService(PropertyRepository propertyRepository, UserRepository userRepository){
         this.propertyRepository = propertyRepository;
+        this.userRepository = userRepository;
     }
 
     private Property PropertyBuilder(PropertyRequestDTO propertyRequestDTO){
@@ -33,6 +37,8 @@ public class PropertyService {
     }
 
     private PropertyResponseDTO PropertyResponseDTOBuilder(Property property){
+        User user = property.getUser();
+
         return PropertyResponseDTO
                 .builder()
                 .title(property.getTitle())
@@ -41,6 +47,8 @@ public class PropertyService {
                 .description(property.getDescription())
                 .propertyType(property.getPropertyType())
                 .status(property.getStatus())
+                .userID(user.getId())
+                .username(user.getUsername())
                 .build();
     }
 
@@ -54,12 +62,22 @@ public class PropertyService {
         return false;
     }
 
-    public PropertyResponseDTO saveProperty(PropertyRequestDTO propertyRequestDTO) {
+    public PropertyResponseDTO saveProperty(PropertyRequestDTO propertyRequestDTO, Long userId) {
         Property newProperty = PropertyBuilder(propertyRequestDTO);
 
-        propertyRepository.save(newProperty);
+        Optional<User> optionalUser = userRepository.findById(userId);
 
-        return PropertyResponseDTOBuilder(newProperty);
+        if(optionalUser.isEmpty()){
+            throw new RuntimeException("User couldn't be found when adding new property: " + userId);
+        }
+
+        User foundUser = optionalUser.get();
+
+        newProperty.setUser(foundUser);
+
+        Property savedProperty = propertyRepository.save(newProperty);
+
+        return PropertyResponseDTOBuilder(savedProperty);
     }
 
     public PropertyResponseDTO findById(long id) {
@@ -76,6 +94,34 @@ public class PropertyService {
 
     public void deleteById(long id) {
         propertyRepository.deleteById(id);
+    }
+
+    public List<PropertyResponseDTO> findPropertiesByUser(Long userId){
+        List<Property> propertyList = propertyRepository.findAll();
+
+        List<Property> propertyListByUser = new ArrayList<>();
+
+        List<PropertyResponseDTO> responseList = new ArrayList<>();
+
+        Optional<User> user = userRepository.findById(userId);
+
+        if(user.isEmpty()){
+            throw new RuntimeException("Provided user id does not exist when finding properties by user: " + userId);
+        }
+
+        for(var property : propertyList){
+            if(property.getUser().getId().equals(userId)){
+                propertyListByUser.add(property);
+            }
+        }
+
+        for(var property :  propertyListByUser){
+            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
+
+            responseList.add(newProperty);
+        }
+
+        return responseList;
     }
 
     public List<PropertyResponseDTO> findByLocation(String location) {
@@ -198,4 +244,6 @@ public class PropertyService {
 
         return responseList;
     }
+
+
 }

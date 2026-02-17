@@ -18,5 +18,8 @@ public class PropertyResponseDTO {
     private String description;
     private PropertyType propertyType;
     private String status;
+    // User info
+    private long userID;
+    private String username;
 }
 

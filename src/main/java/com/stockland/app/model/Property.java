@@ -20,4 +20,7 @@ public class Property {
     @Enumerated(EnumType.STRING)
     private PropertyType propertyType;
     private String status;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

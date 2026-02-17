@@ -1,5 +1,7 @@
-package com.stockland.app.model;
+package com.stockland.app.repository;
 
+import com.stockland.app.model.Property;
+import com.stockland.app.model.PropertyType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
