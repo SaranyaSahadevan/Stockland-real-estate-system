@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Register – STOCKLAND</title>
@@ -19,119 +19,32 @@
             --transition: 0.25s ease;
         }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: var(--bg-light);
-            color: var(--text-dark);
+        body { margin:0; font-family: Arial, sans-serif; background: var(--bg-light); color: var(--text-dark); }
+
+        .navbar { background: var(--brand-primary); color:#fff; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; }
+        .navbar .logo { font-size:22px; font-weight:bold; }
+        .navbar nav a { color:#fff; margin-left:18px; font-size:14px; text-decoration:none; }
+        .navbar nav a:hover { color:#dfe6ff; }
+
+        @media (max-width:700px){
+            .navbar { flex-direction:column; align-items:flex-start; }
+            .navbar nav { margin-top:10px; display:flex; flex-wrap:wrap; gap:10px; }
         }
 
-        .navbar {
-            background: var(--brand-primary);
-            color: #fff;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .container { max-width:450px; margin:60px auto; padding:0 15px; }
+        .card { background: var(--bg-white); padding:30px; border-radius: var(--radius); box-shadow: var(--shadow); }
+        h1 { margin-top:0; font-size:26px; color: var(--brand-primary); text-align:center; }
 
-        .navbar .logo {
-            font-size: 22px;
-            font-weight: bold;
-        }
+        label { display:block; margin-bottom:4px; font-size:14px; }
+        input { width:100%; padding:10px; border-radius: var(--radius); border:1px solid #ccc; margin-bottom:15px; font-size:14px; }
 
-        .navbar nav a {
-            color: #fff;
-            margin-left: 18px;
-            font-size: 14px;
-            text-decoration: none;
-        }
+        .btn-primary { width:100%; padding:12px; background: var(--brand-primary); color:#fff; border-radius: var(--radius); border:none; font-size:15px; cursor:pointer; transition: var(--transition); }
+        .btn-primary:hover { background: var(--brand-primary-dark); }
 
-        .navbar nav a:hover {
-            color: #dfe6ff;
-        }
+        .helper { text-align:center; margin-top:15px; font-size:14px; }
+        .helper a { color: var(--brand-primary); }
 
-        @media (max-width: 700px) {
-            .navbar {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .navbar nav {
-                margin-top: 10px;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-        }
-
-        .container {
-            max-width: 450px;
-            margin: 60px auto;
-            padding: 0 15px;
-        }
-
-        .card {
-            background: var(--bg-white);
-            padding: 30px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-        }
-
-        h1 {
-            margin-top: 0;
-            font-size: 26px;
-            color: var(--brand-primary);
-            text-align: center;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 4px;
-            font-size: 14px;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            border-radius: var(--radius);
-            border: 1px solid #ccc;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 12px;
-            background: var(--brand-primary);
-            color: #fff;
-            border-radius: var(--radius);
-            border: none;
-            font-size: 15px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .btn-primary:hover {
-            background: var(--brand-primary-dark);
-        }
-
-        .helper {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-        }
-
-        .helper a {
-            color: var(--brand-primary);
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 13px;
-            color: var(--text-light);
-            margin-top: 40px;
-        }
+        footer { text-align:center; padding:20px; font-size:13px; color: var(--text-light); margin-top:40px; }
     </style>
 </head>
 <body>
@@ -139,9 +52,9 @@
 <header class="navbar">
     <div class="logo">STOCKLAND</div>
     <nav>
-        <a href="index.html">Home</a>
-        <a href="listings.html">Listings</a>
-        <a href="login.html">Login</a>
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/listings}">Listings</a>
+        <a th:href="@{/login}">Login</a>
     </nav>
 </header>
 
@@ -164,13 +77,30 @@
 
             <label>Password</label>
             <input th:field="*{password}" type="password" placeholder="••••••••" required>
+        <!-- You currently allow GET/POST /register in SecurityConfig.
+             Later we’ll connect this to a real controller. -->
+        <form th:action="@{/register}" method="post">
+            <label>Full Name</label>
+            <input type="text" name="fullName" placeholder="Your name">
+
+            <label>Email</label>
+            <input type="email" name="email" placeholder="you@example.com">
+
+            <label>Username</label>
+            <input type="text" name="username" placeholder="username" required>
+
+            <label>Password</label>
+            <input type="password" name="password" placeholder="••••••••" required>
+
+            <label>Confirm Password</label>
+            <input type="password" name="confirmPassword" placeholder="••••••••" required>
 
             <button class="btn-primary" type="submit">Sign Up</button>
         </form>
 
         <div class="helper">
             Already have an account?
-            <a href="login.html">Login</a>
+            <a th:href="@{/login}">Login</a>
         </div>
     </div>
 </div>
@@ -179,5 +109,6 @@
     STOCKLAND - Real Estate Property Listing & Management System
 </footer>
 
+<div th:replace="fragments/chatbot :: chatbot"></div>
 </body>
 </html>
