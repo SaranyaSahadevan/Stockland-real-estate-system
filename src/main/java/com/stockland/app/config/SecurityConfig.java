@@ -2,6 +2,7 @@ package com.stockland.app.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -22,15 +23,17 @@ public class SecurityConfig {
             .disable()
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/register", "/", "/css/**", "/js/**", "/h2-console/**").permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/user/**").hasRole("USER")
+                .requestMatchers("/login", "/", "/css/**", "/js/**", "/h2-console/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/register").permitAll()
+                .requestMatchers(HttpMethod.POST, "/register").permitAll()
+                // .requestMatchers("/admin/**").hasRole("ADMIN") // Uncomment if admin endpoints are added
+                // .requestMatchers("/user/**").hasRole("USER")   // Uncomment if user endpoints are added
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                    //.loginPage("/login")
-                    .defaultSuccessUrl("/welcome", true)
-                    .permitAll()
+                .loginPage("/login")
+                .defaultSuccessUrl("/dashboard", true)
+                .permitAll()
             )
             .headers(headers -> headers
                     .frameOptions(frame -> frame.sameOrigin())
@@ -61,4 +64,3 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-
