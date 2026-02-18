@@ -1,6 +1,5 @@
 package com.stockland.app.config;
 
-import com.stockland.app.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,7 +15,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -25,14 +23,11 @@ public class SecurityConfig {
                         .disable()
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index", "/login", "/css/**", "/js/**", "/h2-console/**").permitAll()
+                        .requestMatchers("/login", "/", "/css/**", "/js/**", "/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()
-
-                        // ✅ allow chatbot API
-                        .requestMatchers(HttpMethod.POST, "/api/chat").permitAll()
-
-                        // everything else needs login
+                        // .requestMatchers("/admin/**").hasRole("ADMIN") // Uncomment if admin endpoints are added
+                        // .requestMatchers("/user/**").hasRole("USER")   // Uncomment if user endpoints are added
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -47,28 +42,23 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/")
                         .permitAll()
                 );
-
         return http.build();
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return new CustomUserDetailsService();
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-
         manager.createUser(User.withUsername("admin")
                 .password(passwordEncoder.encode("admin"))
                 .roles("ADMIN")
                 .build());
-
         manager.createUser(User.withUsername("user")
                 .password(passwordEncoder.encode("user"))
                 .roles("USER")
                 .build());
-
         return manager;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

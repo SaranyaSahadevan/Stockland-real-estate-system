@@ -15,16 +15,6 @@ public class ViewController {
         return "login";
     }
 
-    @GetMapping("/register")
-    public String register() {
-        return "register";
-    }
-
-    @GetMapping("/dashboard")
-    public String dashboard() {
-        return "dashboard";
-    }
-
     @GetMapping("/listings")
     public String listings() {
         return "listings";
@@ -45,4 +35,3 @@ public class ViewController {
         return "logout";
     }
 }
-
