@@ -124,14 +124,14 @@
             Browse listings, save favorites and publish your own properties.
         </p>
 
-        <form th:action="@{/listings}" method="get" class="search-box">
-            <input type="text" name="q" placeholder="City, street or keyword" th:value="${q}">
-            <select name="type">
+        <form th:action="@{/properties}" method="get" class="search-box">
+            <input type="text" name="location" placeholder="City, street or keyword" th:value="${filters.location}">
+            <select name="actionType">
                 <option value="">Any type</option>
-                <option th:value="'Apartment'">Apartment</option>
-                <option th:value="'House'">House</option>
-                <option th:value="'Commercial'">Commercial</option>
-                <option th:value="'Land'">Land</option>
+                <option th:each="t : ${actions}"
+                        th:value="${t}"
+                        th:text="${t}">
+                </option>
             </select>
             <button type="submit">Search</button>
         </form>
@@ -145,7 +145,7 @@
             <div class="card-body">
                 <h3 th:text="${p.title}">Property title</h3>
                 <p th:text="${p.city}">City</p>
-                <p th:text="${p.type}">Type</p>
+                <p th:text="${p.propertyType}">Type</p>
                 <p th:text="${p.price}">€0</p>
             </div>
             <div class="card-footer">

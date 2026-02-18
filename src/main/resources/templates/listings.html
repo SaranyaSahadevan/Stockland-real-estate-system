@@ -55,6 +55,14 @@
         footer { text-align:center; padding:20px; font-size:13px; color: var(--text-light); margin-top:40px; }
 
         @media (max-width:700px){ form { grid-template-columns:1fr; } }
+
+        .hero {
+            background: var(--bg-white);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
     </style>
 </head>
 <body>
@@ -71,88 +79,35 @@
 </header>
 
 <div class="container">
-    <h1>Create New Listing</h1>
-
-    <div class="card">
-        <form>
-
-            <div class="full">
-                <label>Title</label>
-                <input type="text" placeholder="Modern apartment in Riga center" required>
-            </div>
-
-            <div>
-                <label>City</label>
-                <input type="text" placeholder="Riga" required>
-            </div>
-
-            <div>
-                <label>Address</label>
-                <input type="text" placeholder="Street, house number">
-            </div>
-
-            <div>
-                <label>Property Type</label>
-                <select required>
-                    <option value="">Select type</option>
-                    <option>Apartment</option>
-                    <option>House</option>
-                    <option>Commercial</option>
-                    <option>Land</option>
-                </select>
-            </div>
-
-            <div>
-                <label>Deal Type</label>
-                <select required>
-                    <option value="">Select</option>
-                    <option>For sale</option>
-                    <option>For rent</option>
-                </select>
-            </div>
-
-            <div>
-                <label>Price (€)</label>
-                <input type="number" min="0" placeholder="150000" required>
-            </div>
-
-            <div>
-                <label>Area (m²)</label>
-                <input type="number" min="0" placeholder="50">
-            </div>
-
-            <div>
-                <label>Rooms</label>
-                <input type="number" min="0" placeholder="2">
-            </div>
-
-            <div class="full">
-                <label>Description</label>
-                <textarea placeholder="Describe the property..."></textarea>
-            </div>
-
-            <div class="full">
-                <label>Images (static demo)</label>
-                <input type="file" multiple>
-            </div>
-
-            <div class="full">
-                <label>Contact Phone</label>
-                <input type="text" placeholder="+371 ...">
-            </div>
-
-            <div class="full">
-                <label>Contact Email</label>
-                <input type="email" placeholder="agent@example.com">
-            </div>
-
+    <section class="hero">
+        <form th:action="@{/properties}" method="get" class="filter-box">
+            <input type="text" name="location" placeholder="location" th:value="${filters.location}">
+            <input type="number" name="minPrice" placeholder="min. price" th:value="${filters.minPrice}">
+            <input type="number" name="maxPrice" placeholder="max. price" th:value="${filters.maxPrice}">
+            <select name="actionType">
+                <option value="">Any type</option>
+                <option th:each="t : ${actions}"
+                        th:value="${t}"
+                        th:text="${t}"
+                        th:selected="${a == filters.actionType}">
+                </option>
+            </select>
+            <select name="propertyType">
+                <option value="">Any type</option>
+                <option th:each="t : ${propertyTypes}"
+                        th:value="${t}"
+                        th:text="${t}"
+                        th:selected="${t == filters.propertyType}">
+                </option>
+            </select>
+            <select name="status">
+                <option value="">Any status</option>
+                <option th:value="OLD" th:text="Old" th:selected="${filters.status == 'OLD'}"></option>
+                <option th:value="NEW" th:text="New" th:selected="${filters.status == 'NEW'}"></option>
+            </select>
+            <button type="submit">Search</button>
         </form>
-
-        <div class="actions">
-            <button class="btn-primary" type="button">Save Listing</button>
-            <button class="btn-secondary" type="button" onclick="window.location.href='/dashboard'">Cancel</button>
-        </div>
-    </div>
+    </section>
 </div>
 
 <footer>
