@@ -1,5 +1,6 @@
 package com.stockland.app.controller;
 
+import com.stockland.app.dto.PropertyFilterRequestDTO;
 import com.stockland.app.model.ActionType;
 import com.stockland.app.model.PropertyType;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,10 @@ public class ViewController {
     @GetMapping({"/", "/index"})
     public String index(Model model) {
         model.addAttribute("actions", ActionType.values());
+
+        model.addAttribute("filters", new PropertyFilterRequestDTO());
+
+        model.addAttribute("featuredProperties", java.util.Collections.emptyList());
         return "index";
     }
 
@@ -34,6 +39,7 @@ public class ViewController {
     public String listings(Model model) {
         model.addAttribute("actions", ActionType.values());
         model.addAttribute("propertyTypes", PropertyType.values());
+        model.addAttribute("filters", new PropertyFilterRequestDTO());
         return "listings";
     }
 

@@ -127,7 +127,7 @@
         <form th:action="@{/properties}" method="get" class="search-box">
             <input type="text" name="location" placeholder="City, street or keyword" th:value="${filters.location}">
             <select name="actionType">
-                <option value="">Any type</option>
+                <option value=""></option>
                 <option th:each="t : ${actions}"
                         th:value="${t}"
                         th:text="${t}">

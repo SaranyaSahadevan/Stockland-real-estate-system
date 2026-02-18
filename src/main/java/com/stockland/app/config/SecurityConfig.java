@@ -24,11 +24,12 @@ public class SecurityConfig {
                         .disable()
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index", "/login", "/css/**", "/js/**", "/h2-console/**").permitAll()
+                        .requestMatchers("/**").permitAll()
+//                        .requestMatchers("/", "/index", "/login", "/css/**", "/js/**", "/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()
 
-                        // ✅ allow chatbot API
+                        // allow chatbot API
                         .requestMatchers(HttpMethod.POST, "/api/chat").permitAll()
 
                         // everything else needs login
