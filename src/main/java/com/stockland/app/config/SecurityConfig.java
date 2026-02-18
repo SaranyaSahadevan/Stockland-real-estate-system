@@ -5,8 +5,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -23,13 +26,13 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/", "/css/**", "/js/**", "/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/chat").permitAll()
+                        // .requestMatchers("/admin/**").hasRole("ADMIN") // Uncomment if admin endpoints are added
+                        // .requestMatchers("/user/**").hasRole("USER")   // Uncomment if user endpoints are added
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/dashboard", true)
-                        .failureUrl("/login?error")
                         .permitAll()
                 )
                 .headers(headers -> headers
@@ -40,6 +43,20 @@ public class SecurityConfig {
                         .permitAll()
                 );
         return http.build();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+        manager.createUser(User.withUsername("admin")
+                .password(passwordEncoder.encode("admin"))
+                .roles("ADMIN")
+                .build());
+        manager.createUser(User.withUsername("user")
+                .password(passwordEncoder.encode("user"))
+                .roles("USER")
+                .build());
+        return manager;
     }
 
     @Bean
