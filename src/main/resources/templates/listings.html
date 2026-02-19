@@ -137,8 +137,17 @@
             </select>
             <button type="submit">Search</button>
         </form>
-        <div th:if="${errorMessage}">
-            <span th:text="${errorMessage}"></span>
+        <div class="sort-error-box">
+            <div th:if="${errorMessage}">
+                <span th:text="${errorMessage}"></span>
+            </div>
+                <form th:action="@{/properties}" method="get" >
+                    <select name="sort">
+                        <option value="price,asc">Price: Low to High</option>
+                        <option value="price,desc">Price: High to Low</option>
+                    </select>
+                    <button type="submit">Sort</button>
+                </form>
         </div>
     </section>
 
