@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Error ' + ${status} + ' – STOCKLAND'">Error – STOCKLAND</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        :root {
+            --brand-primary: #1f3c88;
+            --brand-primary-dark: #162b5c;
+            --brand-accent: #4a6cf7;
+            --bg-light: #f5f5f5;
+            --bg-white: #ffffff;
+            --text-dark: #222;
+            --text-light: #666;
+            --radius: 8px;
+            --shadow: 0 2px 6px rgba(0,0,0,0.08);
+            --transition: 0.25s ease;
+        }
+        body { margin: 0; font-family: Arial, sans-serif; background: var(--bg-light); color: var(--text-dark); }
+        .container { max-width: 600px; margin: 80px auto; background: var(--bg-white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 40px 30px; text-align: center; }
+        .error-code { font-size: 48px; color: var(--brand-primary); margin-bottom: 10px; font-weight: bold; }
+        .error-title { font-size: 24px; color: var(--text-dark); margin-bottom: 15px; }
+        .error-description { color: var(--text-light); margin-bottom: 30px; line-height: 1.5; }
+        .actions { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .btn { padding: 12px 24px; text-decoration: none; border-radius: var(--radius); font-weight: bold; transition: var(--transition); }
+        .btn-primary { background: var(--brand-primary); color: white; }
+        .btn-primary:hover { background: var(--brand-primary-dark); }
+        .btn-secondary { background: var(--bg-light); color: var(--text-dark); }
+        .btn-secondary:hover { background: var(--text-light); color: white; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="error-code" th:text="${status}">Error</div>
+    <h1 class="error-title" th:text="${title}">Unexpected Error</h1>
+    <p class="error-description" th:text="${message}">
+        An unexpected error occurred.
+    </p>
+
+    <div class="actions">
+        <a th:href="@{/}" class="btn btn-primary">Go to Home</a>
+
+        <a th:if="${!isLoggedIn}" th:href="@{/login}" class="btn btn-secondary">Login</a>
+        <a th:if="${!isLoggedIn}" th:href="@{/register}" class="btn btn-secondary">Register</a>
+    </div>
+</div>
+</body>
+</html>
