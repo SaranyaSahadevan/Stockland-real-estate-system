@@ -10,14 +10,24 @@ import lombok.*;
 @Builder
 public class Property {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private Long property_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "property_id")
+    private Long Id;
     private String title;
     private String location;
     private Double price;
     @Column(columnDefinition = "TEXT")
     private String description;
+    //Values: RENT, BUY
     @Enumerated(EnumType.STRING)
+    @Column(name = "action_type")
+    private ActionType actionType;
+    //Values: HOUSE, CONDO, MULTIFAMILY, LAND, APARTMENTS, COMMERCIAL
+    @Enumerated(EnumType.STRING)
+    @Column(name = "property_type")
     private PropertyType propertyType;
     private String status;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

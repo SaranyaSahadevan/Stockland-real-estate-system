@@ -36,7 +36,30 @@
         .container { max-width:900px; margin:25px auto; padding:0 15px; }
         h1 { margin-top:0; font-size:26px; }
 
-        .card { background: var(--bg-white); padding:25px; border-radius: var(--radius); box-shadow: var(--shadow); }
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+        .card {
+            background: var(--bg-white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-img { height: 150px; background: #d0d6ff; }
+        .card-body { padding: 15px; }
+        .card-body h3 { margin: 0 0 6px; font-size: 16px; }
+        .card-body p { margin: 3px 0; color: var(--text-light); font-size: 13px; }
+
+        .card-footer {
+            padding: 10px 15px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            border-top: 1px solid #eee;
+        }
+        .card-footer a { padding: 6px 10px; background: var(--brand-primary); color: #fff; border-radius: 4px; font-size: 13px; }
+        .card-footer a:hover { background: var(--brand-primary-dark); }
 
         form { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
         form .full { grid-column:1 / -1; }
@@ -55,6 +78,20 @@
         footer { text-align:center; padding:20px; font-size:13px; color: var(--text-light); margin-top:40px; }
 
         @media (max-width:700px){ form { grid-template-columns:1fr; } }
+
+        .hero {
+            background: var(--bg-white);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+
+        .filter-box{
+            display: flex;
+        }
+
+        h2.section-title { margin: 20px 0 10px; font-size: 20px; }
     </style>
 </head>
 <body>
@@ -71,88 +108,65 @@
 </header>
 
 <div class="container">
-    <h1>Create New Listing</h1>
-
-    <div class="card">
-        <form>
-
-            <div class="full">
-                <label>Title</label>
-                <input type="text" placeholder="Modern apartment in Riga center" required>
-            </div>
-
-            <div>
-                <label>City</label>
-                <input type="text" placeholder="Riga" required>
-            </div>
-
-            <div>
-                <label>Address</label>
-                <input type="text" placeholder="Street, house number">
-            </div>
-
-            <div>
-                <label>Property Type</label>
-                <select required>
-                    <option value="">Select type</option>
-                    <option>Apartment</option>
-                    <option>House</option>
-                    <option>Commercial</option>
-                    <option>Land</option>
-                </select>
-            </div>
-
-            <div>
-                <label>Deal Type</label>
-                <select required>
-                    <option value="">Select</option>
-                    <option>For sale</option>
-                    <option>For rent</option>
-                </select>
-            </div>
-
-            <div>
-                <label>Price (€)</label>
-                <input type="number" min="0" placeholder="150000" required>
-            </div>
-
-            <div>
-                <label>Area (m²)</label>
-                <input type="number" min="0" placeholder="50">
-            </div>
-
-            <div>
-                <label>Rooms</label>
-                <input type="number" min="0" placeholder="2">
-            </div>
-
-            <div class="full">
-                <label>Description</label>
-                <textarea placeholder="Describe the property..."></textarea>
-            </div>
-
-            <div class="full">
-                <label>Images (static demo)</label>
-                <input type="file" multiple>
-            </div>
-
-            <div class="full">
-                <label>Contact Phone</label>
-                <input type="text" placeholder="+371 ...">
-            </div>
-
-            <div class="full">
-                <label>Contact Email</label>
-                <input type="email" placeholder="agent@example.com">
-            </div>
-
+    <section class="hero">
+        <form th:action="@{/properties}" method="get" class="filter-box">
+            <input type="text" name="location" placeholder="location" th:value="${filters.location}">
+            <input type="number" name="minPrice" placeholder="min. price" th:value="${filters.minPrice}">
+            -
+            <input type="number" name="maxPrice" placeholder="max. price" th:value="${filters.maxPrice}">
+            <select name="actionType">
+                <option value=""></option>
+                <option th:each="a : ${actions}"
+                        th:value="${a}"
+                        th:text="${a}"
+                        th:selected="${a == filters.actionType}">
+                </option>
+            </select>
+            <select name="propertyType">
+                <option value=""></option>
+                <option th:each="p : ${propertyTypes}"
+                        th:value="${p}"
+                        th:text="${p}"
+                        th:selected="${p == filters.propertyType}">
+                </option>
+            </select>
+            <select name="status">
+                <option value=""></option>
+                <option th:value="OLD" th:text="OLD" th:selected="${filters.status == 'OLD'}"></option>
+                <option th:value="NEW" th:text="NEW" th:selected="${filters.status == 'NEW'}"></option>
+            </select>
+            <button type="submit">Search</button>
         </form>
-
-        <div class="actions">
-            <button class="btn-primary" type="button">Save Listing</button>
-            <button class="btn-secondary" type="button" onclick="window.location.href='/dashboard'">Cancel</button>
+        <div th:if="${errorMessage}">
+            <span th:text="${errorMessage}"></span>
         </div>
+    </section>
+
+    <h2 class="section-title">Searched listings</h2>
+
+    <div class="cards">
+        <article class="card" th:each="p : ${properties}">
+            <div class="card-img"></div>
+            <div class="card-body">
+                <h3 th:text="${p.title}">Property title</h3>
+                <p th:text="${p.location}">location</p>
+                <p th:text="${p.propertyType}">Type</p>
+                <p th:text="${p.actionType}">Action</p>
+                <p th:text="${p.price}">€0</p>
+                <p th:text="${p.status}">status</p>
+                <p th:text="${p.description}">description</p>
+            </div>
+            <div class="card-footer">
+<!--                <span th:text="${p.agentName}">Agent name</span>-->
+<!--                <a th:href="@{/property/{id}(id=${p.id})}">View</a>-->
+            </div>
+        </article>
+
+        <p th:if="${#lists.isEmpty(featuredProperties)}">
+            No featured properties yet.
+        </p>
     </div>
+
 </div>
 
 <footer>

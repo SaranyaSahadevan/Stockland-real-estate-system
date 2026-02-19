@@ -24,6 +24,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/chat").permitAll()
+
+                        // everything else needs login
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

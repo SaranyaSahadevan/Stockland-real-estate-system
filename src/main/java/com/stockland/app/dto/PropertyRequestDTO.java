@@ -1,5 +1,6 @@
 package com.stockland.app.dto;
 
+import com.stockland.app.model.ActionType;
 import com.stockland.app.model.PropertyType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ public class PropertyRequestDTO {
     private String location;
     private Double price;
     private String description;
+    private ActionType actionType;
     private PropertyType propertyType;
     private String status;
 }

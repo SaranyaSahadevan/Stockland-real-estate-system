@@ -1,10 +1,17 @@
 package com.stockland.app.service;
 
+import com.stockland.app.dto.PropertyFilterRequestDTO;
 import com.stockland.app.dto.PropertyRequestDTO;
 import com.stockland.app.dto.PropertyResponseDTO;
 import com.stockland.app.model.Property;
-import com.stockland.app.model.PropertyRepository;
 import com.stockland.app.model.PropertyType;
+import com.stockland.app.model.User;
+import com.stockland.app.repository.PropertyRepository;
+import com.stockland.app.model.ActionType;
+import com.stockland.app.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,9 +22,11 @@ import java.util.Optional;
 public class PropertyService {
 
     private final PropertyRepository propertyRepository;
+    private final UserRepository userRepository;
 
-    public PropertyService(PropertyRepository propertyRepository){
+    public PropertyService(PropertyRepository propertyRepository, UserRepository userRepository){
         this.propertyRepository = propertyRepository;
+        this.userRepository = userRepository;
     }
 
     private Property PropertyBuilder(PropertyRequestDTO propertyRequestDTO){
@@ -27,25 +36,31 @@ public class PropertyService {
                 .location(propertyRequestDTO.getLocation())
                 .price(propertyRequestDTO.getPrice())
                 .description(propertyRequestDTO.getDescription())
+                .actionType(propertyRequestDTO.getActionType())
                 .propertyType(propertyRequestDTO.getPropertyType())
                 .status(propertyRequestDTO.getStatus())
                 .build();
     }
 
     private PropertyResponseDTO PropertyResponseDTOBuilder(Property property){
+        User user = property.getUser();
+
         return PropertyResponseDTO
                 .builder()
                 .title(property.getTitle())
                 .location(property.getLocation())
                 .price(property.getPrice())
                 .description(property.getDescription())
+                .actionType(property.getActionType())
                 .propertyType(property.getPropertyType())
                 .status(property.getStatus())
+                .userID(user.getId())
+                .username(user.getUsername())
                 .build();
     }
 
-    private boolean isValid(String input){
-        for(var type : PropertyType.values()){
+    private boolean isValidActionType(String input){
+        for(var type : ActionType.values()){
             if(type.name().equalsIgnoreCase(input)){
                 return true;
             }
@@ -54,12 +69,22 @@ public class PropertyService {
         return false;
     }
 
-    public PropertyResponseDTO saveProperty(PropertyRequestDTO propertyRequestDTO) {
+    public PropertyResponseDTO saveProperty(PropertyRequestDTO propertyRequestDTO, Long userId) {
         Property newProperty = PropertyBuilder(propertyRequestDTO);
 
-        propertyRepository.save(newProperty);
+        Optional<User> optionalUser = userRepository.findById(userId);
 
-        return PropertyResponseDTOBuilder(newProperty);
+        if(optionalUser.isEmpty()){
+            throw new RuntimeException("User couldn't be found when adding new property: " + userId);
+        }
+
+        User foundUser = optionalUser.get();
+
+        newProperty.setUser(foundUser);
+
+        Property savedProperty = propertyRepository.save(newProperty);
+
+        return PropertyResponseDTOBuilder(savedProperty);
     }
 
     public PropertyResponseDTO findById(long id) {
@@ -76,6 +101,34 @@ public class PropertyService {
 
     public void deleteById(long id) {
         propertyRepository.deleteById(id);
+    }
+
+    public List<PropertyResponseDTO> findPropertiesByUser(Long userId){
+        List<Property> propertyList = propertyRepository.findAll();
+
+        List<Property> propertyListByUser = new ArrayList<>();
+
+        List<PropertyResponseDTO> responseList = new ArrayList<>();
+
+        Optional<User> user = userRepository.findById(userId);
+
+        if(user.isEmpty()){
+            throw new RuntimeException("Provided user id does not exist when finding properties by user: " + userId);
+        }
+
+        for(var property : propertyList){
+            if(property.getUser().getId().equals(userId)){
+                propertyListByUser.add(property);
+            }
+        }
+
+        for(var property :  propertyListByUser){
+            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
+
+            responseList.add(newProperty);
+        }
+
+        return responseList;
     }
 
     public List<PropertyResponseDTO> findByLocation(String location) {
@@ -149,16 +202,16 @@ public class PropertyService {
     }
 
     // Finds by property type: BUY, SELL
-    public List<PropertyResponseDTO> findByPropertyType(String propertyType){
-        boolean valid = isValid(propertyType);
+    public List<PropertyResponseDTO> findByActionType(String propertyType){
+        boolean valid = isValidActionType(propertyType);
 
         if(!valid){
             return List.of();
         }
 
-        PropertyType type = PropertyType.valueOf(propertyType.toUpperCase());
+        ActionType type = ActionType.valueOf(propertyType.toUpperCase());
 
-        List<Property> propertyList = propertyRepository.findByPropertyType(type);
+        List<Property> propertyList = propertyRepository.findByActionType(type);
 
         List<PropertyResponseDTO> responseList = new ArrayList<>();
 
@@ -197,5 +250,46 @@ public class PropertyService {
         }
 
         return responseList;
+    }
+
+    public Page<PropertyResponseDTO> searchPropertiesWithFilterSortAndPagination(
+            PropertyFilterRequestDTO filters,
+            Pageable pageable
+    ){
+        Specification<Property> spec = Specification.where((root, query, cb) -> cb.conjunction());
+
+        if (filters.getLocation() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.like(cb.lower(root.get("location")), "%" + filters.getLocation().toLowerCase() + "%"));
+        }
+
+        if (filters.getMinPrice() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.greaterThanOrEqualTo(root.get("price"), filters.getMinPrice()));
+        }
+
+        if (filters.getMaxPrice() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.lessThanOrEqualTo(root.get("price"), filters.getMaxPrice()));
+        }
+
+        if(filters.getActionType() != null){
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("actionType"), filters.getActionType()));
+        }
+
+        if(filters.getPropertyType() != null){
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("propertyType"), filters.getPropertyType()));
+        }
+
+        if (filters.getStatus() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.like(cb.lower(root.get("status")), "%" + filters.getStatus().toLowerCase() + "%"));
+        }
+
+        Page<Property> entities = propertyRepository.findAll(spec, pageable);
+
+        return entities.map(entity -> PropertyResponseDTOBuilder(entity));
     }
 }
