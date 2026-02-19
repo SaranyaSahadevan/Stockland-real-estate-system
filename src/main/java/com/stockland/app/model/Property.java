@@ -30,4 +30,7 @@ public class Property {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
 }
