@@ -1,5 +1,6 @@
 package com.stockland.app.service;
 
+import com.stockland.app.dto.UserResponseDTO;
 import com.stockland.app.model.User;
 import com.stockland.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,26 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("ROLE_USER");
         userRepository.save(user);
+    }
+
+    public UserResponseDTO findByUsername(String username){
+        Optional<User> userOptional = userRepository.findByUsername(username);
+
+        if(userOptional.isEmpty()){
+            throw new RuntimeException("Provided username does not exist: " + username);
+        }
+
+        User user = userOptional.get();
+
+        return UserResponseDTO
+                .builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .role(user.getRole())
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .build();
     }
 
     @Override

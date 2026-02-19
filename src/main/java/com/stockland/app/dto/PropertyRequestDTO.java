@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class PropertyRequestDTO {
-    private Long property_id;
+    private Long id;
     private String title;
     private String location;
     private Double price;

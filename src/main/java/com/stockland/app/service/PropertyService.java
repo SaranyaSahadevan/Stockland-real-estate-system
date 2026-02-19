@@ -47,6 +47,7 @@ public class PropertyService {
 
         return PropertyResponseDTO
                 .builder()
+                .id(property.getId())
                 .title(property.getTitle())
                 .location(property.getLocation())
                 .price(property.getPrice())

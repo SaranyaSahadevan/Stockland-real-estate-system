@@ -95,16 +95,15 @@
                 <h1 th:text="${property.title}">Property Title</h1>
 
                 <div class="meta">
-                    <span th:text="${property.city}">City</span> •
-                    <span th:text="${property.type}">Type</span> •
-                    ID: <span th:text="${property.id}">0</span>
+                    <span th:text="${property.location}">Location</span> •
+                    <span th:text="${property.propertyType}">Type</span> •
                 </div>
 
                 <div class="price" th:text="${property.price}">€0</div>
 
-                <div class="tags">
-                    <span th:each="tag : ${property.tags}" th:text="${tag}">Tag</span>
-                </div>
+<!--                <div class="tags">-->
+<!--                    <span th:each="tag : ${property.tags}" th:text="${tag}">Tag</span>-->
+<!--                </div>-->
 
                 <div class="description" th:text="${property.description}">
                     Property description goes here.
@@ -116,16 +115,16 @@
             <div class="sidebar-card">
                 <h2>Contact agent</h2>
                 <p>
-                    <strong th:text="${property.agentName}">Agent Name</strong><br>
-                    <span th:text="${property.agentEmail}">email@example.com</span>
+                    <strong th:text="${user.username}">username</strong><br>
+                    <span th:text="${user.email}">email@example.com</span>
                 </p>
 
-                <form>
-                    <input type="text" placeholder="Your name">
-                    <input type="email" placeholder="Your email">
-                    <textarea rows="4" placeholder="Your message"></textarea>
-                    <button type="submit">Send inquiry</button>
-                </form>
+<!--                <form>-->
+<!--                    <input type="text" placeholder="Your name">-->
+<!--                    <input type="email" placeholder="Your email">-->
+<!--                    <textarea rows="4" placeholder="Your message"></textarea>-->
+<!--                    <button type="submit">Send inquiry</button>-->
+<!--                </form>-->
             </div>
 
             <div class="sidebar-card">

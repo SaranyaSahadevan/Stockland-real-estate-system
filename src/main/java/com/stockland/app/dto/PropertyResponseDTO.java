@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class PropertyResponseDTO {
-    private Long property_id;
+    private Long id;
     private String title;
     private String location;
     private Double price;
