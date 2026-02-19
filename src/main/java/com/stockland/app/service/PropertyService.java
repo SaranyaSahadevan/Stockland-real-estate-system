@@ -4,7 +4,6 @@ import com.stockland.app.dto.PropertyFilterRequestDTO;
 import com.stockland.app.dto.PropertyRequestDTO;
 import com.stockland.app.dto.PropertyResponseDTO;
 import com.stockland.app.model.Property;
-import com.stockland.app.model.PropertyType;
 import com.stockland.app.model.User;
 import com.stockland.app.repository.PropertyRepository;
 import com.stockland.app.model.ActionType;
@@ -292,5 +291,21 @@ public class PropertyService {
         Page<Property> entities = propertyRepository.findAll(spec, pageable);
 
         return entities.map(entity -> PropertyResponseDTOBuilder(entity));
+    }
+
+    public List<PropertyResponseDTO> getPropertiesByUserId(Long userId) {
+        List<Property> properties = propertyRepository.findByUserId(userId);
+
+        List<PropertyResponseDTO> responseList = new ArrayList<>();
+
+        for (Property property : properties) {
+            responseList.add(PropertyResponseDTOBuilder(property));
+        }
+
+        return responseList;
+    }
+    public Page<PropertyResponseDTO> findAll(Pageable pageable) {
+        Page<Property> entities = propertyRepository.findAll(pageable);
+        return entities.map(this::PropertyResponseDTOBuilder);
     }
 }
