@@ -3,51 +3,85 @@ package com.stockland.app.service;
 import com.stockland.app.dto.UserResponseDTO;
 import com.stockland.app.model.User;
 import com.stockland.app.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     public boolean usernameExists(String username) {
-        return userRepository.findByUsername(username).isPresent();
+        if (!StringUtils.hasText(username)) {
+            return false;
+        }
+        return userRepository.findByUsername(username.trim()).isPresent();
     }
 
     public boolean emailExists(String email) {
-        return userRepository.findByEmail(email).isPresent();
+        if (!StringUtils.hasText(email)) {
+            return false;
+        }
+        return userRepository.findByEmail(email.trim()).isPresent();
     }
 
-    public void registerUser(User user) {
+    public void registerUser(@Valid User user) {
+
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+
+        if (!StringUtils.hasText(user.getUsername())) {
+            throw new IllegalArgumentException("Username required");
+        }
+
+        if (!StringUtils.hasText(user.getPassword())) {
+            throw new IllegalArgumentException("Password required");
+        }
+
+        if (!StringUtils.hasText(user.getEmail())) {
+            throw new IllegalArgumentException("Email required");
+        }
+
+        user.setUsername(user.getUsername().trim());
+        user.setEmail(user.getEmail().trim());
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("ROLE_USER");
+
         userRepository.save(user);
     }
 
-    public UserResponseDTO findByUsername(String username){
-        Optional<User> userOptional = userRepository.findByUsername(username);
+    public UserResponseDTO findByUsername(String username) {
 
-        if(userOptional.isEmpty()){
-            throw new RuntimeException("Provided username does not exist: " + username);
+        if (!StringUtils.hasText(username)) {
+            throw new IllegalArgumentException("Username required");
         }
 
-        User user = userOptional.get();
+        Optional<User> userOptional =
+                userRepository.findByUsername(username.trim());
 
-        return UserResponseDTO
-                .builder()
+        User user = userOptional.orElseThrow(
+                () -> new RuntimeException("User not found: " + username)
+        );
+
+        return UserResponseDTO.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .password(user.getPassword())
@@ -58,15 +92,26 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-        Optional<User> userOpt = userRepository.findByUsername(usernameOrEmail);
-        if (userOpt.isEmpty()) {
-            userOpt = userRepository.findByEmail(usernameOrEmail);
+    public UserDetails loadUserByUsername(String usernameOrEmail)
+            throws UsernameNotFoundException {
+
+        if (!StringUtils.hasText(usernameOrEmail)) {
+            throw new UsernameNotFoundException("Username required");
         }
 
-        User user = userOpt.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Optional<User> userOpt =
+                userRepository.findByUsername(usernameOrEmail.trim());
 
-        return org.springframework.security.core.userdetails.User.builder()
+        if (userOpt.isEmpty()) {
+            userOpt = userRepository.findByEmail(usernameOrEmail.trim());
+        }
+
+        User user = userOpt.orElseThrow(
+                () -> new UsernameNotFoundException("User not found")
+        );
+
+        return org.springframework.security.core.userdetails.User
+                .builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .authorities(user.getRole())

@@ -2,6 +2,7 @@ package com.stockland.app.controller;
 
 import com.stockland.app.dto.ChatRequest;
 import com.stockland.app.dto.ChatResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,14 +15,10 @@ public class ChatbotController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ChatResponse chat(@RequestBody ChatRequest request) {
-        String userMsg = request.getMessage() == null ? "" : request.getMessage().trim();
+    public ChatResponse chat(@Valid @RequestBody ChatRequest request) {
 
-        if (userMsg.isEmpty()) {
-            return new ChatResponse("Please type a message 😊");
-        }
+        String message = request.getMessage().trim();
 
-        // Step 2: test reply (Step 3 will connect real AI)
-        return new ChatResponse("✅ Backend connected! You said: " + userMsg);
+        return new ChatResponse("✅ Backend connected! You said: " + message);
     }
 }

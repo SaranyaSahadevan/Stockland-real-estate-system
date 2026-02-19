@@ -9,44 +9,98 @@
         :root {
             --brand-primary: #1f3c88;
             --brand-primary-dark: #162b5c;
-            --brand-accent: #4a6cf7;
             --bg-light: #f5f5f5;
             --bg-white: #ffffff;
-            --text-dark: #222;
-            --text-light: #666;
             --radius: 8px;
             --shadow: 0 2px 6px rgba(0,0,0,0.08);
-            --transition: 0.25s ease;
         }
 
-        body { margin:0; font-family: Arial, sans-serif; background: var(--bg-light); color: var(--text-dark); }
-
-        .navbar { background: var(--brand-primary); color:#fff; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; }
-        .navbar .logo { font-size:22px; font-weight:bold; }
-        .navbar nav a { color:#fff; margin-left:18px; font-size:14px; text-decoration:none; }
-        .navbar nav a:hover { color:#dfe6ff; }
-
-        @media (max-width:700px){
-            .navbar { flex-direction:column; align-items:flex-start; }
-            .navbar nav { margin-top:10px; display:flex; flex-wrap:wrap; gap:10px; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: var(--bg-light);
         }
 
-        .container { max-width:450px; margin:60px auto; padding:0 15px; }
-        .card { background: var(--bg-white); padding:30px; border-radius: var(--radius); box-shadow: var(--shadow); }
-        h1 { margin-top:0; font-size:26px; color: var(--brand-primary); text-align:center; }
+        .navbar {
+            background: var(--brand-primary);
+            color: #fff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+        }
 
-        label { display:block; margin-bottom:4px; font-size:14px; }
-        input { width:100%; padding:10px; border-radius: var(--radius); border:1px solid #ccc; margin-bottom:15px; font-size:14px; }
+        .navbar .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
 
-        .btn-primary { width:100%; padding:12px; background: var(--brand-primary); color:#fff; border-radius: var(--radius); border:none; font-size:15px; cursor:pointer; transition: var(--transition); }
-        .btn-primary:hover { background: var(--brand-primary-dark); }
+        .navbar nav a {
+            color: white;
+            margin-left: 18px;
+            text-decoration: none;
+        }
 
-        .helper { text-align:center; margin-top:15px; font-size:14px; }
-        .helper a { color: var(--brand-primary); }
+        .container {
+            max-width: 450px;
+            margin: 60px auto;
+        }
 
-        footer { text-align:center; padding:20px; font-size:13px; color: var(--text-light); margin-top:40px; }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border-radius: var(--radius);
+            border: 1px solid #ccc;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .toggle-eye {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background: var(--brand-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+        }
+
+        .error {
+            color: red;
+            font-size: 13px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+        }
     </style>
 </head>
+
 <body>
 
 <header class="navbar">
@@ -60,33 +114,41 @@
 
 <div class="container">
     <div class="card">
+
         <h1>Create Account</h1>
 
-        <!-- You currently allow GET/POST /register in SecurityConfig.
-             Later we’ll connect this to a real controller. -->
-        <form th:action="@{/register}" method="post">
+        <div class="error" th:if="${error}" th:text="${error}"></div>
+
+        <form th:action="@{/register}" th:object="${user}" method="post">
+
             <label>Full Name</label>
-            <input type="text" name="fullName" placeholder="Your name">
+            <input type="text" th:field="*{fullName}">
+            <div class="error" th:errors="*{fullName}"></div>
 
             <label>Email</label>
-            <input type="email" name="email" placeholder="you@example.com">
+            <input type="email" th:field="*{email}">
+            <div class="error" th:errors="*{email}"></div>
 
             <label>Username</label>
-            <input type="text" name="username" placeholder="username" required>
+            <input type="text" th:field="*{username}">
+            <div class="error" th:errors="*{username}"></div>
 
             <label>Password</label>
-            <input type="password" name="password" placeholder="••••••••" required>
+            <div class="password-wrapper">
+                <input type="password" th:field="*{password}" id="password">
+                <span class="toggle-eye" onclick="togglePassword('password')">👁</span>
+            </div>
+            <div class="error" th:errors="*{password}"></div>
 
             <label>Confirm Password</label>
-            <input type="password" name="confirmPassword" placeholder="••••••••" required>
+            <div class="password-wrapper">
+                <input type="password" name="confirmPassword" id="confirmPassword">
+                <span class="toggle-eye" onclick="togglePassword('confirmPassword')">👁</span>
+            </div>
 
             <button class="btn-primary" type="submit">Sign Up</button>
         </form>
 
-        <div class="helper">
-            Already have an account?
-            <a th:href="@{/login}">Login</a>
-        </div>
     </div>
 </div>
 
@@ -94,6 +156,12 @@
     STOCKLAND - Real Estate Property Listing & Management System
 </footer>
 
-<div th:replace="~{fragments/chatbot :: chatbot}"></div>
+<script>
+    function togglePassword(id) {
+        const input = document.getElementById(id);
+        input.type = input.type === "password" ? "text" : "password";
+    }
+</script>
+
 </body>
 </html>
