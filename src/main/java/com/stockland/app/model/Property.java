@@ -12,7 +12,7 @@ public class Property {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "property_id")
-    private Long Id;
+    private Long id;
     private String title;
     private String location;
     private Double price;

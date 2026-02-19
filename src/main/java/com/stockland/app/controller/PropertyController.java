@@ -61,7 +61,16 @@ public class PropertyController {
     }
 
     @PostMapping("/create")
-    public String createProperty(@AuthenticationPrincipal UserDetails userDetails, @Valid PropertyRequestDTO propertyRequestDTO){
+    public String createProperty(@AuthenticationPrincipal UserDetails userDetails,
+                                 @Valid PropertyRequestDTO propertyRequestDTO,
+                                 BindingResult bindingResult,
+                                 Model model){
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("actions", ActionType.values());
+            model.addAttribute("propertyTypes", PropertyType.values());
+            return "create-listing";
+        }
+
         String username = userDetails.getUsername();
 
         if(!userService.usernameExists(username)){
@@ -72,6 +81,6 @@ public class PropertyController {
 
         PropertyResponseDTO response = propertyService.saveProperty(propertyRequestDTO, user.getId());
 
-        return "dashboard";
+        return "redirect:/dashboard";
     }
 }

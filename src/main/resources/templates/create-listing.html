@@ -190,84 +190,92 @@
     <h1>Create New Listing</h1>
 
     <div class="card">
-        <form>
+        <form th:action="@{/properties/create}" th:object="${propertyRequestDTO}" method="post">
 
             <div class="full">
                 <label>Title</label>
-                <input type="text" placeholder="Modern apartment in Riga center" required>
+                <input type="text" placeholder="Modern apartment in Riga center" th:field="*{title}" required>
             </div>
 
             <div>
-                <label>City</label>
-                <input type="text" placeholder="Riga" required>
+                <label>Location</label>
+                <input type="text" placeholder="Latvia, Riga" th:field="*{location}" required>
             </div>
 
-            <div>
-                <label>Address</label>
-                <input type="text" placeholder="Street, house number">
-            </div>
+<!--            <div>-->
+<!--                <label>Address</label>-->
+<!--                <input type="text" placeholder="Street, house number">-->
+<!--            </div>-->
 
             <div>
                 <label>Property Type</label>
-                <select required>
+                <select th:field="*{propertyType}" required>
                     <option value="">Select type</option>
-                    <option>Apartment</option>
-                    <option>House</option>
-                    <option>Commercial</option>
-                    <option>Land</option>
+                    <option th:each="t : ${propertyTypes}"
+                            th:value="${t}"
+                            th:text="${t}">
+                    </option>
                 </select>
             </div>
 
             <div>
                 <label>Deal Type</label>
-                <select required>
-                    <option value="">Select</option>
-                    <option>For sale</option>
-                    <option>For rent</option>
+                <select th:field="*{actionType}" required>
+                    <option value="">Select deal</option>
+                    <option th:each="t : ${actions}"
+                            th:value="${t}"
+                            th:text="${t}">
+                    </option>
                 </select>
             </div>
 
             <div>
                 <label>Price (€)</label>
-                <input type="number" min="0" placeholder="150000" required>
+                <input type="number" min="0" placeholder="150000" th:field="*{price}" required>
             </div>
 
-            <div>
-                <label>Area (m²)</label>
-                <input type="number" min="0" placeholder="50">
-            </div>
+<!--            <div>-->
+<!--                <label>Area (m²)</label>-->
+<!--                <input type="number" min="0" placeholder="50">-->
+<!--            </div>-->
 
-            <div>
-                <label>Rooms</label>
-                <input type="number" min="0" placeholder="2">
-            </div>
+<!--            <div>-->
+<!--                <label>Rooms</label>-->
+<!--                <input type="number" min="0" placeholder="2">-->
+<!--            </div>-->
 
             <div class="full">
                 <label>Description</label>
-                <textarea placeholder="Describe the property..."></textarea>
+                <textarea placeholder="Describe the property..." th:field="*{description}" ></textarea>
             </div>
 
-            <div class="full">
-                <label>Images (static demo)</label>
-                <input type="file" multiple>
-            </div>
+            <select th:field="*{status}" required>
+                <option value="">Select status</option>
+                <option value="OLD">OLD</option>
+                <option value="NEW">NEW</option>
+            </select>
 
-            <div class="full">
-                <label>Contact Phone</label>
-                <input type="text" placeholder="+371 ...">
-            </div>
+<!--            <div class="full">-->
+<!--                <label>Images (static demo)</label>-->
+<!--                <input type="file" multiple>-->
+<!--            </div>-->
 
-            <div class="full">
-                <label>Contact Email</label>
-                <input type="email" placeholder="agent@example.com">
+<!--            <div class="full">-->
+<!--                <label>Contact Phone</label>-->
+<!--                <input type="text" placeholder="+371 ...">-->
+<!--            </div>-->
+
+<!--            <div class="full">-->
+<!--                <label>Contact Email</label>-->
+<!--                <input type="email" placeholder="agent@example.com">-->
+<!--            </div>-->
+            <div class="actions">
+                <button class="btn-primary" type="submit">Save Listing</button>
+                <button class="btn-secondary" onclick="window.location.href='dashboard.html'" type="reset">Cancel</button>
             </div>
 
         </form>
 
-        <div class="actions">
-            <button class="btn-primary">Save Listing</button>
-            <button class="btn-secondary" onclick="window.location.href='dashboard.html'">Cancel</button>
-        </div>
     </div>
 </div>
 
