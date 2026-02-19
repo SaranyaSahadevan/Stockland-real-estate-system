@@ -24,19 +24,19 @@
 
         /* --- Chat Box --- */
         #chatWidget {
-          position: fixed;
-          right: 20px;
-          bottom: 78px;
-          width: 360px;
-          max-width: calc(100vw - 40px);
-          height: 480px;
-          background: #fff;
-          border-radius: 14px;
-          box-shadow: 0 18px 45px rgba(0,0,0,.25);
-          overflow: hidden;
-          display: none;
-          z-index: 2147483647;
-          font-family: Arial, sans-serif;
+            position: fixed;
+            right: 20px;
+            bottom: 78px;
+            width: 360px;
+            max-width: calc(100vw - 40px);
+            height: 620px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 18px 45px rgba(0,0,0,.25);
+            overflow: hidden;
+            display: none;
+            z-index: 2147483647;
+            font-family: Arial, sans-serif;
         }
 
         #chatHeader {
@@ -61,7 +61,7 @@
         }
 
         #chatBody {
-          height: calc(480px - 58px - 64px - 92px);
+          height: calc(480px - 58px - 64px - 110px);
           padding: 12px;
           overflow-y: auto;
           background: #f6f6f6;
@@ -139,7 +139,7 @@
         /* Small screens */
         @media (max-width: 420px) {
           #chatWidget { width: calc(100vw - 40px); height: 520px; }
-          #chatBody { height: calc(520px - 58px - 64px - 92px); }
+          #chatBody { height: calc(520px - 58px - 64px - 250px); }
         }
     </style>
 
