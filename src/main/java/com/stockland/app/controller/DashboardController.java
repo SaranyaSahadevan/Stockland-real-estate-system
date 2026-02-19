@@ -13,6 +13,7 @@ import java.util.Collections;
 
 @Controller
 public class DashboardController {
+
     private final UserRepository userRepository;
 
     @Autowired
@@ -22,15 +23,20 @@ public class DashboardController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
         String username = authentication.getName();
+
         User user = userRepository.findByUsername(username)
-                .orElseGet(() -> userRepository.findByEmail(username).orElse(null));
+                .orElseGet(() ->
+                        userRepository.findByEmail(username).orElse(null));
+
         model.addAttribute("user", user);
-        // For now, add empty lists for favorites and myListings
         model.addAttribute("favorites", Collections.emptyList());
         model.addAttribute("myListings", Collections.emptyList());
+
         return "dashboard";
     }
 }
-
