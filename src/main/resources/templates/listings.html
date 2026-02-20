@@ -98,13 +98,7 @@
 
 <header class="navbar">
     <div class="logo">STOCKLAND</div>
-    <nav>
-        <a th:href="@{/}">Home</a>
-        <a th:href="@{/listings}">Listings</a>
-        <a th:href="@{/dashboard}">Dashboard</a>
-        <a th:href="@{/create-listing}">Post property</a>
-        <a th:href="@{/logout}">Logout</a>
-    </nav>
+    <div th:replace="fragments/navbar :: navbar"></div>
 </header>
 
 <div class="container">
