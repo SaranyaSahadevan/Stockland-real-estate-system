@@ -21,7 +21,6 @@ public class ChatbotController {
             return new ChatResponse("Please type a message 😊");
         }
 
-        // Step 2: test reply (Step 3 will connect real AI)
         return new ChatResponse("✅ Backend connected! You said: " + userMsg);
     }
 }
