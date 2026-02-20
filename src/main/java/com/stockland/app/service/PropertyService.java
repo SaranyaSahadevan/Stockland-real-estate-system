@@ -4,7 +4,6 @@ import com.stockland.app.dto.PropertyFilterRequestDTO;
 import com.stockland.app.dto.PropertyRequestDTO;
 import com.stockland.app.dto.PropertyResponseDTO;
 import com.stockland.app.model.Property;
-import com.stockland.app.model.PropertyType;
 import com.stockland.app.model.User;
 import com.stockland.app.repository.PropertyRepository;
 import com.stockland.app.model.ActionType;
@@ -60,15 +59,15 @@ public class PropertyService {
                 .build();
     }
 
-    private boolean isValidActionType(String input){
-        for(var type : ActionType.values()){
-            if(type.name().equalsIgnoreCase(input)){
-                return true;
-            }
-        }
-
-        return false;
-    }
+//    private boolean isValidActionType(String input){
+//        for(var type : ActionType.values()){
+//            if(type.name().equalsIgnoreCase(input)){
+//                return true;
+//            }
+//        }
+//
+//        return false;
+//    }
 
     public PropertyResponseDTO saveProperty(PropertyRequestDTO propertyRequestDTO, Long userId) {
         Property newProperty = PropertyBuilder(propertyRequestDTO);
@@ -100,144 +99,144 @@ public class PropertyService {
         return PropertyResponseDTOBuilder(property);
     }
 
-    public void deleteById(long id) {
-        propertyRepository.deleteById(id);
-    }
+//    public void deleteById(long id) {
+//        propertyRepository.deleteById(id);
+//    }
 
-    public List<PropertyResponseDTO> findPropertiesByUser(Long userId){
-        List<Property> propertyList = propertyRepository.findAll();
+//    public List<PropertyResponseDTO> findPropertiesByUser(Long userId){
+//        List<Property> propertyList = propertyRepository.findAll();
+//
+//        List<Property> propertyListByUser = new ArrayList<>();
+//
+//        List<PropertyResponseDTO> responseList = new ArrayList<>();
+//
+//        Optional<User> user = userRepository.findById(userId);
+//
+//        if(user.isEmpty()){
+//            throw new RuntimeException("Provided user id does not exist when finding properties by user: " + userId);
+//        }
+//
+//        for(var property : propertyList){
+//            if(property.getUser().getId().equals(userId)){
+//                propertyListByUser.add(property);
+//            }
+//        }
+//
+//        for(var property :  propertyListByUser){
+//            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
+//
+//            responseList.add(newProperty);
+//        }
+//
+//        return responseList;
+//    }
 
-        List<Property> propertyListByUser = new ArrayList<>();
+//    public List<PropertyResponseDTO> findByLocation(String location) {
+//        List<Property> propertyList = propertyRepository.findByLocationContainingIgnoreCase(location);
+//
+//        List<PropertyResponseDTO> responseList = new ArrayList<>();
+//
+//        for(var property :  propertyList){
+//            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
+//
+//            responseList.add(newProperty);
+//        }
+//
+//        return responseList;
+//    }
 
-        List<PropertyResponseDTO> responseList = new ArrayList<>();
+//    public List<PropertyResponseDTO> findByPrice(Double price){
+//        List<Property> propertyList = propertyRepository.findByPrice(price);
+//
+//        List<PropertyResponseDTO> responseList = new ArrayList<>();
+//
+//        for(var property :  propertyList){
+//            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
+//
+//            responseList.add(newProperty);
+//        }
+//
+//        return responseList;
+//    }
 
-        Optional<User> user = userRepository.findById(userId);
+//    public List<PropertyResponseDTO> findByPriceLessThanEqual(Double price){
+//        List<Property> propertyList = propertyRepository.findByPriceLessThanEqual(price);
+//
+//        List<PropertyResponseDTO> responseList = new ArrayList<>();
+//
+//        for(var property :  propertyList){
+//            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
+//
+//            responseList.add(newProperty);
+//        }
+//
+//        return responseList;
+//    }
 
-        if(user.isEmpty()){
-            throw new RuntimeException("Provided user id does not exist when finding properties by user: " + userId);
-        }
+//    public List<PropertyResponseDTO> findByPriceGreaterThanEqual(Double price){
+//        List<Property> propertyList = propertyRepository.findByPriceGreaterThanEqual(price);
+//
+//        List<PropertyResponseDTO> responseList = new ArrayList<>();
+//
+//        for(var property :  propertyList){
+//            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
+//
+//            responseList.add(newProperty);
+//        }
+//
+//        return responseList;
+//    }
 
-        for(var property : propertyList){
-            if(property.getUser().getId().equals(userId)){
-                propertyListByUser.add(property);
-            }
-        }
+//    public List<PropertyResponseDTO> findByPriceBetween(Double min, Double max){
+//        List<Property> propertyList = propertyRepository.findByPriceBetween(min, max);
+//
+//        List<PropertyResponseDTO> responseList = new ArrayList<>();
+//
+//        for(var property :  propertyList){
+//            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
+//
+//            responseList.add(newProperty);
+//        }
+//
+//        return responseList;
+//    }
 
-        for(var property :  propertyListByUser){
-            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
+//    // Finds by property type: BUY, SELL
+//    public List<PropertyResponseDTO> findByActionType(String propertyType){
+//        boolean valid = isValidActionType(propertyType);
+//
+//        if(!valid){
+//            return List.of();
+//        }
+//
+//        ActionType type = ActionType.valueOf(propertyType.toUpperCase());
+//
+//        List<Property> propertyList = propertyRepository.findByActionType(type);
+//
+//        List<PropertyResponseDTO> responseList = new ArrayList<>();
+//
+//        for(var property :  propertyList){
+//            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
+//
+//            responseList.add(newProperty);
+//        }
+//
+//        return responseList;
+//    }
 
-            responseList.add(newProperty);
-        }
-
-        return responseList;
-    }
-
-    public List<PropertyResponseDTO> findByLocation(String location) {
-        List<Property> propertyList = propertyRepository.findByLocationContainingIgnoreCase(location);
-
-        List<PropertyResponseDTO> responseList = new ArrayList<>();
-
-        for(var property :  propertyList){
-            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
-
-            responseList.add(newProperty);
-        }
-
-        return responseList;
-    }
-
-    public List<PropertyResponseDTO> findByPrice(Double price){
-        List<Property> propertyList = propertyRepository.findByPrice(price);
-
-        List<PropertyResponseDTO> responseList = new ArrayList<>();
-
-        for(var property :  propertyList){
-            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
-
-            responseList.add(newProperty);
-        }
-
-        return responseList;
-    }
-
-    public List<PropertyResponseDTO> findByPriceLessThanEqual(Double price){
-        List<Property> propertyList = propertyRepository.findByPriceLessThanEqual(price);
-
-        List<PropertyResponseDTO> responseList = new ArrayList<>();
-
-        for(var property :  propertyList){
-            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
-
-            responseList.add(newProperty);
-        }
-
-        return responseList;
-    }
-
-    public List<PropertyResponseDTO> findByPriceGreaterThanEqual(Double price){
-        List<Property> propertyList = propertyRepository.findByPriceGreaterThanEqual(price);
-
-        List<PropertyResponseDTO> responseList = new ArrayList<>();
-
-        for(var property :  propertyList){
-            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
-
-            responseList.add(newProperty);
-        }
-
-        return responseList;
-    }
-
-    public List<PropertyResponseDTO> findByPriceBetween(Double min, Double max){
-        List<Property> propertyList = propertyRepository.findByPriceBetween(min, max);
-
-        List<PropertyResponseDTO> responseList = new ArrayList<>();
-
-        for(var property :  propertyList){
-            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
-
-            responseList.add(newProperty);
-        }
-
-        return responseList;
-    }
-
-    // Finds by property type: BUY, SELL
-    public List<PropertyResponseDTO> findByActionType(String propertyType){
-        boolean valid = isValidActionType(propertyType);
-
-        if(!valid){
-            return List.of();
-        }
-
-        ActionType type = ActionType.valueOf(propertyType.toUpperCase());
-
-        List<Property> propertyList = propertyRepository.findByActionType(type);
-
-        List<PropertyResponseDTO> responseList = new ArrayList<>();
-
-        for(var property :  propertyList){
-            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
-
-            responseList.add(newProperty);
-        }
-
-        return responseList;
-    }
-
-    public List<PropertyResponseDTO> findByStatus(String status){
-        List<Property> propertyList = propertyRepository.findByStatus(status);
-
-        List<PropertyResponseDTO> responseList = new ArrayList<>();
-
-        for(var property :  propertyList){
-            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
-
-            responseList.add(newProperty);
-        }
-
-        return responseList;
-    }
+//    public List<PropertyResponseDTO> findByStatus(String status){
+//        List<Property> propertyList = propertyRepository.findByStatus(status);
+//
+//        List<PropertyResponseDTO> responseList = new ArrayList<>();
+//
+//        for(var property :  propertyList){
+//            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
+//
+//            responseList.add(newProperty);
+//        }
+//
+//        return responseList;
+//    }
 
     public List<PropertyResponseDTO> findAll(){
         List<Property> propertyList = propertyRepository.findAll();
@@ -292,5 +291,22 @@ public class PropertyService {
         Page<Property> entities = propertyRepository.findAll(spec, pageable);
 
         return entities.map(entity -> PropertyResponseDTOBuilder(entity));
+    }
+
+    public List<PropertyResponseDTO> getPropertiesByUserId(Long userId) {
+        List<Property> properties = propertyRepository.findByUserId(userId);
+
+        List<PropertyResponseDTO> responseList = new ArrayList<>();
+
+        for (Property property : properties) {
+            responseList.add(PropertyResponseDTOBuilder(property));
+        }
+
+        return responseList;
+    }
+
+    public Page<PropertyResponseDTO> findAll(Pageable pageable) {
+        Page<Property> entities = propertyRepository.findAll(pageable);
+        return entities.map(this::PropertyResponseDTOBuilder);
     }
 }

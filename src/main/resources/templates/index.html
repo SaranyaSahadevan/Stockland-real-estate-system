@@ -99,21 +99,41 @@
         .card-footer a:hover { background: var(--brand-primary-dark); }
 
         footer { text-align: center; padding: 20px; font-size: 13px; color: var(--text-light); margin-top: 40px; }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2e7d32;
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-size: 15px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeInOut 4s forwards;
+        }
+        @keyframes fadeInOut {
+            0%   { opacity: 0; top: 10px; }
+            10%  { opacity: 1; top: 20px; }
+            80%  { opacity: 1; top: 20px; }
+            100% { opacity: 0; top: 10px; }
+        }
     </style>
 </head>
 <body>
 
+<div th:if="${param.logout}" class="toast">
+    ✓ You have been successfully logged out.
+</div>
+
 <header class="navbar">
     <div class="logo">STOCKLAND</div>
-    <nav>
-        <a th:href="@{/}">Home</a>
-        <a th:href="@{/listings}">Listings</a>
-        <a th:href="@{/dashboard}" th:if="${#authentication?.principal != null}">Dashboard</a>
-        <a th:href="@{/create-listing}" th:if="${#authentication?.principal != null}">Post property</a>
-        <a th:href="@{/login}" th:if="${#authentication?.principal == null}">Login</a>
-        <a th:href="@{/register}" th:if="${#authentication?.principal == null}">Sign up</a>
-        <a th:href="@{/logout}" th:if="${#authentication?.principal != null}">Logout</a>
-    </nav>
+    <div th:replace="fragments/navbar :: navbar"></div>
 </header>
 
 <div class="container">

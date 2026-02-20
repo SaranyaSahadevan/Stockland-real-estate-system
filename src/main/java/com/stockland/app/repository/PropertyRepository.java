@@ -21,4 +21,6 @@ public interface PropertyRepository extends JpaRepository<Property, Long>, JpaSp
     List<Property> findByLocationContainingIgnoreCase(String location);
 
     List<Property> findByStatus(String status);
+
+    List<Property> findByUserId(Long userId);
 }

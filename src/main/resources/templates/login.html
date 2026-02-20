@@ -35,7 +35,7 @@
         h1 { margin-top:0; font-size:26px; color: var(--brand-primary); text-align:center; }
 
         label { display:block; margin-bottom:4px; font-size:14px; }
-        input { width:100%; padding:10px; border-radius: var(--radius); border:1px solid #ccc; margin-bottom:15px; font-size:14px; }
+        input { width:94%; padding:10px; border-radius: var(--radius); border:1px solid #ccc; margin-bottom:15px; font-size:14px; }
 
         .btn-primary { width:100%; padding:12px; background: var(--brand-primary); color:#fff; border-radius: var(--radius); border:none; font-size:15px; cursor:pointer; transition: var(--transition); }
         .btn-primary:hover { background: var(--brand-primary-dark); }
@@ -44,30 +44,59 @@
         .helper a { color: var(--brand-primary); }
 
         footer { text-align:center; padding:20px; font-size:13px; color: var(--text-light); margin-top:40px; }
+
+        .flash-error { color: red; text-align: center; margin: 20px 0; font-weight: bold; font-size: 14px; }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2e7d32;
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-size: 15px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeInOut 4s forwards;
+        }
+        @keyframes fadeInOut {
+            0%   { opacity: 0; top: 10px; }
+            10%  { opacity: 1; top: 20px; }
+            80%  { opacity: 1; top: 20px; }
+            100% { opacity: 0; top: 10px; }
+        }
     </style>
 </head>
 <body>
 
+<div th:if="${param.registered}" class="toast">
+    ✓ Registration successful! You can now log in.
+</div>
+
 <header class="navbar">
     <div class="logo">STOCKLAND</div>
-    <nav>
-        <a th:href="@{/}">Home</a>
-        <a th:href="@{/listings}">Listings</a>
-        <a th:href="@{/register}">Sign up</a>
-    </nav>
+    <div th:replace="fragments/navbar :: navbar"></div>
 </header>
 
 <div class="container">
     <div class="card">
         <h1>Login</h1>
 
+
+        <p th:if="${error}" th:text="${error}" class="flash-error"></p>
+
         <!-- If you want Spring Security login to work, use POST /login with name=username,password -->
         <form th:action="@{/login}" method="post">
-            <label>Username</label>
-            <input type="text" name="username" placeholder="username" required>
+            <label>Username or Email</label>
+            <input type="text" name="username" placeholder="Username or Email">
 
             <label>Password</label>
-            <input type="password" name="password" placeholder="••••••••" required>
+            <input type="password" name="password" placeholder="••••••••">
 
             <button class="btn-primary" type="submit">Login</button>
         </form>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Create Listing – STOCKLAND</title>
@@ -171,19 +171,28 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .input-error {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+
+        .flash-success {
+            color: green;
+            font-size: 14px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
     </style>
 </head>
 <body>
 
 <header class="navbar">
     <div class="logo">STOCKLAND</div>
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="listings.html">Listings</a>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="create-listing.html">Post property</a>
-        <a href="login.html">Logout</a>
-    </nav>
+    <div th:replace="fragments/navbar :: navbar"></div>
 </header>
 
 <div class="container">
@@ -192,14 +201,18 @@
     <div class="card">
         <form th:action="@{/properties/create}" th:object="${propertyRequestDTO}" method="post">
 
+            <p th:if="${success}" th:text="${success}" class="flash-success"></p>
+
             <div class="full">
                 <label>Title</label>
-                <input type="text" placeholder="Modern apartment in Riga center" th:field="*{title}" required>
+                <input type="text" placeholder="Modern apartment in Riga center" th:field="*{title}">
+                <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="input-error"></p>
             </div>
 
             <div>
                 <label>Location</label>
-                <input type="text" placeholder="Latvia, Riga" th:field="*{location}" required>
+                <input type="text" placeholder="Latvia, Riga" th:field="*{location}">
+                <p th:if="${#fields.hasErrors('location')}" th:errors="*{location}" class="input-error"></p>
             </div>
 
 <!--            <div>-->
@@ -209,29 +222,32 @@
 
             <div>
                 <label>Property Type</label>
-                <select th:field="*{propertyType}" required>
+                <select th:field="*{propertyType}">
                     <option value="">Select type</option>
                     <option th:each="t : ${propertyTypes}"
                             th:value="${t}"
                             th:text="${t}">
                     </option>
                 </select>
+                <p th:if="${#fields.hasErrors('propertyType')}" th:errors="*{propertyType}" class="input-error"></p>
             </div>
 
             <div>
                 <label>Deal Type</label>
-                <select th:field="*{actionType}" required>
+                <select th:field="*{actionType}">
                     <option value="">Select deal</option>
                     <option th:each="t : ${actions}"
                             th:value="${t}"
                             th:text="${t}">
                     </option>
                 </select>
+                <p th:if="${#fields.hasErrors('actionType')}" th:errors="*{actionType}" class="input-error"></p>
             </div>
 
             <div>
                 <label>Price (€)</label>
-                <input type="number" min="0" placeholder="150000" th:field="*{price}" required>
+                <input type="number" min="0" placeholder="150000" th:field="*{price}">
+                <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="input-error"></p>
             </div>
 
 <!--            <div>-->
@@ -247,13 +263,19 @@
             <div class="full">
                 <label>Description</label>
                 <textarea placeholder="Describe the property..." th:field="*{description}" ></textarea>
+
             </div>
 
-            <select th:field="*{status}" required>
-                <option value="">Select status</option>
-                <option value="OLD">OLD</option>
-                <option value="NEW">NEW</option>
-            </select>
+            <div>
+                <select th:field="*{status}">
+                    <option value="">Select status</option>
+                    <option value="OLD">OLD</option>
+                    <option value="NEW">NEW</option>
+                </select>
+                    <p th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="input-error"></p>
+            </div>
+
+
 
 <!--            <div class="full">-->
 <!--                <label>Images (static demo)</label>-->
