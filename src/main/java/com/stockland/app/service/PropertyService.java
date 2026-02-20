@@ -305,8 +305,8 @@ public class PropertyService {
         return responseList;
     }
 
-    public Page<PropertyResponseDTO> findAll(Pageable pageable) {
-        Page<Property> entities = propertyRepository.findAll(pageable);
-        return entities.map(this::PropertyResponseDTOBuilder);
-    }
+//    public Page<PropertyResponseDTO> findAll(Pageable pageable) {
+//        Page<Property> entities = propertyRepository.findAll(pageable);
+//        return entities.map(this::PropertyResponseDTOBuilder);
+//    }
 }

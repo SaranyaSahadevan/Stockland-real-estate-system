@@ -293,7 +293,11 @@
 <!--            </div>-->
             <div class="actions">
                 <button class="btn-primary" type="submit">Save Listing</button>
-                <button class="btn-secondary" onclick="window.location.href='dashboard.html'" type="reset">Cancel</button>
+                <button type="button"
+                        class="btn-secondary"
+                        th:onclick="|window.location.href='@{/dashboard}'|">
+                    Cancel
+                </button>
             </div>
 
         </form>
