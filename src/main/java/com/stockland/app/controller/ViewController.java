@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Controller
 public class ViewController {
     @Autowired
@@ -30,7 +32,14 @@ public class ViewController {
 
         model.addAttribute("filters", new PropertyFilterRequestDTO());
 
-        model.addAttribute("featuredProperties", java.util.Collections.emptyList());
+
+
+        List<PropertyResponseDTO> featuredProperties = propertyService.findAll()
+                .stream()
+                .limit(2)
+                .toList();
+
+        model.addAttribute("featuredProperties", featuredProperties);
         return "index";
     }
 

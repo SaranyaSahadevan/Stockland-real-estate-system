@@ -144,12 +144,12 @@
             <div class="card-img"></div>
             <div class="card-body">
                 <h3 th:text="${p.title}">Property title</h3>
-                <p th:text="${p.city}">City</p>
+                <p th:text="${p.location}">City</p>
                 <p th:text="${p.propertyType}">Type</p>
                 <p th:text="${p.price}">€0</p>
             </div>
             <div class="card-footer">
-                <span th:text="${p.agentName}">Agent name</span>
+<!--                <span th:text="${p.agentName}">Agent name</span>-->
                 <a th:href="@{/property/{id}(id=${p.id})}">View</a>
             </div>
         </article>
