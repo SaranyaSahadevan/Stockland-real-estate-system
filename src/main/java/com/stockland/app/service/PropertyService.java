@@ -238,19 +238,19 @@ public class PropertyService {
 //        return responseList;
 //    }
 
-//    public List<PropertyResponseDTO> findAll(){
-//        List<Property> propertyList = propertyRepository.findAll();
-//
-//        List<PropertyResponseDTO> responseList = new ArrayList<>();
-//
-//        for(var property :  propertyList){
-//            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
-//
-//            responseList.add(newProperty);
-//        }
-//
-//        return responseList;
-//    }
+    public List<PropertyResponseDTO> findAll(){
+        List<Property> propertyList = propertyRepository.findAll();
+
+        List<PropertyResponseDTO> responseList = new ArrayList<>();
+
+        for(var property :  propertyList){
+            PropertyResponseDTO newProperty = PropertyResponseDTOBuilder(property);
+
+            responseList.add(newProperty);
+        }
+
+        return responseList;
+    }
 
     public Page<PropertyResponseDTO> searchPropertiesWithFilterSortAndPagination(
             PropertyFilterRequestDTO filters,
@@ -304,8 +304,9 @@ public class PropertyService {
 
         return responseList;
     }
-//    public Page<PropertyResponseDTO> findAll(Pageable pageable) {
-//        Page<Property> entities = propertyRepository.findAll(pageable);
-//        return entities.map(this::PropertyResponseDTOBuilder);
-//    }
+
+    public Page<PropertyResponseDTO> findAll(Pageable pageable) {
+        Page<Property> entities = propertyRepository.findAll(pageable);
+        return entities.map(this::PropertyResponseDTOBuilder);
+    }
 }
