@@ -18,7 +18,7 @@ A Spring Boot application for managing real estate properties.
 1. Clone the repository
 
 ```
-git clone 
+git clone https://github.com/SaranyaSahadevan/Stockland-real-estate-system.git
 ```
 
 2. Configure the database (application.properties)
