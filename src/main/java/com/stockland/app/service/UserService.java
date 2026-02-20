@@ -1,5 +1,6 @@
 package com.stockland.app.service;
 
+import com.stockland.app.dto.UserRegistrationDTO;
 import com.stockland.app.dto.UserResponseDTO;
 import com.stockland.app.model.User;
 import com.stockland.app.repository.UserRepository;
@@ -31,9 +32,24 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    public void registerUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("ROLE_USER");
+    public void registerUser(UserRegistrationDTO dto) {
+
+        if (usernameExists(dto.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+
+        if (emailExists(dto.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        User user = User.builder()
+                .username(dto.getUsername())
+                .email(dto.getEmail())
+                .fullName(dto.getFullName())
+                .password(passwordEncoder.encode(dto.getPassword()))
+                .role("ROLE_USER")
+                .build();
+
         userRepository.save(user);
     }
 
@@ -41,7 +57,7 @@ public class UserService implements UserDetailsService {
         Optional<User> userOptional = userRepository.findByUsername(username);
 
         if(userOptional.isEmpty()){
-            throw new RuntimeException("Provided username does not exist: " + username);
+            throw new UsernameNotFoundException("Provided username does not exist: " + username);
         }
 
         User user = userOptional.get();
@@ -50,7 +66,6 @@ public class UserService implements UserDetailsService {
                 .builder()
                 .id(user.getId())
                 .username(user.getUsername())
-                .password(user.getPassword())
                 .role(user.getRole())
                 .email(user.getEmail())
                 .fullName(user.getFullName())
@@ -72,4 +87,5 @@ public class UserService implements UserDetailsService {
                 .authorities(user.getRole())
                 .build();
     }
+
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
 <div th:fragment="chatbot">
 
@@ -150,7 +150,7 @@
     <div id="chatWidget" role="dialog" aria-label="Help Chat">
         <div id="chatHeader">
             <div>
-                <div class="title">AI Help</div>
+                <div class="title">STOCKLAND Assistant</div>
                 <div class="sub">Choose a question or type below</div>
             </div>
             <button id="chatClose" type="button" aria-label="Close">✕</button>
@@ -184,7 +184,7 @@
           const FAQ = [
             {
               q: "How to register?",
-              a: "Go to **Sign up** in the top menu → fill in username & password → submit. Then login from the **Login** page."
+              a: "Go to **Sign up** in the top menu → fill in your full name, username, email and password → submit. Then login from the **Login** page."
             },
             {
               q: "How to login?",
@@ -196,15 +196,15 @@
             },
             {
               q: "How to add photos?",
-              a: "On **Post property**, use **Images (static demo)** upload field. (If you want real saving to database/cloud, we can add it next.)"
+              a: "On **Post property**, use **Images (static demo)** upload field."
             },
             {
               q: "How to edit a listing?",
-              a: "Open **Dashboard** → in **My Listings**, click **Edit**. (If Edit is not wired yet, we can connect it to backend next.)"
+              a: "Open **Dashboard** → in **My Listings**, click **Edit**."
             },
             {
               q: "How to delete a listing?",
-              a: "Open **Dashboard** → in **My Listings**, click **Delete**. (If Delete is not wired yet, we can connect it to backend next.)"
+              a: "Open **Dashboard** → in **My Listings**, click **Delete**."
             },
             {
               q: "How to search properties?",
@@ -216,11 +216,11 @@
             },
             {
               q: "How to save favorites?",
-              a: "Open a property → click **Save to favorites** (if not implemented yet, we can add it next)."
+              a: "Open a property → click **Save to favorites**"
             },
             {
               q: "Schedule a call",
-              a: "✅ Our concerned person will contact you within 24hrs."
+              a: "Our concerned person will contact you within 24hrs."
             }
           ];
 
@@ -236,7 +236,7 @@
           function openChat() {
             chatWidget.style.display = "block";
             if (chatBody.childElementCount === 0) {
-              addMsg("Hi! I’m your AI helper. Choose a question below or type your question.", "ai");
+              addMsg("Hi! I'm your STOCKLAND assistant. Choose a quick question below or type your own, and we will contact you shortly!", "ai");
             }
             setTimeout(() => chatInput.focus(), 50);
           }
@@ -280,7 +280,7 @@
             if (found) {
               addMsg(found.a, "ai");
             } else {
-              addMsg("I can help with registration, listing properties, adding photos, searching, and scheduling a call. Try one of the quick questions.", "ai");
+              addMsg("Thank you for your question! We will contact you shortly.", "ai");
             }
           });
         })();

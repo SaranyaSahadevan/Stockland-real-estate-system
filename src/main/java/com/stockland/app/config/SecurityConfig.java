@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/css/**", "/js/**", "/error/**").permitAll()
+                        .requestMatchers("/", "/login", "/listings", "/properties", "/property/**", "/css/**", "/js/**", "/error/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/chat").permitAll()
@@ -34,7 +34,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/dashboard", true)
+                        .defaultSuccessUrl("/dashboard?login", true)
                         .failureUrl("/login?error")
                         .failureHandler(customAuthenticationFailureHandler())
                         .permitAll()
@@ -47,7 +47,11 @@ public class SecurityConfig {
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/")
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/?logout")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
                 );
         return http.build();
@@ -62,7 +66,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationFailureHandler customAuthenticationFailureHandler() {
         return (request, response, exception) -> {
-            request.getSession().setAttribute("error", "Invalid username or password");
+            request.getSession().setAttribute("error", "Invalid username/email or password");
             response.sendRedirect("/login?error");
         };
     }
@@ -95,7 +99,7 @@ public class SecurityConfig {
     }
 
     private boolean pathExists(String path) {
-        return path.startsWith("/dashboard") || path.startsWith("/profile") || path.startsWith("/listings");
+        return path.startsWith("/dashboard") || path.startsWith("/create-listing");
     }
 
 

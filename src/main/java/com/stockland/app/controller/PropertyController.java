@@ -68,19 +68,19 @@ public class PropertyController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("actions", ActionType.values());
             model.addAttribute("propertyTypes", PropertyType.values());
+            model.addAttribute("propertyRequestDTO", propertyRequestDTO);
             return "create-listing";
         }
 
         String username = userDetails.getUsername();
+        UserResponseDTO user = userService.findByUsername(username);
+        propertyService.saveProperty(propertyRequestDTO, user.getId());
 
         if(!userService.usernameExists(username)){
             throw new RuntimeException("Provided username does not exist when creating a new property: " + username);
         }
 
-        UserResponseDTO user = userService.findByUsername(username);
-
-        PropertyResponseDTO response = propertyService.saveProperty(propertyRequestDTO, user.getId());
-
+        model.addAttribute("success", "Property listing created successfully!");
         return "redirect:/dashboard";
     }
 }
