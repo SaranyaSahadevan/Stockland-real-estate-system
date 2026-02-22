@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import com.stockland.app.service.FavoriteService;
 
 import java.util.List;
 
@@ -17,12 +18,15 @@ import java.util.List;
 public class DashboardController {
     private final UserRepository userRepository;
     private final PropertyService propertyService;
+    private final FavoriteService favoriteService;
 
     @Autowired
     public DashboardController(UserRepository userRepository,
-                               PropertyService propertyService) {
+                               PropertyService propertyService,
+                               FavoriteService favoriteService) {
         this.userRepository = userRepository;
         this.propertyService = propertyService;
+        this.favoriteService = favoriteService;
     }
 
     @GetMapping("/dashboard")
@@ -34,7 +38,7 @@ public class DashboardController {
         model.addAttribute("user", user);
         List<PropertyResponseDTO> myListings = propertyService.getPropertiesByUserId(user.getId());
         model.addAttribute("myListings", myListings);
-        model.addAttribute("favorites", List.of());
+        model.addAttribute("favorites", favoriteService.getFavorites(user));
         return "dashboard";
     }
 }
