@@ -59,6 +59,11 @@ public class PropertyService {
                 .build();
     }
 
+    public Property getPropertyById(Long id) {
+        return propertyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found with id: " + id));
+    }
+
 //    private boolean isValidActionType(String input){
 //        for(var type : ActionType.values()){
 //            if(type.name().equalsIgnoreCase(input)){

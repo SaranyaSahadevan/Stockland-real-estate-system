@@ -121,22 +121,23 @@
                     <thead>
                     <tr>
                         <th>Title</th>
-                        <th>City</th>
+                        <th>Location</th>
                         <th>Price</th>
                         <th></th>
                     </tr>
                     </thead>
 
                     <tbody>
-                    <tr th:each="f : ${favorites}">
-                        <td th:text="${f.title}">Title</td>
-                        <td th:text="${f.city}">City</td>
-                        <td th:text="${f.price}">€0</td>
-                        <td class="actions">
-                            <a th:href="@{/property/{id}(id=${f.id})}">Open</a>
-                            <a href="#">Remove</a>
+                    <tr th:each="fav : ${favorites}">
+                        <td th:text="${fav.property.title}"></td>
+                        <td th:text="${fav.property.location}"></td>
+                        <td>€<span th:text="${fav.property.price}"></span></td>
+
+                        <td>
+                            <a th:href="@{/property/{id}(id=${fav.property.id})}" class="btn-primary">Open</a>
+                            <a th:href="@{/favorites/remove/{id}(id=${fav.property.id})}" class="btn-secondary">Remove</a>
                         </td>
-                    </tr>
+
 
                     <tr th:if="${#lists.isEmpty(favorites)}">
                         <td colspan="4">No favorites yet.</td>

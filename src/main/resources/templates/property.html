@@ -70,6 +70,7 @@
 </header>
 
 <div class="container">
+    <a th:href="@{/favorites/add/{id}(id=${property.id})}" class="btn btn-warning">Add to Favorites</a>
     <a class="back-link" th:href="@{/listings}">← Back to listings</a>
 
     <div class="layout">
