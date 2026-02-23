@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings – STOCKLAND</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        :root {
+            --brand-primary: #1f3c88;
+            --brand-primary-dark: #162b5c;
+            --brand-accent: #4a6cf7;
+            --bg-light: #f5f5f5;
+            --bg-white: #ffffff;
+            --text-dark: #222;
+            --text-light: #666;
+            --radius: 8px;
+            --shadow: 0 2px 6px rgba(0,0,0,0.08);
+            --transition: 0.25s ease;
+        }
+
+        body { margin:0; font-family:Arial, sans-serif; background:var(--bg-light); color:var(--text-dark); }
+        a { color: var(--brand-primary); text-decoration:none; transition: var(--transition); }
+        a:hover { color: var(--brand-accent); }
+
+        .navbar { background: var(--brand-primary); color:#fff; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; }
+        .navbar .logo { font-size:22px; font-weight:bold; letter-spacing:1px; }
+        .navbar nav a { color:#fff; margin-left:18px; font-size:14px; }
+        .navbar nav a:hover { color:#dfe6ff; }
+
+        @media (max-width:700px){
+            .navbar { flex-direction:column; align-items:flex-start; }
+            .navbar nav { margin-top:10px; display:flex; flex-wrap:wrap; gap:10px; }
+        }
+
+        .container { max-width:1100px; margin:25px auto; padding:0 15px; }
+        h1 { margin-top:0; font-size:26px; }
+
+        .layout { display:grid; grid-template-columns:260px 1fr; gap:20px; }
+        @media (max-width:900px){ .layout { grid-template-columns:1fr; } }
+
+        .sidebar { background:var(--bg-white); padding:20px; border-radius:var(--radius); box-shadow:var(--shadow); }
+        .sidebar h2 { margin-top:0; font-size:18px; }
+        .sidebar p { margin:6px 0; font-size:14px; }
+        .btn-logout { display:inline-block; margin-top:10px; padding:8px 12px; background:#eee; border-radius:6px; font-size:13px; color:#444; }
+        .btn-logout:hover { background:#ddd; }
+
+        .card { background:var(--bg-white); padding:20px; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:20px; }
+        .card h2 { margin-top:0; font-size:20px; }
+
+        label { display:block; margin-top:12px; font-size:14px; font-weight:bold; }
+        input[type=text], input[type=email], input[type=password] {
+            width:100%;
+            padding:10px;
+            margin-top:5px;
+            border-radius:6px;
+            border:1px solid #ccc;
+            font-size:14px;
+            box-sizing:border-box;
+            transition: border-color var(--transition);
+        }
+        input:focus { outline:none; border-color: var(--brand-primary); }
+
+        .btn-primary { display:inline-block; padding:8px 14px; background:var(--brand-primary); color:#fff; border-radius:6px; font-size:14px; border:none; cursor:pointer; transition: var(--transition); }
+        .btn-primary:hover { background:var(--brand-primary-dark); }
+
+        .flash-error { color: red; margin-top:12px; font-size:14px; }
+
+        footer { text-align:center; padding:20px; font-size:13px; color:var(--text-light); margin-top:40px; }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2e7d32;
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-size: 15px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeInOut 4s forwards;
+        }
+        @keyframes fadeInOut {
+            0%   { opacity: 0; top: 10px; }
+            10%  { opacity: 1; top: 20px; }
+            80%  { opacity: 1; top: 20px; }
+            100% { opacity: 0; top: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div th:if="${success}" class="toast">
+    ✓ <span th:text="${success}"></span>
+</div>
+
+<header class="navbar">
+    <div class="logo">STOCKLAND</div>
+    <div th:replace="fragments/navbar :: navbar"></div>
+</header>
+
+<div class="container">
+    <h1>Settings</h1>
+
+    <div class="layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <h2>Profile</h2>
+            <p><strong>Username:</strong> <span th:text="${user.username}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+            <p><strong>Full Name:</strong> <span th:text="${user.fullName}"></span></p>
+
+            <a th:href="@{/dashboard}" class="btn-primary" style="display:block; margin-top:20px; text-align:center;">
+                Dashboard
+            </a>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <section>
+
+            <div class="card">
+                <h2>Edit Profile</h2>
+
+                <form th:action="@{/settings}" method="post">
+
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" th:value="${user.fullName}" required>
+
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" th:value="${user.username}" required>
+
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" th:value="${user.email}" required>
+
+                    <hr style="margin:20px 0; border:none; border-top:1px solid #eee;">
+
+                    <h3 style="margin-top:0; font-size:16px;">Change Password</h3>
+                    <p style="font-size:13px; color:var(--text-light); margin-top:0; margin-bottom:25px; ">Leave blank to keep your current password.</p>
+
+                    <label for="currentPassword">Current Password</label>
+                    <input type="password" id="currentPassword" name="currentPassword" placeholder="Enter current password">
+
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password">
+
+                    <p th:if="${error}" class="flash-error" th:text="${error}"></p>
+
+                    <button class="btn-primary" type="submit" style="margin-top:18px; width:100%; padding:12px;">
+                        Save Changes
+                    </button>
+
+                </form>
+            </div>
+
+        </section>
+    </div>
+</div>
+
+<footer>
+    STOCKLAND - Real Estate Property Listing & Management System
+</footer>
+
+<div th:replace="~{fragments/chatbot :: chatbot}"></div>
+</body>
+</html>
