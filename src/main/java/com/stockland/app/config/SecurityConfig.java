@@ -53,6 +53,11 @@ public class SecurityConfig {
                         .clearAuthentication(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
+                )
+                .rememberMe(remember -> remember
+                        .key("stockland-remember-me-key")
+                        .rememberMeParameter("remember-me")
+                        .tokenValiditySeconds(604800) // 7 days
                 );
         return http.build();
     }
@@ -99,7 +104,7 @@ public class SecurityConfig {
     }
 
     private boolean pathExists(String path) {
-        return path.startsWith("/dashboard") || path.startsWith("/create-listing");
+        return path.startsWith("/dashboard") || path.startsWith("/create-listing") || path.startsWith("/settings");
     }
 
 

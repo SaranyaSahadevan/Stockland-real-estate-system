@@ -88,4 +88,12 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Provided username does not exist: " + username));
+    }
+
+    public void saveUser(User user) {
+        userRepository.save(user);
+    }
 }
