@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title th:text="${property.title}">Property Details – STOCKLAND</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="
+    https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css
+    " rel="stylesheet">
 
     <style>
         :root {
@@ -60,6 +63,21 @@
         .sidebar-card button:hover { background: var(--brand-primary-dark); }
 
         footer { text-align:center; padding:20px; font-size:13px; color: var(--text-light); margin-top:40px; }
+
+        .splide__slide img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        #thumbnail-carousel .splide__slide {
+          opacity: 0.6;
+        }
+
+        #thumbnail-carousel .splide__slide.is-active {
+          opacity: 1;
+          border: 2px solid #007bff;
+        }
     </style>
 </head>
 <body>
@@ -74,17 +92,25 @@
 
     <div class="layout">
         <section>
-            <div class="gallery">
-                <div class="gallery-grid" style="display: flex; flex-wrap: wrap; gap: 10px;">
-                    <div th:each="url : ${property.images}">
-                        <a th:href="${url}" target="_blank">
-                            <img th:src="${url}"
-                                 alt="Property Interior"
-                                 style="width: 150px; border-radius: 8px;">
-                        </a>
-                    </div>
+            <section id="main-carousel" class="splide" aria-label="Property Images">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        <li class="splide__slide" th:each="url : ${property.images}">
+                            <img th:src="${url}" alt="Property image">
+                        </li>
+                    </ul>
                 </div>
-            </div>
+            </section>
+
+            <section id="thumbnail-carousel" class="splide" aria-label="The carousel with thumbnails.">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        <li class="splide__slide" th:each="url : ${property.images}">
+                            <img th:src="${url}" alt="Miniature">
+                        </li>
+                    </ul>
+                </div>
+            </section>
 
             <div class="details">
                 <h1 th:text="${property.title}">Property Title</h1>
@@ -140,5 +166,41 @@
 </footer>
 
 <div th:replace="~{fragments/chatbot :: chatbot}"></div>
+
+<script src="
+    https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js
+"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var main = new Splide('#main-carousel', {
+        fixedHeight: 400,
+        type: 'fade',
+        rewind: true,
+        pagination: false,
+        arrows: true,
+      });
+
+      var thumbnails = new Splide('#thumbnail-carousel', {
+        fixedWidth: 100,
+        fixedHeight: 60,
+        gap: 10,
+        rewind: true,
+        isNavigation: true,
+        pagination: false,
+        focus: 'center',
+        breakpoints:{
+          600:{
+            fixedWidth: 60,
+            fixedHeight: 44,
+          },
+        },
+      });
+
+      main.sync(thumbnails);
+      main.mount();
+      thumbnails.mount();
+    });
+</script>
 </body>
 </html>

@@ -37,6 +37,7 @@ public class Property {
     @JoinColumn(name = "owner_id")
     private User owner;
 
+    @Builder.Default
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 }

@@ -75,4 +75,19 @@ public class ViewController {
         model.addAttribute("propertyRequestDTO", new PropertyRequestDTO());
         return "create-listing";
     }
+
+    @GetMapping("/edit-property/{id}")
+    public String editProperty(@PathVariable("id") Long id, Model model) {
+        PropertyResponseDTO property = propertyService.findById(id);
+
+//        UserResponseDTO user = userService.findByUsername(property.getUsername());
+//
+//        model.addAttribute("user", user);
+
+        model.addAttribute("actions", ActionType.values());
+        model.addAttribute("propertyTypes", PropertyType.values());
+        model.addAttribute("property", property);
+
+        return "edit-property";
+    }
 }
