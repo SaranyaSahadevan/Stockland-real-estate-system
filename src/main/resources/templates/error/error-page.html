@@ -28,10 +28,12 @@
         .btn-primary:hover { background: var(--brand-primary-dark); }
         .btn-secondary { background: var(--bg-light); color: var(--text-dark); }
         .btn-secondary:hover { background: var(--text-light); color: white; }
+        .error-image { width: 100%; max-width: 640px; margin: 0 auto 24px; display: block; }
     </style>
 </head>
 <body>
 <div class="container">
+    <img th:src="@{/images/error-illustrating.png}" src="/images/error-illustrating.png" alt="Error illustration" class="error-image">
     <div class="error-code" th:text="${status}">Error</div>
     <h1 class="error-title" th:text="${title}">Unexpected Error</h1>
     <p class="error-description" th:text="${message}">
