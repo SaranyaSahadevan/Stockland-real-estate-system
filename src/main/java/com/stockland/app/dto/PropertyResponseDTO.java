@@ -23,5 +23,7 @@ public class PropertyResponseDTO {
     // User info
     private long userID;
     private String username;
+    //Images
+    private String[] images;
 }
 

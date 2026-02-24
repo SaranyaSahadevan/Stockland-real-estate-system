@@ -3,6 +3,9 @@ package com.stockland.app.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -33,4 +36,7 @@ public class Property {
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images = new ArrayList<>();
 }

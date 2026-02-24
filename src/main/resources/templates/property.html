@@ -75,11 +75,14 @@
     <div class="layout">
         <section>
             <div class="gallery">
-                <div class="gallery-main"></div>
-                <div class="gallery-thumbs">
-                    <div class="thumb"></div>
-                    <div class="thumb"></div>
-                    <div class="thumb"></div>
+                <div class="gallery-grid" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <div th:each="url : ${property.images}">
+                        <a th:href="${url}" target="_blank">
+                            <img th:src="${url}"
+                                 alt="Property Interior"
+                                 style="width: 150px; border-radius: 8px;">
+                        </a>
+                    </div>
                 </div>
             </div>
 

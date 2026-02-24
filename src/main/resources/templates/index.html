@@ -161,7 +161,11 @@
 
     <div class="cards">
         <article class="card" th:each="p : ${featuredProperties}">
-            <div class="card-img"></div>
+            <div class="card-img">
+                <img th:src="${p.images != null && p.images.length > 0 ? p.images[0] : '/images/placeholder_image.jpg'}"
+                     alt="Property Preview"
+                     style="width:100%; height:200px; object-fit:cover;">
+            </div>
             <div class="card-body">
                 <h3 th:text="${p.title}">Property title</h3>
                 <p th:text="${p.location}">City</p>

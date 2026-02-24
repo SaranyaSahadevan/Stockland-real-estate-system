@@ -21,6 +21,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.stream.Collectors;
 
@@ -64,6 +66,7 @@ public class PropertyController {
     public String createProperty(@AuthenticationPrincipal UserDetails userDetails,
                                  @Valid PropertyRequestDTO propertyRequestDTO,
                                  BindingResult bindingResult,
+                                 @RequestParam("imageFiles") MultipartFile[] imageFiles,
                                  Model model){
         if (bindingResult.hasErrors()) {
             model.addAttribute("actions", ActionType.values());
@@ -74,7 +77,7 @@ public class PropertyController {
 
         String username = userDetails.getUsername();
         UserResponseDTO user = userService.findByUsername(username);
-        propertyService.saveProperty(propertyRequestDTO, user.getId());
+        propertyService.saveProperty(propertyRequestDTO, user.getId(), imageFiles);
 
         if(!userService.usernameExists(username)){
             throw new RuntimeException("Provided username does not exist when creating a new property: " + username);

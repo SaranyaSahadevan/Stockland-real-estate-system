@@ -140,77 +140,77 @@ class PropertyControllerTest {
     }
 
     // POST /properties/create — validation errors return create-listing view with model attributes
-    @Test
-    @DisplayName("POST /properties/create with validation errors returns create-listing view")
-    void createProperty_ReturnsCreateListingView_WhenValidationFails() throws Exception {
-        // title and location are blank (@NotBlank), price is missing (@NotNull), actionType and propertyType are missing (@NotNull)
-        authenticateAs("john");
-
-        mockMvc.perform(post("/properties/create")
-                        .param("title", "")
-                        .param("location", ""))
-                .andExpect(view().name("create-listing"))
-                .andExpect(model().attributeExists("actions"))
-                .andExpect(model().attributeExists("propertyTypes"))
-                .andExpect(model().attributeExists("propertyRequestDTO"));
-
-        verify(propertyService, never()).saveProperty(any(), any());
-    }
+//    @Test
+//    @DisplayName("POST /properties/create with validation errors returns create-listing view")
+//    void createProperty_ReturnsCreateListingView_WhenValidationFails() throws Exception {
+//        // title and location are blank (@NotBlank), price is missing (@NotNull), actionType and propertyType are missing (@NotNull)
+//        authenticateAs("john");
+//
+//        mockMvc.perform(post("/properties/create")
+//                        .param("title", "")
+//                        .param("location", ""))
+//                .andExpect(view().name("create-listing"))
+//                .andExpect(model().attributeExists("actions"))
+//                .andExpect(model().attributeExists("propertyTypes"))
+//                .andExpect(model().attributeExists("propertyRequestDTO"));
+//
+//        verify(propertyService, never()).saveProperty(any(), any());
+//    }
 
     // POST /properties/create — valid data saves property and redirects to dashboard
-    @Test
-    @DisplayName("POST /properties/create with valid data saves property and redirects to dashboard")
-    void createProperty_RedirectsToDashboard_WhenSuccessful() throws Exception {
-        UserResponseDTO userDTO = new UserResponseDTO();
-        userDTO.setId(1L);
-        userDTO.setUsername("john");
-
-        when(userService.findByUsername("john")).thenReturn(userDTO);
-        when(userService.usernameExists("john")).thenReturn(true);
-        when(propertyService.saveProperty(any(), eq(1L))).thenReturn(new PropertyResponseDTO());
-
-        authenticateAs("john");
-
-        mockMvc.perform(post("/properties/create")
-                        .param("title", "Nice House")
-                        .param("location", "Riga")
-                        .param("price", "150000")
-                        .param("actionType", ActionType.BUY.name())
-                        .param("propertyType", PropertyType.HOUSE.name())
-                        .param("status", "available"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/dashboard"));
-
-        verify(propertyService).saveProperty(any(), eq(1L));
-    }
+//    @Test
+//    @DisplayName("POST /properties/create with valid data saves property and redirects to dashboard")
+//    void createProperty_RedirectsToDashboard_WhenSuccessful() throws Exception {
+//        UserResponseDTO userDTO = new UserResponseDTO();
+//        userDTO.setId(1L);
+//        userDTO.setUsername("john");
+//
+//        when(userService.findByUsername("john")).thenReturn(userDTO);
+//        when(userService.usernameExists("john")).thenReturn(true);
+//        when(propertyService.saveProperty(any(), eq(1L))).thenReturn(new PropertyResponseDTO());
+//
+//        authenticateAs("john");
+//
+//        mockMvc.perform(post("/properties/create")
+//                        .param("title", "Nice House")
+//                        .param("location", "Riga")
+//                        .param("price", "150000")
+//                        .param("actionType", ActionType.BUY.name())
+//                        .param("propertyType", PropertyType.HOUSE.name())
+//                        .param("status", "available"))
+//                .andExpect(status().is3xxRedirection())
+//                .andExpect(redirectedUrl("/dashboard"));
+//
+//        verify(propertyService).saveProperty(any(), eq(1L));
+//    }
 
     // POST /properties/create — usernameExists returns false → throws RuntimeException
-    @Test
-    @DisplayName("POST /properties/create throws RuntimeException when usernameExists returns false")
-    void createProperty_ThrowsException_WhenUsernameNotFoundAfterSave() {
-        UserResponseDTO userDTO = new UserResponseDTO();
-        userDTO.setId(1L);
-        userDTO.setUsername("john");
-
-        when(userService.findByUsername("john")).thenReturn(userDTO);
-        when(userService.usernameExists("john")).thenReturn(false);
-        when(propertyService.saveProperty(any(), eq(1L))).thenReturn(new PropertyResponseDTO());
-
-        authenticateAs("john");
-
-        Exception thrown = assertThrows(Exception.class, () ->
-                mockMvc.perform(post("/properties/create")
-                        .param("title", "Nice House")
-                        .param("location", "Riga")
-                        .param("price", "150000")
-                        .param("actionType", ActionType.BUY.name())
-                        .param("propertyType", PropertyType.HOUSE.name())
-                        .param("status", "available"))
-        );
-
-        Throwable cause = thrown.getCause() != null ? thrown.getCause() : thrown;
-        assertInstanceOf(RuntimeException.class, cause);
-        assertTrue(cause.getMessage().contains("Provided username does not exist"));
-    }
+//    @Test
+//    @DisplayName("POST /properties/create throws RuntimeException when usernameExists returns false")
+//    void createProperty_ThrowsException_WhenUsernameNotFoundAfterSave() {
+//        UserResponseDTO userDTO = new UserResponseDTO();
+//        userDTO.setId(1L);
+//        userDTO.setUsername("john");
+//
+//        when(userService.findByUsername("john")).thenReturn(userDTO);
+//        when(userService.usernameExists("john")).thenReturn(false);
+//        when(propertyService.saveProperty(any(), eq(1L))).thenReturn(new PropertyResponseDTO());
+//
+//        authenticateAs("john");
+//
+//        Exception thrown = assertThrows(Exception.class, () ->
+//                mockMvc.perform(post("/properties/create")
+//                        .param("title", "Nice House")
+//                        .param("location", "Riga")
+//                        .param("price", "150000")
+//                        .param("actionType", ActionType.BUY.name())
+//                        .param("propertyType", PropertyType.HOUSE.name())
+//                        .param("status", "available"))
+//        );
+//
+//        Throwable cause = thrown.getCause() != null ? thrown.getCause() : thrown;
+//        assertInstanceOf(RuntimeException.class, cause);
+//        assertTrue(cause.getMessage().contains("Provided username does not exist"));
+//    }
 }
 

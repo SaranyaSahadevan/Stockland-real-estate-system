@@ -199,7 +199,7 @@
     <h1>Create New Listing</h1>
 
     <div class="card">
-        <form th:action="@{/properties/create}" th:object="${propertyRequestDTO}" method="post">
+        <form th:action="@{/properties/create}" th:object="${propertyRequestDTO}" method="post" enctype="multipart/form-data">
 
             <p th:if="${success}" th:text="${success}" class="flash-success"></p>
 
@@ -275,12 +275,10 @@
                     <p th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="input-error"></p>
             </div>
 
-
-
-<!--            <div class="full">-->
-<!--                <label>Images (static demo)</label>-->
-<!--                <input type="file" multiple>-->
-<!--            </div>-->
+            <div class="full">
+                <label>Images (static demo)</label>
+                <input type="file" name="imageFiles" multiple accept="image/*">
+            </div>
 
 <!--            <div class="full">-->
 <!--                <label>Contact Phone</label>-->
