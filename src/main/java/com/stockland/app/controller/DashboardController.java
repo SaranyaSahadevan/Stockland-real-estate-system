@@ -39,6 +39,12 @@ public class DashboardController {
         List<PropertyResponseDTO> myListings = propertyService.getPropertiesByUserId(user.getId());
         model.addAttribute("myListings", myListings);
         model.addAttribute("favorites", favoriteService.getFavorites(user));
+
+        if ("ROLE_ADMIN".equals(user.getRole())) {
+            model.addAttribute("allListings", propertyService.findAll());
+            model.addAttribute("pendingListings", propertyService.findPendingProperties());
+        }
+
         return "dashboard";
     }
 }

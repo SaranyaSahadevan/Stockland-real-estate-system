@@ -8,7 +8,13 @@
     <a th:href="@{/listings}">Listings</a>
 
     <a th:href="@{/dashboard}"
-       sec:authorize="isAuthenticated()">
+       sec:authorize="hasRole('ADMIN')"
+       style="color:#ffcccc;">
+        Admin Dashboard
+    </a>
+
+    <a th:href="@{/dashboard}"
+       sec:authorize="hasRole('USER')">
         Dashboard
     </a>
 

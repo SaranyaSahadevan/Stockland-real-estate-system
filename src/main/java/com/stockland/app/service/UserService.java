@@ -46,6 +46,7 @@ public class UserService implements UserDetailsService {
                 .username(dto.getUsername())
                 .email(dto.getEmail())
                 .fullName(dto.getFullName())
+                .phoneNumber(dto.getPhoneNumber())
                 .password(passwordEncoder.encode(dto.getPassword()))
                 .role("ROLE_USER")
                 .build();
@@ -69,6 +70,7 @@ public class UserService implements UserDetailsService {
                 .role(user.getRole())
                 .email(user.getEmail())
                 .fullName(user.getFullName())
+                .phoneNumber(user.getPhoneNumber())
                 .build();
     }
 

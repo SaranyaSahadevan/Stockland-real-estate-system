@@ -53,6 +53,7 @@ class PropertyServiceIntegrationTest {
                 .actionType(ActionType.BUY)
                 .propertyType(PropertyType.APARTMENTS)
                 .status("available")
+                .moderationStatus(ModerationStatus.APPROVED)
                 .user(savedUser)
                 .build());
 
@@ -63,6 +64,7 @@ class PropertyServiceIntegrationTest {
                 .actionType(ActionType.RENT)
                 .propertyType(PropertyType.HOUSE)
                 .status("sold")
+                .moderationStatus(ModerationStatus.APPROVED)
                 .user(savedUser)
                 .build());
     }

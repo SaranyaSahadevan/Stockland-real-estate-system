@@ -1,6 +1,7 @@
 package com.stockland.app.repository;
 
 import com.stockland.app.model.ActionType;
+import com.stockland.app.model.ModerationStatus;
 import com.stockland.app.model.Property;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -23,4 +24,6 @@ public interface PropertyRepository extends JpaRepository<Property, Long>, JpaSp
     List<Property> findByStatus(String status);
 
     List<Property> findByUserId(Long userId);
+
+    List<Property> findByModerationStatus(ModerationStatus moderationStatus);
 }

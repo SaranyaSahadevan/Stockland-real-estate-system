@@ -15,4 +15,5 @@ public class UserResponseDTO {
     private String role;
     private String email;
     private String fullName;
+    private String phoneNumber;
 }

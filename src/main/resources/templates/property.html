@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title th:text="${property.title}">Property Details – STOCKLAND</title>
@@ -60,6 +61,8 @@
         .sidebar-card button:hover { background: var(--brand-primary-dark); }
 
         footer { text-align:center; padding:20px; font-size:13px; color: var(--text-light); margin-top:40px; }
+        .btn-danger { display:inline-block; padding:9px 16px; background:#c0392b; color:#fff; border:none; border-radius: var(--radius); cursor:pointer; font-size:14px; width:100%; transition: var(--transition); }
+        .btn-danger:hover { background:#a93226; }
     </style>
 </head>
 <body>
@@ -109,7 +112,10 @@
                 <h2>Contact agent</h2>
                 <p>
                     <strong th:text="${user.username}">username</strong><br>
-                    <span th:text="${user.email}">email@example.com</span>
+                    <span th:text="${user.email}">email@example.com</span><br>
+                    <span th:if="${user.phoneNumber != null and !user.phoneNumber.isEmpty()}">
+                        <span th:text="${user.phoneNumber}"></span>
+                    </span>
                 </p>
 
 <!--                <form>-->
@@ -128,6 +134,21 @@
                     <li>Track inquiries</li>
                     <li>View in dashboard</li>
                 </ul>
+
+                <!-- Admin-only actions -->
+                <div sec:authorize="hasRole('ADMIN')" style="margin-top:14px;">
+                    <hr style="border:none;border-top:1px solid #eee;margin-bottom:12px;">
+                    <p style="font-size:15px;color:#c0392b;margin:0 0 8px;"><strong>Admin Actions</strong></p>
+                    <a th:href="@{/properties/edit/{id}(id=${property.id})}"
+                       style="display:block; text-align:center; padding:9px 16px; background:#1f3c88; color:#fff; border-radius:8px; font-size:14px; margin-bottom:10px; transition:0.25s ease;"
+                       onmouseover="this.style.background='#162b5c'" onmouseout="this.style.background='#1f3c88'">
+                        Edit Listing
+                    </a>
+                    <form th:action="@{/properties/delete/{id}(id=${property.id})}" method="post"
+                          onsubmit="return confirm('Permanently delete this listing? This cannot be undone.');">
+                        <button type="submit" class="btn-danger">Delete Listing</button>
+                    </form>
+                </div>
             </div>
         </aside>
     </div>
