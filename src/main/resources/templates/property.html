@@ -63,9 +63,50 @@
         footer { text-align:center; padding:20px; font-size:13px; color: var(--text-light); margin-top:40px; }
         .btn-danger { display:inline-block; padding:9px 16px; background:#c0392b; color:#fff; border:none; border-radius: var(--radius); cursor:pointer; font-size:14px; width:100%; transition: var(--transition); }
         .btn-danger:hover { background:#a93226; }
+        .btn-approve { display:inline-block; padding:9px 16px; background:#27ae60; color:#fff; border:none; border-radius: var(--radius); cursor:pointer; font-size:14px; width:100%; transition: var(--transition); margin-bottom:10px; }
+        .btn-approve:hover { background:#1e8449; }
+        .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:bold; margin-bottom:10px; }
+        .badge-pending  { background:#fff3cd; color:#856404; border:1px solid #ffc107; }
+        .badge-approved { background:#d1e7dd; color:#155724; border:1px solid #28a745; }
+        .badge-rejected { background:#f8d7da; color:#721c24; border:1px solid #dc3545; }
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2e7d32;
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-size: 15px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeInOut 4s forwards;
+        }
+        @keyframes fadeInOut {
+            0%   { opacity: 0; top: 10px; }
+            10%  { opacity: 1; top: 20px; }
+            80%  { opacity: 1; top: 20px; }
+            100% { opacity: 0; top: 10px; }
+        }
     </style>
 </head>
 <body>
+
+<div th:if="${param.approved}" class="toast" style="background:#27ae60;">
+    ✓ Listing approved and is now publicly visible.
+</div>
+
+<div th:if="${param.rejected}" class="toast" style="background:#c0392b;">
+    ✓ Listing has been rejected.
+</div>
+
+<div th:if="${param.updated}" class="toast" style="background:#1f3c88;">
+    ✓ Listing updated successfully.
+</div>
 
 <header class="navbar">
     <div class="logo">STOCKLAND</div>
@@ -95,7 +136,7 @@
                     <span th:text="${property.propertyType}">Type</span> •
                 </div>
 
-                <div class="price" th:text="${property.price}">€0</div>
+                <div class="price" style="white-space: nowrap;"><span th:text="${#numbers.formatDecimal(property.price, 1, 'WHITESPACE', 2, 'COMMA')}">0</span> €</div>
 
 <!--                <div class="tags">-->
 <!--                    <span th:each="tag : ${property.tags}" th:text="${tag}">Tag</span>-->
@@ -139,7 +180,50 @@
                 <div sec:authorize="hasRole('ADMIN')" style="margin-top:14px;">
                     <hr style="border:none;border-top:1px solid #eee;margin-bottom:12px;">
                     <p style="font-size:15px;color:#c0392b;margin:0 0 8px;"><strong>Admin Actions</strong></p>
-                    <a th:href="@{/properties/edit/{id}(id=${property.id})}"
+
+                    <div style="margin-bottom:10px;">
+                        <span th:if="${property.moderationStatus?.name() == 'PENDING'}"  class="badge badge-pending">⏳ Pending Review</span>
+                        <span th:if="${property.moderationStatus?.name() == 'APPROVED'}" class="badge badge-approved">✅ Approved</span>
+                        <span th:if="${property.moderationStatus?.name() == 'REJECTED'}" class="badge badge-rejected">❌ Rejected</span>
+                    </div>
+
+                    <a th:href="@{/properties/edit/{id}(id=${property.id}, redirectUrl='/property/' + ${property.id})}"
+                       style="display:block; text-align:center; padding:9px 16px; background:#1f3c88; color:#fff; border-radius:8px; font-size:14px; margin-bottom:10px; transition:0.25s ease;"
+                       onmouseover="this.style.background='#162b5c'" onmouseout="this.style.background='#1f3c88'">
+                        Edit Listing
+                    </a>
+                    <form th:action="@{/properties/delete/{id}(id=${property.id})}" method="post"
+                          onsubmit="return confirm('Permanently delete this listing? This cannot be undone.');"
+                          style="margin-bottom:10px;">
+                        <button type="submit" class="btn-danger">Delete Listing</button>
+                    </form>
+
+                    <hr style="border:none;border-top:1px solid #eee;margin-bottom:12px;">
+                    <form th:if="${property.moderationStatus?.name() != 'APPROVED'}"
+                          th:action="@{/properties/approve/{id}(id=${property.id})}" method="post">
+                        <input type="hidden" name="redirectUrl" th:value="'/property/' + ${property.id} + '?approved'">
+                        <button type="submit" class="btn-approve">✔ Approve Listing</button>
+                    </form>
+                    <form th:if="${property.moderationStatus?.name() != 'REJECTED'}"
+                          th:action="@{/properties/reject/{id}(id=${property.id})}" method="post">
+                        <input type="hidden" name="redirectUrl" th:value="'/property/' + ${property.id} + '?rejected'">
+                        <button type="submit" class="btn-danger">✘ Reject Listing</button>
+                    </form>
+                </div>
+
+                <!-- Owner-only actions (non-admin listing owner) -->
+                <div th:if="${#authentication != null and #authentication.name == property.username and not #authorization.expression('hasRole(''ADMIN'')')}"
+                     style="margin-top:14px;">
+                    <hr style="border:none;border-top:1px solid #eee;margin-bottom:12px;">
+                    <p style="font-size:15px;color:#1f3c88;margin:0 0 8px;"><strong>Your Listing</strong></p>
+
+                    <div style="margin-bottom:10px;">
+                        <span th:if="${property.moderationStatus?.name() == 'PENDING'}"  class="badge badge-pending">⏳ Pending Review</span>
+                        <span th:if="${property.moderationStatus?.name() == 'APPROVED'}" class="badge badge-approved">✅ Approved</span>
+                        <span th:if="${property.moderationStatus?.name() == 'REJECTED'}" class="badge badge-rejected">❌ Rejected</span>
+                    </div>
+
+                    <a th:href="@{/properties/edit/{id}(id=${property.id}, redirectUrl='/property/' + ${property.id})}"
                        style="display:block; text-align:center; padding:9px 16px; background:#1f3c88; color:#fff; border-radius:8px; font-size:14px; margin-bottom:10px; transition:0.25s ease;"
                        onmouseover="this.style.background='#162b5c'" onmouseout="this.style.background='#1f3c88'">
                         Edit Listing
