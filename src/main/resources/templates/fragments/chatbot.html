@@ -114,9 +114,13 @@
         <div id="chatBody"></div>
 
         <div id="quickActions">
+            <div style="font-weight:normal;margin-bottom:8px;">
+                Quick Questions
+            </div>
             <div id="chips"></div>
         </div>
     </div>
+
 
     <script>
         (function(){
@@ -154,6 +158,9 @@
          const f=document.createElement("div");
          f.className="feedbackRow";
          f.innerHTML=`
+        <div style="font-family:Segoe UI, Arial, sans-serif; font-weight:Italic; font-size:12px;">
+    Did I help you?
+</div>
           <button class="feedbackBtn" onclick="yes()">👍 Yes</button>
           <button class="feedbackBtn" onclick="no()">👎 No</button>
          `;
