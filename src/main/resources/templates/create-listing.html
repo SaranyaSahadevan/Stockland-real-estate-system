@@ -250,15 +250,15 @@
                 <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="input-error"></p>
             </div>
 
-<!--            <div>-->
-<!--                <label>Area (m²)</label>-->
-<!--                <input type="number" min="0" placeholder="50">-->
-<!--            </div>-->
+            <div>
+                <label>Area (m²)</label>
+                <input type="number" min="0" placeholder="50" th:field="*{area}">
+            </div>
 
-<!--            <div>-->
-<!--                <label>Rooms</label>-->
-<!--                <input type="number" min="0" placeholder="2">-->
-<!--            </div>-->
+            <div>
+                <label>Rooms</label>
+                <input type="number" min="0" placeholder="2" th:field="*{roomCount}">
+            </div>
 
             <div class="full">
                 <label>Description</label>

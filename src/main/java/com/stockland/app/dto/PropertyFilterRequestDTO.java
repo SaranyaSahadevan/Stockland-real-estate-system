@@ -20,6 +20,10 @@ public class PropertyFilterRequestDTO {
     @Min(value = 0, message = "Price cannot be negative")
     @Max(value = 999999999, message = "Price cannot exceed 999999999")
     private Double maxPrice;
+    private Double maxArea;
+    private Double minArea;
+    private Integer minRooms;
+    private Integer maxRooms;
     private ActionType actionType;
     private PropertyType propertyType;
     private String status;

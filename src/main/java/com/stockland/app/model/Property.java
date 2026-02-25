@@ -19,6 +19,8 @@ public class Property {
     private String title;
     private String location;
     private Double price;
+    private Double area;
+    private Integer roomCount;
     @Column(columnDefinition = "TEXT")
     private String description;
     //Values: RENT, BUY

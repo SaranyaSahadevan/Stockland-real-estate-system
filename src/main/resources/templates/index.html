@@ -82,8 +82,15 @@
             display: flex;
             flex-direction: column;
         }
-        .card-img { height: 150px; background: #d0d6ff; }
-        .card-body { padding: 15px; }
+        .card-img {
+            flex: 1;
+            height: 200px;
+            background: #d0d6ff;
+        }
+        .card-body {
+            flex: 1;
+            padding: 15px;
+        }
         .card-body h3 { margin: 0 0 6px; font-size: 16px; }
         .card-body p { margin: 3px 0; color: var(--text-light); font-size: 13px; }
 
@@ -144,7 +151,7 @@
             Browse listings, save favorites and publish your own properties.
         </p>
 
-        <form th:action="@{/properties}" method="get" class="search-box">
+        <form th:action="@{/listings}" method="get" class="search-box">
             <input type="text" name="location" placeholder="City, street or keyword" th:value="${filters.location}">
             <select name="actionType">
                 <option value=""></option>

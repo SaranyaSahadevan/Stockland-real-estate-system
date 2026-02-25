@@ -50,7 +50,7 @@
         .details { background: var(--bg-white); padding:20px; border-radius: var(--radius); box-shadow: var(--shadow); }
         .details h1 { margin-top:0; font-size:26px; }
         .meta { font-size:14px; color: var(--text-light); margin-bottom:10px; }
-        .price { font-size:22px; font-weight:bold; margin:10px 0; }
+        .price .area .rooms{ font-size:22px; font-weight:bold; margin:10px 0; }
 
         .tags span { display:inline-block; background:#eef1ff; padding:5px 10px; border-radius:20px; font-size:12px; margin-right:6px; margin-bottom:6px; }
 
@@ -123,7 +123,11 @@
                     <span th:text="${property.propertyType}">Type</span> •
                 </div>
 
-                <div class="price" th:text="${property.price}">€0</div>
+                <div class="price"> <span th:text="${property.price}">0</span> €</div>
+
+                <div class="area"><span th:text="${property.area}">0</span> m²</div>
+
+                <div class="rooms">Rooms: <span th:text="${property.roomCount}">0</span></div>
 
 <!--                <div class="tags">-->
 <!--                    <span th:each="tag : ${property.tags}" th:text="${tag}">Tag</span>-->

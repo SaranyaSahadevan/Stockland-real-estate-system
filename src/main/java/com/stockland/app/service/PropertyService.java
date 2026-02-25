@@ -51,6 +51,8 @@ public class PropertyService {
                 .actionType(propertyRequestDTO.getActionType())
                 .propertyType(propertyRequestDTO.getPropertyType())
                 .status(propertyRequestDTO.getStatus())
+                .roomCount(propertyRequestDTO.getRoomCount())
+                .area(propertyRequestDTO.getArea())
                 .build();
     }
 
@@ -81,6 +83,8 @@ public class PropertyService {
                 .userID(user.getId())
                 .username(user.getUsername())
                 .images(imageUrls)
+                .Area(property.getArea())
+                .roomCount(property.getRoomCount())
                 .build();
     }
 
@@ -157,9 +161,25 @@ public class PropertyService {
         propertyRepository.deleteById(id);
     }
 
-    public PropertyResponseDTO updateProperty(Long id, PropertyRequestDTO dto) {
+    @Transactional
+    public PropertyResponseDTO updateProperty(Long id, PropertyRequestDTO dto, MultipartFile[] newImages, List<String> imageUrlsToDelete) {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Property not found with id: " + id));
+
+        // Deletes marked images
+        if(imageUrlsToDelete != null && !imageUrlsToDelete.isEmpty()){
+            for(String url : imageUrlsToDelete){
+                Optional<Image> optionalImg = imageRepository.findByUrl(url);
+                if (!optionalImg.isEmpty()) {
+                    Image img = optionalImg.get();
+
+                    cloudinaryService.deleteFile(img.getPublic_id());
+
+                    imageRepository.delete(img);
+                    property.getImages().remove(img);
+                }
+            }
+        }
 
         property.setTitle(dto.getTitle());
         property.setLocation(dto.getLocation());
@@ -168,6 +188,24 @@ public class PropertyService {
         property.setActionType(dto.getActionType());
         property.setPropertyType(dto.getPropertyType());
         property.setStatus(dto.getStatus());
+        property.setArea(dto.getArea());
+        property.setRoomCount(dto.getRoomCount());
+
+        // Adds additionally provided images
+        if (newImages != null && newImages.length > 0) {
+            for (MultipartFile file : newImages) {
+                if (!file.isEmpty()) {
+                    Map uploadResult = cloudinaryService.uploadFile(file, "properties");
+                    Image newImg = Image.builder()
+                            .url(uploadResult.get("secure_url").toString())
+                            .public_id(uploadResult.get("public_id").toString())
+                            .property(property)
+                            .build();
+                    imageRepository.save(newImg);
+                    property.getImages().add(newImg);
+                }
+            }
+        }
 
         Property saved = propertyRepository.save(property);
         return PropertyResponseDTOBuilder(saved);
@@ -330,6 +368,26 @@ public class PropertyService {
     ){
         Specification<Property> spec = Specification.where((root, query, cb) ->
                 cb.equal(root.get("moderationStatus"), ModerationStatus.APPROVED));
+
+        if (filters.getMinArea() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.greaterThanOrEqualTo(root.get("area"), filters.getMinArea()));
+        }
+
+        if (filters.getMaxArea() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.lessThanOrEqualTo(root.get("area"), filters.getMaxArea()));
+        }
+
+        if (filters.getMinRooms() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.greaterThanOrEqualTo(root.get("roomCount"), filters.getMinRooms()));
+        }
+
+        if (filters.getMaxRooms() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.lessThanOrEqualTo(root.get("roomCount"), filters.getMaxRooms()));
+        }
 
         if (filters.getLocation() != null) {
             spec = spec.and((root, query, cb) ->

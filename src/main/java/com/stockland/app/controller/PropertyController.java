@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,34 +34,6 @@ public class PropertyController {
 
     @Autowired
     private UserService userService;
-
-    @GetMapping
-    public String searchProperties(@Valid PropertyFilterRequestDTO filters,
-                                   BindingResult bindingResult,
-                                   @PageableDefault(size = 20) Pageable pageable,
-                                   Model model) {
-
-        model.addAttribute("actions", ActionType.values());
-        model.addAttribute("propertyTypes", PropertyType.values());
-
-        if (bindingResult.hasErrors()) {
-            String allErrors = bindingResult.getFieldErrors().stream()
-                    .map(error -> error.getDefaultMessage())
-                    .collect(Collectors.joining(", "));
-
-            model.addAttribute("filters", filters);
-            model.addAttribute("errorMessage", "Invalid fields: " + allErrors);
-            return "listings";
-        }
-
-        Page<PropertyResponseDTO> properties =
-                propertyService.searchPropertiesWithFilterSortAndPagination(filters, pageable);
-
-        model.addAttribute("properties", properties);
-        model.addAttribute("filters", filters);
-
-        return "listings";
-    }
 
     @GetMapping("/{id}")
     public String viewProperty(@PathVariable Long id, Model model) {
@@ -88,9 +61,14 @@ public class PropertyController {
                 .actionType(property.getActionType())
                 .propertyType(property.getPropertyType())
                 .status(property.getStatus())
+                .area(property.getArea())
+                .roomCount(property.getRoomCount())
                 .build();
 
+        String[] images = property.getImages();
+
         model.addAttribute("propertyRequestDTO", dto);
+        model.addAttribute("images", images);
         model.addAttribute("actions", ActionType.values());
         model.addAttribute("propertyTypes", PropertyType.values());
         return "edit-listing";
@@ -100,6 +78,8 @@ public class PropertyController {
     public String editProperty(@PathVariable Long id,
                                @Valid PropertyRequestDTO propertyRequestDTO,
                                BindingResult bindingResult,
+                               @RequestParam("imageFiles") MultipartFile[] imageFiles,
+                               @RequestParam(value = "deleteImageIds", required = false) List<String> imageUrlsToDelete,
                                Model model) {
 
         if (bindingResult.hasErrors()) {
@@ -108,7 +88,7 @@ public class PropertyController {
             return "edit-listing";
         }
 
-        propertyService.updateProperty(id, propertyRequestDTO);
+        propertyService.updateProperty(id, propertyRequestDTO, imageFiles, imageUrlsToDelete);
         return "redirect:/dashboard?updated";
     }
 

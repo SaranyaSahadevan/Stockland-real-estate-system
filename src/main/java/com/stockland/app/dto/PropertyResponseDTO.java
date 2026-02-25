@@ -17,6 +17,8 @@ public class PropertyResponseDTO {
     private String title;
     private String location;
     private Double price;
+    private Double Area;
+    private Integer roomCount;
     private String description;
     private ActionType actionType;
     private PropertyType propertyType;

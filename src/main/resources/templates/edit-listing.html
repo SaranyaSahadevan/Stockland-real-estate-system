@@ -144,7 +144,8 @@
     <div class="card">
         <form th:action="@{/properties/edit/{id}(id=${propertyRequestDTO.id})}"
               th:object="${propertyRequestDTO}"
-              method="post">
+              method="post"
+              enctype="multipart/form-data">
 
             <div class="full">
                 <label>Title</label>
@@ -201,6 +202,23 @@
             <div class="full">
                 <label>Description</label>
                 <textarea placeholder="Describe the property..." th:field="*{description}"></textarea>
+            </div>
+
+
+            <div class="full">
+                <label>Current Images (Check to delete)</label>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                    <div th:each="url : ${images}" style="position: relative; width: 100px;">
+                        <img th:src="${url}" style="width: 100px; height: 75px; object-fit: cover; border-radius: 4px;">
+                        <div style="text-align: center;">
+                            <input type="checkbox" name="deleteImageIds" th:value="${url}">
+                            <span style="font-size: 10px; color: red;">Delete</span>
+                        </div>
+                    </div>
+                </div>
+
+                <label>Add More Images</label>
+                <input type="file" name="imageFiles" multiple accept="image/*">
             </div>
 
             <div class="actions full">

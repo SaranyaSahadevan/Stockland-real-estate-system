@@ -28,6 +28,14 @@ public class PropertyRequestDTO {
     @Positive(message = "Price must be positive")
     private Double price;
 
+    @NotNull(message = "Area is required")
+    @Positive(message = "Area must be positive")
+    private Double area;
+
+    @NotNull(message = "Room number is required")
+    @Positive(message = "Room number must be positive")
+    private Integer roomCount;
+
     private String description;
 
     @NotNull(message = "Deal type is required")
