@@ -4,285 +4,191 @@
 <div th:fragment="chatbot">
 
     <style>
-        /* --- Help Button --- */
-        #helpFab {
-          position: fixed;
-          right: 20px;
-          bottom: 20px;
-          background: #1f3c88;
-          color: #fff;
-          border: none;
-          padding: 12px 18px;
-          border-radius: 999px;
-          font-size: 14px;
-          font-weight: 700;
-          cursor: pointer;
-          box-shadow: 0 10px 30px rgba(0,0,0,.2);
-          z-index: 2147483647;
+        #helpFab{
+         position:fixed;
+         right:20px;
+         bottom:20px;
+         background:#1f3c88;
+         color:#fff;
+         border:none;
+         padding:12px 20px;
+         border-radius:999px;
+         font-weight:bold;
+         cursor:pointer;
+         box-shadow:0 10px 25px rgba(0,0,0,.25);
+         z-index:9999;
         }
-        #helpFab:hover { background: #162b5c; }
+        #helpFab:hover{background:#162b5c}
 
-        /* --- Chat Box --- */
-        #chatWidget {
-            position: fixed;
-            right: 20px;
-            bottom: 78px;
-            width: 360px;
-            max-width: calc(100vw - 40px);
-            height: 620px;
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 18px 45px rgba(0,0,0,.25);
-            overflow: hidden;
-            display: none;
-            z-index: 2147483647;
-            font-family: Arial, sans-serif;
+        #chatWidget{
+         position:fixed;
+         right:20px;
+         bottom:80px;
+         width:400px;
+         height:600px;
+         background:#fff;
+         border-radius:16px;
+         box-shadow:0 18px 45px rgba(0,0,0,.25);
+         display:none;
+         flex-direction:column;
+         overflow:hidden;
+         font-family:Segoe UI,Arial,sans-serif;
+         z-index:9999;
         }
 
-        #chatHeader {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 12px 12px;
-          background: #1f3c88;
-          color: #fff;
+        #chatHeader{
+         background:#1f3c88;
+         color:#fff;
+         padding:14px;
+         display:flex;
+         justify-content:space-between;
+         align-items:center;
+         font-weight:bold;
         }
 
-        #chatHeader .title { font-weight: 700; }
-        #chatHeader .sub { font-size: 12px; opacity: .9; margin-top: 2px; }
-
-        #chatClose {
-          background: transparent;
-          border: none;
-          color: #fff;
-          font-size: 16px;
-          cursor: pointer;
-          font-weight: 700;
+        #chatClose{
+         background:none;
+         border:none;
+         color:#fff;
+         font-size:18px;
+         cursor:pointer;
         }
 
-        #chatBody {
-          height: calc(480px - 58px - 64px - 110px);
-          padding: 12px;
-          overflow-y: auto;
-          background: #f6f6f6;
+        #chatBody{
+         flex:1;
+         padding:12px;
+         overflow-y:auto;
+         background:#f5f6fa;
         }
 
-        .msg {
-          max-width: 90%;
-          padding: 10px 12px;
-          border-radius: 12px;
-          margin: 8px 0;
-          line-height: 1.3;
-          white-space: pre-wrap;
-          word-wrap: break-word;
-          font-size: 14px;
+        .msg{
+         padding:10px 14px;
+         border-radius:12px;
+         margin:8px 0;
+         max-width:90%;
+         font-size:14px;
         }
-        .user { margin-left: auto; background: #d9fdd3; }
-        .ai { margin-right: auto; background: #fff; }
+        .user{margin-left:auto;background:#cfe9c9;}
+        .ai{margin-right:auto;background:#fff;}
 
-        /* --- Quick Questions --- */
-        #quickActions {
-          padding: 10px;
-          background: #fff;
-          border-top: 1px solid #eee;
+        .feedbackRow{margin-top:6px;}
+        .feedbackBtn{
+         border:none;
+         background:#eef1ff;
+         color:#1f3c88;
+         padding:6px 12px;
+         margin-right:6px;
+         border-radius:20px;
+         cursor:pointer;
+         font-size:13px;
         }
-        #quickActions .label {
-          font-size: 12px;
-          color: #666;
-          margin-bottom: 8px;
-          font-weight: 700;
-        }
-        .chips {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-        }
-        .chip {
-          border: 1px solid #d9e2ff;
-          background: #eef1ff;
-          color: #1f3c88;
-          padding: 7px 10px;
-          border-radius: 999px;
-          font-size: 12px;
-          cursor: pointer;
-          user-select: none;
-        }
-        .chip:hover { background: #dfe6ff; }
 
-        /* --- Input Row --- */
-        #chatForm {
-          display: flex;
-          gap: 8px;
-          padding: 10px;
-          background: #fff;
-          border-top: 1px solid #e8e8e8;
+        #quickActions{
+         padding:12px;
+         border-top:1px solid #eee;
+         background:#fff;
+         max-height:200px;
+         overflow-y:auto;
         }
-        #chatInput {
-          flex: 1;
-          padding: 10px 12px;
-          border-radius: 10px;
-          border: 1px solid #ddd;
-          outline: none;
-          font-size: 14px;
-        }
-        #chatSend {
-          padding: 10px 14px;
-          border-radius: 10px;
-          border: none;
-          cursor: pointer;
-          background: #1f3c88;
-          color: #fff;
-          font-weight: 700;
-        }
-        #chatSend:hover { background: #162b5c; }
 
-        /* Small screens */
-        @media (max-width: 420px) {
-          #chatWidget { width: calc(100vw - 40px); height: 520px; }
-          #chatBody { height: calc(520px - 58px - 64px - 250px); }
+        .chip{
+         display:inline-block;
+         padding:8px 14px;
+         margin:6px;
+         background:#eef1ff;
+         border-radius:20px;
+         cursor:pointer;
+         font-size:13px;
         }
+        .chip:hover{background:#dfe6ff}
     </style>
 
-    <!-- Blue Help button -->
-    <button id="helpFab" type="button" aria-label="Help" title="Help">Help ?</button>
+    <button id="helpFab">Help ?</button>
 
-    <!-- Chat widget -->
-    <div id="chatWidget" role="dialog" aria-label="Help Chat">
+    <div id="chatWidget">
         <div id="chatHeader">
-            <div>
-                <div class="title">STOCKLAND Assistant</div>
-                <div class="sub">Choose a question or type below</div>
-            </div>
-            <button id="chatClose" type="button" aria-label="Close">✕</button>
+            STOCKLAND Assistant
+            <button id="chatClose">✕</button>
         </div>
 
         <div id="chatBody"></div>
 
         <div id="quickActions">
-            <div class="label">Quick questions</div>
-            <div class="chips" id="chips"></div>
+            <div id="chips"></div>
         </div>
-
-        <form id="chatForm">
-            <input id="chatInput" type="text" placeholder="Type your question…" autocomplete="off" />
-            <button id="chatSend" type="submit">Send</button>
-        </form>
     </div>
 
     <script>
-        (function () {
-          const helpFab = document.getElementById("helpFab");
-          const chatWidget = document.getElementById("chatWidget");
-          const chatClose = document.getElementById("chatClose");
-          const chatBody = document.getElementById("chatBody");
-          const chatForm = document.getElementById("chatForm");
-          const chatInput = document.getElementById("chatInput");
-          const chipsWrap = document.getElementById("chips");
+        (function(){
 
-          if (!helpFab || !chatWidget || !chatClose || !chatBody || !chatForm || !chatInput || !chipsWrap) return;
+        const helpFab=document.getElementById("helpFab");
+        const chatWidget=document.getElementById("chatWidget");
+        const chatClose=document.getElementById("chatClose");
+        const chatBody=document.getElementById("chatBody");
+        const chips=document.getElementById("chips");
 
-          const FAQ = [
-            {
-              q: "How to register?",
-              a: "Go to **Sign up** in the top menu → fill in your full name, username, email and password → submit. Then login from the **Login** page."
-            },
-            {
-              q: "How to login?",
-              a: "Click **Login** in the top menu → enter your username and password → press **Login**."
-            },
-            {
-              q: "How to list a property?",
-              a: "Login first → open **Post property** → fill title, city, type, deal type, price and description → click **Save Listing**."
-            },
-            {
-              q: "How to add photos?",
-              a: "On **Post property**, use **Images (static demo)** upload field."
-            },
-            {
-              q: "How to edit a listing?",
-              a: "Open **Dashboard** → in **My Listings**, click **Edit**."
-            },
-            {
-              q: "How to delete a listing?",
-              a: "Open **Dashboard** → in **My Listings**, click **Delete**."
-            },
-            {
-              q: "How to search properties?",
-              a: "Use the search box on Home or use filters on **Listings** (city, min/max price)."
-            },
-            {
-              q: "How to contact an agent?",
-              a: "Open any property → use **Contact agent** form to send an inquiry."
-            },
-            {
-              q: "How to save favorites?",
-              a: "Open a property → click **Save to favorites**"
-            },
-            {
-              q: "Schedule a call",
-              a: "Our concerned person will contact you within 24hrs."
-            }
-          ];
+        const FAQ=[
+        {q:"How do I register?",a:"Click Sign Up → Enter details → Submit registration form."},
+        {q:"How do I login?",a:"Click Login → Enter username and password."},
+        {q:"How do I post a property?",a:"Login → Post Property → Fill details → Save."},
+        {q:"How do I edit a listing?",a:"Dashboard → My Listings → Edit."},
+        {q:"How do I delete a listing?",a:"Dashboard → My Listings → Delete."},
+        {q:"How can I contact an agent?",a:"Open property → Contact Agent section."},
+        {q:"How do I search properties?",a:"Use filters on Listings page."},
+        {q:"How do I save favorites?",a:"Open property → Save to favorites."},
+        {q:"How to reach customer care?",a:"Call 1800-123-456 or support@stockland.com."},
+        {q:"I Need More information",a: "For More information please Call 1800-123-456 or support@stockland.com."},
+        {q:"Do listings need approval?",a:"Yes. Admin approval is required before publishing."}
 
-          function addMsg(text, who) {
-            const div = document.createElement("div");
-            div.className = "msg " + who;
-            div.innerText = text.replace(/\*\*/g, ""); // simple safe display
-            chatBody.appendChild(div);
-            chatBody.scrollTop = chatBody.scrollHeight;
-            return div;
-          }
+        ];
 
-          function openChat() {
-            chatWidget.style.display = "block";
-            if (chatBody.childElementCount === 0) {
-              addMsg("Hi! I'm your STOCKLAND assistant. Choose a quick question below or type your own, and we will contact you shortly!", "ai");
-            }
-            setTimeout(() => chatInput.focus(), 50);
-          }
+        function addMsg(text,who){
+         const d=document.createElement("div");
+         d.className="msg "+who;
+         d.innerText=text;
+         chatBody.appendChild(d);
+         chatBody.scrollTop=chatBody.scrollHeight;
+        }
 
-          function closeChat() {
-            chatWidget.style.display = "none";
-          }
+        function addFeedback(){
+         const f=document.createElement("div");
+         f.className="feedbackRow";
+         f.innerHTML=`
+          <button class="feedbackBtn" onclick="yes()">👍 Yes</button>
+          <button class="feedbackBtn" onclick="no()">👎 No</button>
+         `;
+         chatBody.appendChild(f);
+        }
 
-          // Build chips
-          FAQ.forEach(item => {
-            const b = document.createElement("button");
-            b.type = "button";
-            b.className = "chip";
-            b.textContent = item.q;
-            b.addEventListener("click", () => {
-              addMsg(item.q, "user");
-              addMsg(item.a, "ai");
-            });
-            chipsWrap.appendChild(b);
-          });
+        window.yes=function(){
+         addMsg("Thank you😊 ! Happy to help you.","ai");
+        };
 
-          helpFab.addEventListener("click", () => {
-            const isOpen = chatWidget.style.display === "block";
-            isOpen ? closeChat() : openChat();
-          });
+        window.no=function(){
+         addMsg("Sorry for the inconvenience 🙁. For more information Please contact 1800-123-456 or support@stockland.com","ai");
+        };
 
-          chatClose.addEventListener("click", closeChat);
+        FAQ.forEach(item=>{
+         const c=document.createElement("span");
+         c.className="chip";
+         c.innerText=item.q;
+         c.onclick=()=>{
+          addMsg(item.q,"user");
+          addMsg(item.a,"ai");
+          addFeedback();
+         };
+         chips.appendChild(c);
+        });
 
-          // Typed message: match FAQ or fallback
-          chatForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const text = (chatInput.value || "").trim();
-            if (!text) return;
+        helpFab.onclick=()=>{
+         chatWidget.style.display="flex";
+         if(chatBody.childElementCount===0){
+          addMsg("Hi! I'm your STOCKLAND assistant. Please select a question below.","ai");
+         }
+        };
 
-            addMsg(text, "user");
-            chatInput.value = "";
+        chatClose.onclick=()=>chatWidget.style.display="none";
 
-            const found = FAQ.find(x => x.q.toLowerCase() === text.toLowerCase())
-              || FAQ.find(x => text.toLowerCase().includes(x.q.toLowerCase().replace("?", "")));
-
-            if (found) {
-              addMsg(found.a, "ai");
-            } else {
-              addMsg("Thank you for your question! We will contact you shortly.", "ai");
-            }
-          });
         })();
     </script>
 
