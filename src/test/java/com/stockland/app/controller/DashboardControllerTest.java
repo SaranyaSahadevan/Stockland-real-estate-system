@@ -3,6 +3,7 @@ package com.stockland.app.controller;
 import com.stockland.app.dto.PropertyResponseDTO;
 import com.stockland.app.model.User;
 import com.stockland.app.repository.UserRepository;
+import com.stockland.app.service.FavoriteService;
 import com.stockland.app.service.PropertyService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +34,9 @@ class DashboardControllerTest {
 
     @Mock
     private PropertyService propertyService;
+
+    @Mock
+    private FavoriteService favoriteService;
 
     @InjectMocks
     private DashboardController dashboardController;
@@ -74,6 +78,7 @@ class DashboardControllerTest {
 
         when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
         when(propertyService.getPropertiesByUserId(1L)).thenReturn(List.of(new PropertyResponseDTO()));
+        when(favoriteService.getFavorites(user)).thenReturn(List.of());
 
         mockMvc.perform(get("/dashboard"))
                 .andExpect(status().isOk())
@@ -98,6 +103,7 @@ class DashboardControllerTest {
         when(userRepository.findByUsername("john@example.com")).thenReturn(Optional.empty());
         when(userRepository.findByEmail("john@example.com")).thenReturn(Optional.of(user));
         when(propertyService.getPropertiesByUserId(2L)).thenReturn(List.of());
+        when(favoriteService.getFavorites(user)).thenReturn(List.of());
 
         mockMvc.perform(get("/dashboard"))
                 .andExpect(status().isOk())
@@ -123,6 +129,7 @@ class DashboardControllerTest {
 
         when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
         when(propertyService.getPropertiesByUserId(1L)).thenReturn(List.of(p1, p2));
+        when(favoriteService.getFavorites(user)).thenReturn(List.of());
 
         mockMvc.perform(get("/dashboard"))
                 .andExpect(status().isOk())
@@ -141,6 +148,7 @@ class DashboardControllerTest {
 
         when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
         when(propertyService.getPropertiesByUserId(1L)).thenReturn(List.of());
+        when(favoriteService.getFavorites(user)).thenReturn(List.of());
 
         mockMvc.perform(get("/dashboard"))
                 .andExpect(status().isOk())

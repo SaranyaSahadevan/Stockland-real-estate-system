@@ -76,6 +76,10 @@
             <input type="text" th:field="*{username}" placeholder="username">
             <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="input-error"></p>
 
+            <label>Phone Number <span style="font-weight:normal; color:#888;">(optional)</span></label>
+            <input type="tel" th:field="*{phoneNumber}" placeholder="+371 20 000 000">
+            <p th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="input-error"></p>
+
             <label>Password</label>
             <input type="password" th:field="*{password}" placeholder="••••••••">
             <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="input-error"></p>

@@ -24,11 +24,15 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/listings", "/properties", "/property/**", "/css/**", "/js/**", "/error/**").permitAll()
+                        .requestMatchers("/", "/login", "/listings", "/properties", "/property/**", "/css/**", "/js/**", "/images/**", "/error/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/chat").permitAll()
-
+                        .requestMatchers(HttpMethod.POST, "/properties/delete/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/properties/edit/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/properties/edit/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/properties/approve/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/properties/reject/**").hasRole("ADMIN")
                         // everything else needs login
                         .anyRequest().authenticated()
                 )

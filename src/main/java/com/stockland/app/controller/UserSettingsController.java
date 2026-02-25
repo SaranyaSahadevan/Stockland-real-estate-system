@@ -37,6 +37,7 @@ public class UserSettingsController {
     public String updateSettings(@RequestParam String username,
                                  @RequestParam String email,
                                  @RequestParam String fullName,
+                                 @RequestParam(required = false) String phoneNumber,
                                  @RequestParam(required = false) String currentPassword,
                                  @RequestParam(required = false) String newPassword,
                                  Model model) {
@@ -73,6 +74,7 @@ public class UserSettingsController {
         user.setUsername(username);
         user.setEmail(email);
         user.setFullName(fullName);
+        user.setPhoneNumber((phoneNumber != null && !phoneNumber.isBlank()) ? phoneNumber.trim() : null);
 
         userService.saveUser(user);
 

@@ -67,6 +67,49 @@ public class PropertyController {
         return "property";
     }
 
+    @PostMapping("/delete/{id}")
+    public String deleteProperty(@PathVariable Long id) {
+        propertyService.deleteById(id);
+        return "redirect:/dashboard?deleted";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editPropertyForm(@PathVariable Long id, Model model) {
+        PropertyResponseDTO property = propertyService.findById(id);
+
+        PropertyRequestDTO dto = PropertyRequestDTO.builder()
+                .id(property.getId())
+                .title(property.getTitle())
+                .location(property.getLocation())
+                .price(property.getPrice())
+                .description(property.getDescription())
+                .actionType(property.getActionType())
+                .propertyType(property.getPropertyType())
+                .status(property.getStatus())
+                .build();
+
+        model.addAttribute("propertyRequestDTO", dto);
+        model.addAttribute("actions", ActionType.values());
+        model.addAttribute("propertyTypes", PropertyType.values());
+        return "edit-listing";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String editProperty(@PathVariable Long id,
+                               @Valid PropertyRequestDTO propertyRequestDTO,
+                               BindingResult bindingResult,
+                               Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("actions", ActionType.values());
+            model.addAttribute("propertyTypes", PropertyType.values());
+            return "edit-listing";
+        }
+
+        propertyService.updateProperty(id, propertyRequestDTO);
+        return "redirect:/dashboard?updated";
+    }
+
     @PostMapping("/create")
     public String createProperty(@AuthenticationPrincipal UserDetails userDetails,
                                  @Valid PropertyRequestDTO propertyRequestDTO,
@@ -91,5 +134,17 @@ public class PropertyController {
 
         model.addAttribute("success", "Property listing created successfully!");
         return "redirect:/dashboard";
+    }
+
+    @PostMapping("/approve/{id}")
+    public String approveProperty(@PathVariable Long id) {
+        propertyService.approveProperty(id);
+        return "redirect:/dashboard?approved";
+    }
+
+    @PostMapping("/reject/{id}")
+    public String rejectProperty(@PathVariable Long id) {
+        propertyService.rejectProperty(id);
+        return "redirect:/dashboard?rejected";
     }
 }
