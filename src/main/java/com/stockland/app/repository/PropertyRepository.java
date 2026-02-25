@@ -26,4 +26,6 @@ public interface PropertyRepository extends JpaRepository<Property, Long>, JpaSp
     List<Property> findByUserId(Long userId);
 
     List<Property> findByModerationStatus(ModerationStatus moderationStatus);
+
+    List<Property> findByFeaturedTrue();
 }

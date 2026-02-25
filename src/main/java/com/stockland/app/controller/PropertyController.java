@@ -8,6 +8,8 @@ import com.stockland.app.model.ActionType;
 import com.stockland.app.model.PropertyType;
 import com.stockland.app.service.PropertyService;
 import com.stockland.app.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -68,20 +70,45 @@ public class PropertyController {
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteProperty(@PathVariable Long id) {
+    public String deleteProperty(@PathVariable Long id,
+                                 @AuthenticationPrincipal UserDetails userDetails,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response) throws Exception {
+        PropertyResponseDTO property = propertyService.findById(id);
+        boolean isAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+        if (!isAdmin && !property.getUsername().equals(userDetails.getUsername())) {
+            request.setAttribute("jakarta.servlet.error.status_code", 403);
+            request.setAttribute("errorMessage", "You do not have permission to delete this listing.");
+            request.getRequestDispatcher("/error").forward(request, response);
+            return null;
+        }
         propertyService.deleteById(id);
         return "redirect:/dashboard?deleted";
     }
 
     @GetMapping("/edit/{id}")
-    public String editPropertyForm(@PathVariable Long id, Model model) {
+    public String editPropertyForm(@PathVariable Long id,
+                                   @AuthenticationPrincipal UserDetails userDetails,
+                                   @RequestParam(value = "redirectUrl", defaultValue = "/dashboard") String redirectUrl,
+                                   Model model,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response) throws Exception {
         PropertyResponseDTO property = propertyService.findById(id);
+        boolean isAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+        if (!isAdmin && !property.getUsername().equals(userDetails.getUsername())) {
+            request.setAttribute("jakarta.servlet.error.status_code", 403);
+            request.setAttribute("errorMessage", "You do not have permission to edit this listing.");
+            request.getRequestDispatcher("/error").forward(request, response);
+            return null;
+        }
 
         PropertyRequestDTO dto = PropertyRequestDTO.builder()
                 .id(property.getId())
                 .title(property.getTitle())
                 .location(property.getLocation())
-                .price(property.getPrice())
+                .price(property.getPrice() != null ? String.format("%.2f", property.getPrice()).replace(".", ",") : "")
                 .description(property.getDescription())
                 .actionType(property.getActionType())
                 .propertyType(property.getPropertyType())
@@ -91,23 +118,39 @@ public class PropertyController {
         model.addAttribute("propertyRequestDTO", dto);
         model.addAttribute("actions", ActionType.values());
         model.addAttribute("propertyTypes", PropertyType.values());
+        model.addAttribute("redirectUrl", redirectUrl);
         return "edit-listing";
     }
 
     @PostMapping("/edit/{id}")
     public String editProperty(@PathVariable Long id,
+                               @AuthenticationPrincipal UserDetails userDetails,
                                @Valid PropertyRequestDTO propertyRequestDTO,
                                BindingResult bindingResult,
-                               Model model) {
+                               @RequestParam(value = "redirectUrl", defaultValue = "/dashboard") String redirectUrl,
+                               Model model,
+                               HttpServletRequest request,
+                               HttpServletResponse response) throws Exception {
+
+        PropertyResponseDTO property = propertyService.findById(id);
+        boolean isAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+        if (!isAdmin && !property.getUsername().equals(userDetails.getUsername())) {
+            request.setAttribute("jakarta.servlet.error.status_code", 403);
+            request.setAttribute("errorMessage", "You do not have permission to edit this listing.");
+            request.getRequestDispatcher("/error").forward(request, response);
+            return null;
+        }
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("actions", ActionType.values());
             model.addAttribute("propertyTypes", PropertyType.values());
+            model.addAttribute("redirectUrl", redirectUrl);
             return "edit-listing";
         }
 
-        propertyService.updateProperty(id, propertyRequestDTO);
-        return "redirect:/dashboard?updated";
+        propertyService.updateProperty(id, propertyRequestDTO, isAdmin);
+        return "redirect:" + redirectUrl + (redirectUrl.contains("?") ? "&updated" : "?updated");
     }
 
     @PostMapping("/create")
@@ -137,14 +180,22 @@ public class PropertyController {
     }
 
     @PostMapping("/approve/{id}")
-    public String approveProperty(@PathVariable Long id) {
+    public String approveProperty(@PathVariable Long id,
+                                  @RequestParam(value = "redirectUrl", defaultValue = "/dashboard?approved") String redirectUrl) {
         propertyService.approveProperty(id);
-        return "redirect:/dashboard?approved";
+        return "redirect:" + redirectUrl;
     }
 
     @PostMapping("/reject/{id}")
-    public String rejectProperty(@PathVariable Long id) {
+    public String rejectProperty(@PathVariable Long id,
+                                 @RequestParam(value = "redirectUrl", defaultValue = "/dashboard?rejected") String redirectUrl) {
         propertyService.rejectProperty(id);
-        return "redirect:/dashboard?rejected";
+        return "redirect:" + redirectUrl;
+    }
+
+    @PostMapping("/feature/{id}")
+    public String toggleFeatured(@PathVariable Long id) {
+        propertyService.toggleFeatured(id);
+        return "redirect:/dashboard#admin-panel";
     }
 }

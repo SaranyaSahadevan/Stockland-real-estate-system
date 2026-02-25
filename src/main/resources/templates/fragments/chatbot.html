@@ -24,8 +24,8 @@
          position:fixed;
          right:20px;
          bottom:80px;
-         width:400px;
-         height:600px;
+         width:460px;
+         height:680px;
          background:#fff;
          border-radius:16px;
          box-shadow:0 18px 45px rgba(0,0,0,.25);
@@ -141,8 +141,8 @@
         {q:"How do I search properties?",a:"Use filters on Listings page."},
         {q:"How do I save favorites?",a:"Open property → Save to favorites."},
         {q:"How to reach customer care?",a:"Call 1800-123-456 or support@stockland.com."},
-        {q:"I Need More information",a: "For More information please Call 1800-123-456 or support@stockland.com."},
-        {q:"Do listings need approval?",a:"Yes. Admin approval is required before publishing."}
+        {q:"Do listings need approval?",a:"Yes. Admin approval is required before publishing."},
+        {q:"I need more information",a: "For More information please Call 1800-123-456 or support@stockland.com."}
 
         ];
 
@@ -158,21 +158,25 @@
          const f=document.createElement("div");
          f.className="feedbackRow";
          f.innerHTML=`
-        <div style="font-family:Segoe UI, Arial, sans-serif; font-weight:Italic; font-size:12px;">
+        <div style="font-family:Segoe UI, Arial, sans-serif; font-style:italic; font-size:12px;">
     Did I help you?
 </div>
-          <button class="feedbackBtn" onclick="yes()">👍 Yes</button>
-          <button class="feedbackBtn" onclick="no()">👎 No</button>
+          <button class="feedbackBtn" onclick="yes(this)">👍 Yes</button>
+          <button class="feedbackBtn" onclick="no(this)">👎 No</button>
          `;
          chatBody.appendChild(f);
         }
 
-        window.yes=function(){
-         addMsg("Thank you😊 ! Happy to help you.","ai");
+        window.yes=function(btn){
+         const row=btn.closest(".feedbackRow");
+         if(row) row.remove();
+         addMsg("Thank you! 😊 Happy to help you.","ai");
         };
 
-        window.no=function(){
-         addMsg("Sorry for the inconvenience 🙁. For more information Please contact 1800-123-456 or support@stockland.com","ai");
+        window.no=function(btn){
+         const row=btn.closest(".feedbackRow");
+         if(row) row.remove();
+         addMsg("Sorry for the inconvenience. 🙁 For more information Please contact 1800-123-456 or support@stockland.com","ai");
         };
 
         FAQ.forEach(item=>{
@@ -188,6 +192,10 @@
         });
 
         helpFab.onclick=()=>{
+         if(chatWidget.style.display==="flex"){
+          chatWidget.style.display="none";
+          return;
+         }
          chatWidget.style.display="flex";
          if(chatBody.childElementCount===0){
           addMsg("Hi! I'm your STOCKLAND assistant. Please select a question below.","ai");
