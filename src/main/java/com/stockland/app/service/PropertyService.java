@@ -3,31 +3,43 @@ package com.stockland.app.service;
 import com.stockland.app.dto.PropertyFilterRequestDTO;
 import com.stockland.app.dto.PropertyRequestDTO;
 import com.stockland.app.dto.PropertyResponseDTO;
+import com.stockland.app.model.Image;
 import com.stockland.app.model.Property;
 import com.stockland.app.model.User;
+import com.stockland.app.repository.ImageRepository;
 import com.stockland.app.repository.PropertyRepository;
 import com.stockland.app.model.ActionType;
 import com.stockland.app.model.ModerationStatus;
 import com.stockland.app.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import org.hibernate.internal.util.MutableLong;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class PropertyService {
 
+    @Autowired
+    CloudinaryServiceImpl cloudinaryService;
+
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
+    private final ImageRepository imageRepository;
 
-    public PropertyService(PropertyRepository propertyRepository, UserRepository userRepository){
+    public PropertyService(PropertyRepository propertyRepository, UserRepository userRepository, ImageRepository imageRepository){
         this.propertyRepository = propertyRepository;
         this.userRepository = userRepository;
+        this.imageRepository = imageRepository;
     }
 
     private Property PropertyBuilder(PropertyRequestDTO propertyRequestDTO){
@@ -40,6 +52,8 @@ public class PropertyService {
                 .actionType(propertyRequestDTO.getActionType())
                 .propertyType(propertyRequestDTO.getPropertyType())
                 .status(propertyRequestDTO.getStatus())
+                .roomCount(propertyRequestDTO.getRoomCount())
+                .area(propertyRequestDTO.getArea())
                 .build();
     }
 
@@ -50,6 +64,16 @@ public class PropertyService {
 
     private PropertyResponseDTO PropertyResponseDTOBuilder(Property property){
         User user = property.getUser();
+
+        List<Image> storedImages = property.getImages();
+        int s = (storedImages != null) ? storedImages.size(): 0;
+        String[] imageUrls = new String[s];
+
+        if(storedImages != null){
+            for(int i=0; i<s; i++){
+                imageUrls[i] = storedImages.get(i).getUrl();
+            }
+        }
 
         return PropertyResponseDTO
                 .builder()
@@ -64,6 +88,9 @@ public class PropertyService {
                 .moderationStatus(property.getModerationStatus())
                 .userID(user.getId())
                 .username(user.getUsername())
+                .images(imageUrls)
+                .Area(property.getArea())
+                .roomCount(property.getRoomCount())
                 .createdAt(property.getCreatedAt())
                 .featured(property.isFeatured())
                 .build();
@@ -84,7 +111,8 @@ public class PropertyService {
 //        return false;
 //    }
 
-    public PropertyResponseDTO saveProperty(PropertyRequestDTO propertyRequestDTO, Long userId) {
+    @Transactional
+    public PropertyResponseDTO saveProperty(PropertyRequestDTO propertyRequestDTO, Long userId, MultipartFile[] files) {
         Property newProperty = PropertyBuilder(propertyRequestDTO);
 
         Optional<User> optionalUser = userRepository.findById(userId);
@@ -100,9 +128,28 @@ public class PropertyService {
 
         Property savedProperty = propertyRepository.save(newProperty);
 
+        if (files != null && files.length > 0) {
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    Map uploadResult = cloudinaryService.uploadFile(file, "properties");
+
+                    Image img = Image
+                            .builder()
+                            .url(uploadResult.get("secure_url").toString())
+                            .public_id(uploadResult.get("public_id").toString())
+                            .property(savedProperty)
+                            .build();
+
+                    imageRepository.save(img);
+                    savedProperty.getImages().add(img);
+                }
+            }
+        }
+
         return PropertyResponseDTOBuilder(savedProperty);
     }
 
+    @Transactional
     public PropertyResponseDTO findById(long id) {
         Optional<Property> propertyOptional = propertyRepository.findById(id);
 
@@ -115,6 +162,7 @@ public class PropertyService {
         return PropertyResponseDTOBuilder(property);
     }
 
+    @Transactional
     public void deleteById(long id) {
         if (!propertyRepository.existsById(id)) {
             throw new RuntimeException("Property not found with id: " + id);
@@ -122,13 +170,28 @@ public class PropertyService {
         propertyRepository.deleteById(id);
     }
 
-    public PropertyResponseDTO updateProperty(Long id, PropertyRequestDTO dto) {
-        return updateProperty(id, dto, true);
-    }
-
-    public PropertyResponseDTO updateProperty(Long id, PropertyRequestDTO dto, boolean isAdmin) {
+//    public PropertyResponseDTO updateProperty(Long id, PropertyRequestDTO dto) {
+//        return updateProperty(id, dto, true);
+//    }
+    @Transactional
+    public PropertyResponseDTO updateProperty(Long id, PropertyRequestDTO dto, MultipartFile[] newImages, List<String> imageUrlsToDelete, boolean isAdmin) {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Property not found with id: " + id));
+
+        // Deletes marked images
+        if(imageUrlsToDelete != null && !imageUrlsToDelete.isEmpty()){
+            for(String url : imageUrlsToDelete){
+                Optional<Image> optionalImg = imageRepository.findByUrl(url);
+                if (!optionalImg.isEmpty()) {
+                    Image img = optionalImg.get();
+
+                    cloudinaryService.deleteFile(img.getPublic_id());
+
+                    imageRepository.delete(img);
+                    property.getImages().remove(img);
+                }
+            }
+        }
 
         property.setTitle(dto.getTitle());
         property.setLocation(dto.getLocation());
@@ -137,6 +200,24 @@ public class PropertyService {
         property.setActionType(dto.getActionType());
         property.setPropertyType(dto.getPropertyType());
         property.setStatus(dto.getStatus());
+        property.setArea(dto.getArea());
+        property.setRoomCount(dto.getRoomCount());
+
+        // Adds additionally provided images
+        if (newImages != null && newImages.length > 0) {
+            for (MultipartFile file : newImages) {
+                if (!file.isEmpty()) {
+                    Map uploadResult = cloudinaryService.uploadFile(file, "properties");
+                    Image newImg = Image.builder()
+                            .url(uploadResult.get("secure_url").toString())
+                            .public_id(uploadResult.get("public_id").toString())
+                            .property(property)
+                            .build();
+                    imageRepository.save(newImg);
+                    property.getImages().add(newImg);
+                }
+            }
+        }
 
         if (!isAdmin) {
             property.setModerationStatus(ModerationStatus.PENDING);
@@ -281,6 +362,7 @@ public class PropertyService {
 //        return responseList;
 //    }
 
+    @Transactional
     public List<PropertyResponseDTO> findAll(){
         List<Property> propertyList = propertyRepository.findAll();
 
@@ -355,12 +437,33 @@ public class PropertyService {
         return responseList;
     }
 
+    @Transactional
     public Page<PropertyResponseDTO> searchPropertiesWithFilterSortAndPagination(
             PropertyFilterRequestDTO filters,
             Pageable pageable
     ){
         Specification<Property> spec = Specification.where((root, query, cb) ->
                 cb.equal(root.get("moderationStatus"), ModerationStatus.APPROVED));
+
+        if (filters.getMinArea() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.greaterThanOrEqualTo(root.get("area"), filters.getMinArea()));
+        }
+
+        if (filters.getMaxArea() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.lessThanOrEqualTo(root.get("area"), filters.getMaxArea()));
+        }
+
+        if (filters.getMinRooms() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.greaterThanOrEqualTo(root.get("roomCount"), filters.getMinRooms()));
+        }
+
+        if (filters.getMaxRooms() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.lessThanOrEqualTo(root.get("roomCount"), filters.getMaxRooms()));
+        }
 
         if (filters.getLocation() != null) {
             spec = spec.and((root, query, cb) ->
@@ -397,6 +500,7 @@ public class PropertyService {
         return entities.map(entity -> PropertyResponseDTOBuilder(entity));
     }
 
+    @Transactional
     public List<PropertyResponseDTO> getPropertiesByUserId(Long userId) {
         return getPropertiesByUserId(userId, null, null, null);
     }
@@ -409,6 +513,7 @@ public class PropertyService {
         List<Property> properties = propertyRepository.findByUserId(userId);
 
         List<PropertyResponseDTO> responseList = new ArrayList<>();
+
         for (Property property : properties) {
             responseList.add(PropertyResponseDTOBuilder(property));
         }

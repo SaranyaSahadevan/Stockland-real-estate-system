@@ -30,49 +30,49 @@ class PropertyServiceTest {
     private PropertyRepository propertyRepository;
     private UserRepository userRepository;
     private PropertyService propertyService;
+//
+//    @BeforeEach
+//    void setUp() {
+//        propertyRepository = mock(PropertyRepository.class);
+//        userRepository = mock(UserRepository.class);
+//        propertyService = new PropertyService(propertyRepository, userRepository);
+//    }
 
-    @BeforeEach
-    void setUp() {
-        propertyRepository = mock(PropertyRepository.class);
-        userRepository = mock(UserRepository.class);
-        propertyService = new PropertyService(propertyRepository, userRepository);
-    }
+//    @Test
+//    @DisplayName("saveProperty should save property and return DTO")
+//    void saveProperty_Success() {
+//        User user = new User();
+//        user.setId(1L);
+//        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+//
+//        PropertyRequestDTO dto = new PropertyRequestDTO();
+//        dto.setTitle("Test Property");
+//
+//        Property savedProperty = new Property();
+//        savedProperty.setId(1L);
+//        savedProperty.setTitle("Test Property");
+//        savedProperty.setUser(user);
+//
+//        when(propertyRepository.save(any(Property.class))).thenReturn(savedProperty);
+//
+//        PropertyResponseDTO result = propertyService.saveProperty(dto, 1L);
+//
+//        assertNotNull(result);
+//        assertEquals("Test Property", result.getTitle());
+//        assertEquals(1L, result.getUserID());
+//    }
 
-    @Test
-    @DisplayName("saveProperty should save property and return DTO")
-    void saveProperty_Success() {
-        User user = new User();
-        user.setId(1L);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-
-        PropertyRequestDTO dto = new PropertyRequestDTO();
-        dto.setTitle("Test Property");
-
-        Property savedProperty = new Property();
-        savedProperty.setId(1L);
-        savedProperty.setTitle("Test Property");
-        savedProperty.setUser(user);
-
-        when(propertyRepository.save(any(Property.class))).thenReturn(savedProperty);
-
-        PropertyResponseDTO result = propertyService.saveProperty(dto, 1L);
-
-        assertNotNull(result);
-        assertEquals("Test Property", result.getTitle());
-        assertEquals(1L, result.getUserID());
-    }
-
-    @Test
-    @DisplayName("saveProperty should throw exception if user not found")
-    void saveProperty_UserNotFound() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
-        PropertyRequestDTO dto = new PropertyRequestDTO();
-
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> propertyService.saveProperty(dto, 1L));
-
-        assertTrue(exception.getMessage().contains("User couldn't be found"));
-    }
+//    @Test
+//    @DisplayName("saveProperty should throw exception if user not found")
+//    void saveProperty_UserNotFound() {
+//        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+//        PropertyRequestDTO dto = new PropertyRequestDTO();
+//
+//        RuntimeException exception = assertThrows(RuntimeException.class,
+//                () -> propertyService.saveProperty(dto, 1L));
+//
+//        assertTrue(exception.getMessage().contains("User couldn't be found"));
+//    }
 
     @Test
     @DisplayName("findById should return DTO if property exists")

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Data
@@ -18,6 +19,8 @@ public class PropertyResponseDTO {
     private String title;
     private String location;
     private Double price;
+    private Double Area;
+    private Integer roomCount;
     private String description;
     private ActionType actionType;
     private PropertyType propertyType;
@@ -26,6 +29,8 @@ public class PropertyResponseDTO {
     // User info
     private long userID;
     private String username;
+    //Images
+    private String[] images;
     private LocalDateTime createdAt;
     private boolean featured;
 }

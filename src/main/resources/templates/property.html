@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <title th:text="${property.title}">Property Details – STOCKLAND</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link href="
+    https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css
+    " rel="stylesheet">
     <style>
         :root {
             --brand-primary: #1f3c88;
@@ -48,7 +50,7 @@
         .details { background: var(--bg-white); padding:20px; border-radius: var(--radius); box-shadow: var(--shadow); }
         .details h1 { margin-top:0; font-size:26px; }
         .meta { font-size:14px; color: var(--text-light); margin-bottom:10px; }
-        .price { font-size:22px; font-weight:bold; margin:10px 0; }
+        .price .area .rooms{ font-size:22px; font-weight:bold; margin:10px 0; }
 
         .tags span { display:inline-block; background:#eef1ff; padding:5px 10px; border-radius:20px; font-size:12px; margin-right:6px; margin-bottom:6px; }
 
@@ -92,6 +94,27 @@
             80%  { opacity: 1; top: 20px; }
             100% { opacity: 0; top: 10px; }
         }
+
+        .splide__slide img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        #thumbnail-carousel .splide__slide {
+          opacity: 0.6;
+        }
+
+        #thumbnail-carousel .splide__slide.is-active {
+          opacity: 1;
+          border: 2px solid #007bff;
+        }
+
+        .mini-navigation{
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+        }
     </style>
 </head>
 <body>
@@ -114,19 +137,47 @@
 </header>
 
 <div class="container">
-    <a th:href="@{/favorites/add/{id}(id=${property.id})}" class="btn btn-warning">Add to Favorites</a>
-    <a class="back-link" th:href="@{/listings}">← Back to listings</a>
+    <div class="mini-navigation">
+        <th:block th:if="${#authentication != null and #authentication.name == property.username}">
+            <a th:href="@{/favorites/add/{id}(id=${property.id})}" class="btn btn-warning">Add to Favorites</a>
+        </th:block>
+
+        <a class="back-link" th:href="@{/listings}">← Back to listings</a>
+    </div>
 
     <div class="layout">
         <section>
-            <div class="gallery">
-                <div class="gallery-main"></div>
-                <div class="gallery-thumbs">
-                    <div class="thumb"></div>
-                    <div class="thumb"></div>
-                    <div class="thumb"></div>
+            <section id="main-carousel" class="splide" aria-label="Property Images">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        <th:block th:if="${property.images != null && property.images.length > 0}">
+                            <li class="splide__slide" th:each="url : ${property.images}">
+                                <img th:src="${url}" alt="Property image">
+                            </li>
+                        </th:block>
+
+                        <li class="splide__slide" th:if="${property.images == null || property.images.length == 0}">
+                            <img th:src="@{/images/placeholder_image.jpg}" alt="No image available">
+                        </li>
+                    </ul>
                 </div>
-            </div>
+            </section>
+
+            <section id="thumbnail-carousel" class="splide" aria-label="The carousel with thumbnails.">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        <th:block th:if="${property.images != null && property.images.length > 0}">
+                            <li class="splide__slide" th:each="url : ${property.images}">
+                                <img th:src="${url}" alt="Miniature">
+                            </li>
+                        </th:block>
+
+                        <li class="splide__slide" th:if="${property.images == null || property.images.length == 0}">
+                            <img th:src="@{/images/placeholder_image.jpg}" alt="No image available">
+                        </li>
+                    </ul>
+                </div>
+            </section>
 
             <div class="details">
                 <h1 th:text="${property.title}">Property Title</h1>
@@ -137,6 +188,10 @@
                 </div>
 
                 <div class="price" style="white-space: nowrap;"><span th:text="${#numbers.formatDecimal(property.price, 1, 'WHITESPACE', 2, 'COMMA')}">0</span> €</div>
+
+                <div class="area"><span th:text="${property.area}">0</span> m²</div>
+
+                <div class="rooms">Rooms: <span th:text="${property.roomCount}">0</span></div>
 
 <!--                <div class="tags">-->
 <!--                    <span th:each="tag : ${property.tags}" th:text="${tag}">Tag</span>-->
@@ -243,5 +298,41 @@
 </footer>
 
 <div th:replace="~{fragments/chatbot :: chatbot}"></div>
+
+<script src="
+    https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js
+"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var main = new Splide('#main-carousel', {
+        fixedHeight: 400,
+        type: 'fade',
+        rewind: true,
+        pagination: false,
+        arrows: true,
+      });
+
+      var thumbnails = new Splide('#thumbnail-carousel', {
+        fixedWidth: 100,
+        fixedHeight: 60,
+        gap: 10,
+        rewind: true,
+        isNavigation: true,
+        pagination: false,
+        focus: 'center',
+        breakpoints:{
+          600:{
+            fixedWidth: 60,
+            fixedHeight: 44,
+          },
+        },
+      });
+
+      main.sync(thumbnails);
+      main.mount();
+      thumbnails.mount();
+    });
+</script>
 </body>
 </html>

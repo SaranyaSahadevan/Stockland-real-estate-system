@@ -33,7 +33,7 @@
             .navbar nav { margin-top:10px; display:flex; flex-wrap:wrap; gap:10px; }
         }
 
-        .container { max-width:900px; margin:25px auto; padding:0 15px; }
+        .container { max-width:900px; margin:25px auto; padding:0 15px;}
         h1 { margin-top:0; font-size:26px; }
 
         .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
@@ -45,8 +45,15 @@
             display: flex;
             flex-direction: column;
         }
-        .card-img { height: 150px; background: #d0d6ff; }
-        .card-body { padding: 15px; }
+        .card-img {
+            flex: 1;
+            height: 200px;
+            background: #d0d6ff;
+        }
+        .card-body {
+            flex: 1;
+            padding: 15px;
+        }
         .card-body h3 { margin: 0 0 6px; font-size: 16px; }
         .card-body p { margin: 3px 0; color: var(--text-light); font-size: 13px; }
 
@@ -88,10 +95,27 @@
         }
 
         .filter-box{
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            align-items: end;
+        }
+
+        .filter-box button {
+            background: var(--brand-primary);
+            color: #fff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
         }
 
         h2.section-title { margin: 20px 0 10px; font-size: 20px; }
+        .filter-sections{
+            display: flex;
+            flex-direction: column;
+        }
     </style>
 </head>
 <body>
@@ -103,36 +127,73 @@
 
 <div class="container">
     <section class="hero">
-        <form th:action="@{/properties}" method="get" class="filter-box">
-            <input type="text" name="location" placeholder="location" th:value="${filters.location}">
-            <input type="number" name="minPrice" placeholder="min. price" th:value="${filters.minPrice}">
-            -
-            <input type="number" name="maxPrice" placeholder="max. price" th:value="${filters.maxPrice}">
-            <select name="actionType">
-                <option value=""></option>
-                <option th:each="a : ${actions}"
-                        th:value="${a}"
-                        th:text="${a}"
-                        th:selected="${a == filters.actionType}">
-                </option>
-            </select>
-            <select name="propertyType">
-                <option value=""></option>
-                <option th:each="p : ${propertyTypes}"
-                        th:value="${p}"
-                        th:text="${p}"
-                        th:selected="${p == filters.propertyType}">
-                </option>
-            </select>
-            <select name="status">
-                <option value=""></option>
-                <option th:value="OLD" th:text="OLD" th:selected="${filters.status == 'OLD'}"></option>
-                <option th:value="NEW" th:text="NEW" th:selected="${filters.status == 'NEW'}"></option>
-            </select>
-            <select name="sort">
-                <option value="price,asc">Price: Low to High</option>
-                <option value="price,desc">Price: High to Low</option>
-            </select>
+        <form th:action="@{/listings}" method="get" class="filter-box">
+            <div class="filter-sections">
+                <label>Location</label>
+                <input type="text" name="location" placeholder="location" th:value="${filters.location}">
+            </div>
+            <div class="filter-sections">
+                <label>Min. Price</label>
+                <input type="number" name="minPrice" placeholder="min. price" th:value="${filters.minPrice}">
+            </div>
+            <div class="filter-sections">
+                <label >Max. Price</label>
+                <input type="number" name="maxPrice" placeholder="max. price" th:value="${filters.maxPrice}">
+            </div>
+            <div class="filter-sections">
+                <label>Deal type</label>
+                <select name="actionType">
+                    <option value="">-</option>
+                    <option th:each="a : ${actions}"
+                            th:value="${a}"
+                            th:text="${a}"
+                            th:selected="${a == filters.actionType}">
+                    </option>
+                </select>
+            </div>
+            <div class="filter-sections">
+                <label>Property type</label>
+                <select name="propertyType">
+                    <option value="">-</option>
+                    <option th:each="p : ${propertyTypes}"
+                            th:value="${p}"
+                            th:text="${p}"
+                            th:selected="${p == filters.propertyType}">
+                    </option>
+                </select>
+            </div>
+            <div class="filter-sections">
+                <label>Status</label>
+                <select name="status">
+                    <option value="">-</option>
+                    <option th:value="OLD" th:text="OLD" th:selected="${filters.status == 'OLD'}"></option>
+                    <option th:value="NEW" th:text="NEW" th:selected="${filters.status == 'NEW'}"></option>
+                </select>
+            </div>
+            <div class="filter-sections">
+                <label>Min. Area</label>
+                <input type="number" name="minArea" placeholder="min. area" th:value="${filters.minArea}">
+            </div>
+            <div class="filter-sections">
+                <label >Max. Area</label>
+                <input type="number" name="maxArea" placeholder="max. area" th:value="${filters.maxArea}">
+            </div>
+            <div class="filter-sections">
+                <label>Min. Rooms</label>
+                <input type="number" name="minRooms" placeholder="min. rooms" th:value="${filters.minRooms}">
+            </div>
+            <div class="filter-sections">
+                <label >Max. Rooms</label>
+                <input type="number" name="maxRooms" placeholder="max. rooms" th:value="${filters.maxRooms}">
+            </div>
+            <div class="filter-sections">
+                <label>Sort</label>
+                <select id="sort" name="sort">
+                    <option value="">-</option>
+                    <option value="price,asc">Price: Low to High</option>
+                    <option value="price,desc">Price: High to Low</option>
+                </select>
+            </div>
             <button type="submit">Search</button>
         </form>
         <div class="sort-error-box">
@@ -146,7 +207,11 @@
 
     <div class="cards">
         <article class="card" th:each="p : ${properties}">
-            <div class="card-img"></div>
+            <div class="card-img">
+                <img th:src="${p.images != null && p.images.length > 0 ? p.images[0] : '/images/placeholder_image.jpg'}"
+                     alt="Property Preview"
+                     style="width:100%; height:200px; object-fit:cover;">
+            </div>
             <div class="card-body">
                 <h3 th:text="${p.title}">Property title</h3>
                 <p th:text="${p.location}">location</p>
@@ -164,6 +229,58 @@
         <p th:if="${properties == null or properties.isEmpty()}">
             No listings found matching your search.
         </p>
+    </div>
+
+    <div class="pagination-container" th:if="${propertyPage.totalPages > 1}">
+        <ul style="display: flex; list-style: none; gap: 10px;">
+
+            <li th:if="${propertyPage.hasPrevious()}">
+                <a th:href="@{/listings(page=${propertyPage.number - 1},
+                location=${filters.location},
+                minPrice=${filters.minPrice},
+                maxPrice=${filters.maxPrice},
+                actionType=${filters.actionType},
+                propertyType=${filters.propertyType},
+                maxArea=${filters.maxArea},
+                minArea=${filters.minArea},
+                maxRooms=${filters.maxRooms},
+                minRooms=${filters.minRooms},
+                status=${filters.status}
+                )}">Previous</a>
+            </li>
+
+            <li th:each="i : ${#numbers.sequence(0, propertyPage.totalPages - 1)}">
+                <a th:href="@{/listings(page=${i},
+                location=${filters.location},
+                minPrice=${filters.minPrice},
+                maxPrice=${filters.maxPrice},
+                actionType=${filters.actionType},
+                propertyType=${filters.propertyType},
+                maxArea=${filters.maxArea},
+                minArea=${filters.minArea},
+                maxRooms=${filters.maxRooms},
+                minRooms=${filters.minRooms},
+                status=${filters.status}
+                )}"
+                   th:text="${i + 1}"
+                   th:style="${i == propertyPage.number} ? 'font-weight:bold; color:red;' : ''">1</a>
+            </li>
+
+            <li th:if="${propertyPage.hasNext()}">
+                <a th:href="@{/listings(page=${propertyPage.number + 1},
+                location=${filters.location},
+                minPrice=${filters.minPrice},
+                maxPrice=${filters.maxPrice},
+                actionType=${filters.actionType},
+                propertyType=${filters.propertyType},
+                maxArea=${filters.maxArea},
+                minArea=${filters.minArea},
+                maxRooms=${filters.maxRooms},
+                minRooms=${filters.minRooms},
+                status=${filters.status}
+                )}">Next</a>
+            </li>
+        </ul>
     </div>
 
 </div>

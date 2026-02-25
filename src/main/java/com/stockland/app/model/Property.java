@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -17,6 +20,8 @@ public class Property {
     private String title;
     private String location;
     private Double price;
+    private Double area;
+    private Integer roomCount;
     @Column(columnDefinition = "TEXT")
     private String description;
     //Values: RENT, BUY
@@ -37,6 +42,10 @@ public class Property {
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images = new ArrayList<>();
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
