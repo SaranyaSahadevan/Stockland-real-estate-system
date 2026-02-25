@@ -24,11 +24,15 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/listings", "/properties", "/property/**", "/css/**", "/js/**", "/error/**").permitAll()
+                        .requestMatchers("/", "/login", "/listings", "/properties", "/property/**", "/css/**", "/js/**", "/images/**", "/error/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/chat").permitAll()
-
+                        .requestMatchers(HttpMethod.POST, "/properties/delete/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/properties/edit/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/properties/edit/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/properties/approve/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/properties/reject/**").hasRole("ADMIN")
                         // everything else needs login
                         .anyRequest().authenticated()
                 )
@@ -53,6 +57,11 @@ public class SecurityConfig {
                         .clearAuthentication(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
+                )
+                .rememberMe(remember -> remember
+                        .key("stockland-remember-me-key")
+                        .rememberMeParameter("remember-me")
+                        .tokenValiditySeconds(604800) // 7 days
                 );
         return http.build();
     }
@@ -99,7 +108,7 @@ public class SecurityConfig {
     }
 
     private boolean pathExists(String path) {
-        return path.startsWith("/dashboard") || path.startsWith("/create-listing");
+        return path.startsWith("/dashboard") || path.startsWith("/create-listing") || path.startsWith("/settings");
     }
 
 

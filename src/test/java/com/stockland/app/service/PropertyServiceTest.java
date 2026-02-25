@@ -141,7 +141,6 @@ class PropertyServiceTest {
         assertEquals("john", dto.getUsername());
     }
 
-    // Дополнительно — тесты для каждого отдельного фильтра
     @Test
     void searchProperties_FilterByLocationOnly() {
         PropertyFilterRequestDTO filter = new PropertyFilterRequestDTO();

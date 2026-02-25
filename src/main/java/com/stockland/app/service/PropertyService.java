@@ -9,6 +9,7 @@ import com.stockland.app.model.User;
 import com.stockland.app.repository.ImageRepository;
 import com.stockland.app.repository.PropertyRepository;
 import com.stockland.app.model.ActionType;
+import com.stockland.app.model.ModerationStatus;
 import com.stockland.app.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.hibernate.internal.util.MutableLong;
@@ -76,10 +77,16 @@ public class PropertyService {
                 .actionType(property.getActionType())
                 .propertyType(property.getPropertyType())
                 .status(property.getStatus())
+                .moderationStatus(property.getModerationStatus())
                 .userID(user.getId())
                 .username(user.getUsername())
                 .images(imageUrls)
                 .build();
+    }
+
+    public Property getPropertyById(Long id) {
+        return propertyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found with id: " + id));
     }
 
 //    private boolean isValidActionType(String input){
@@ -105,6 +112,7 @@ public class PropertyService {
         User foundUser = optionalUser.get();
 
         newProperty.setUser(foundUser);
+        newProperty.setModerationStatus(ModerationStatus.PENDING);
 
         Property savedProperty = propertyRepository.save(newProperty);
 
@@ -142,18 +150,29 @@ public class PropertyService {
         return PropertyResponseDTOBuilder(property);
     }
 
-    @Transactional
     public void deleteById(long id) {
+        if (!propertyRepository.existsById(id)) {
+            throw new RuntimeException("Property not found with id: " + id);
+        }
         propertyRepository.deleteById(id);
     }
 
-    @Transactional
-    public void updateProperty(PropertyRequestDTO property, List<String> imageUrlsToDelete, MultipartFile[] files){
-        Property existing = propertyRepository.findById(property.getId())
-                .orElseThrow(() -> new RuntimeException("Property not found"));
+    public PropertyResponseDTO updateProperty(Long id, PropertyRequestDTO dto) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found with id: " + id));
 
+        property.setTitle(dto.getTitle());
+        property.setLocation(dto.getLocation());
+        property.setPrice(dto.getPrice());
+        property.setDescription(dto.getDescription());
+        property.setActionType(dto.getActionType());
+        property.setPropertyType(dto.getPropertyType());
+        property.setStatus(dto.getStatus());
 
+        Property saved = propertyRepository.save(property);
+        return PropertyResponseDTOBuilder(saved);
     }
+
 //    public List<PropertyResponseDTO> findPropertiesByUser(Long userId){
 //        List<Property> propertyList = propertyRepository.findAll();
 //
@@ -309,7 +328,8 @@ public class PropertyService {
             PropertyFilterRequestDTO filters,
             Pageable pageable
     ){
-        Specification<Property> spec = Specification.where((root, query, cb) -> cb.conjunction());
+        Specification<Property> spec = Specification.where((root, query, cb) ->
+                cb.equal(root.get("moderationStatus"), ModerationStatus.APPROVED));
 
         if (filters.getLocation() != null) {
             spec = spec.and((root, query, cb) ->
@@ -359,9 +379,32 @@ public class PropertyService {
         return responseList;
     }
 
-    @Transactional
-    public Page<PropertyResponseDTO> findAll(Pageable pageable) {
-        Page<Property> entities = propertyRepository.findAll(pageable);
-        return entities.map(this::PropertyResponseDTOBuilder);
+    public PropertyResponseDTO approveProperty(Long id) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found with id: " + id));
+        property.setModerationStatus(ModerationStatus.APPROVED);
+        return PropertyResponseDTOBuilder(propertyRepository.save(property));
     }
+
+    public PropertyResponseDTO rejectProperty(Long id) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found with id: " + id));
+        property.setModerationStatus(ModerationStatus.REJECTED);
+        return PropertyResponseDTOBuilder(propertyRepository.save(property));
+    }
+
+    public List<PropertyResponseDTO> findPendingProperties() {
+        List<Property> properties = propertyRepository.findByModerationStatus(ModerationStatus.PENDING);
+        List<PropertyResponseDTO> responseList = new ArrayList<>();
+        for (Property property : properties) {
+            responseList.add(PropertyResponseDTOBuilder(property));
+        }
+
+        return responseList;
+    }
+
+//    public Page<PropertyResponseDTO> findAll(Pageable pageable) {
+//        Page<Property> entities = propertyRepository.findAll(pageable);
+//        return entities.map(this::PropertyResponseDTOBuilder);
+//    }
 }

@@ -27,17 +27,18 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/properties")
 public class PropertyController {
-    @Autowired
-    PropertyService propertyService;
 
     @Autowired
-    UserService userService;
+    private PropertyService propertyService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping
     public String searchProperties(@Valid PropertyFilterRequestDTO filters,
                                    BindingResult bindingResult,
                                    @PageableDefault(size = 20) Pageable pageable,
-                                   Model model){
+                                   Model model) {
 
         model.addAttribute("actions", ActionType.values());
         model.addAttribute("propertyTypes", PropertyType.values());
@@ -52,12 +53,63 @@ public class PropertyController {
             return "listings";
         }
 
-        Page<PropertyResponseDTO> properties = propertyService.searchPropertiesWithFilterSortAndPagination(filters, pageable);
+        Page<PropertyResponseDTO> properties =
+                propertyService.searchPropertiesWithFilterSortAndPagination(filters, pageable);
 
         model.addAttribute("properties", properties);
         model.addAttribute("filters", filters);
 
         return "listings";
+    }
+
+    @GetMapping("/{id}")
+    public String viewProperty(@PathVariable Long id, Model model) {
+        PropertyResponseDTO property = propertyService.findById(id);
+        model.addAttribute("property", property);
+        return "property";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteProperty(@PathVariable Long id) {
+        propertyService.deleteById(id);
+        return "redirect:/dashboard?deleted";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editPropertyForm(@PathVariable Long id, Model model) {
+        PropertyResponseDTO property = propertyService.findById(id);
+
+        PropertyRequestDTO dto = PropertyRequestDTO.builder()
+                .id(property.getId())
+                .title(property.getTitle())
+                .location(property.getLocation())
+                .price(property.getPrice())
+                .description(property.getDescription())
+                .actionType(property.getActionType())
+                .propertyType(property.getPropertyType())
+                .status(property.getStatus())
+                .build();
+
+        model.addAttribute("propertyRequestDTO", dto);
+        model.addAttribute("actions", ActionType.values());
+        model.addAttribute("propertyTypes", PropertyType.values());
+        return "edit-listing";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String editProperty(@PathVariable Long id,
+                               @Valid PropertyRequestDTO propertyRequestDTO,
+                               BindingResult bindingResult,
+                               Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("actions", ActionType.values());
+            model.addAttribute("propertyTypes", PropertyType.values());
+            return "edit-listing";
+        }
+
+        propertyService.updateProperty(id, propertyRequestDTO);
+        return "redirect:/dashboard?updated";
     }
 
     @PostMapping("/create")
@@ -75,9 +127,10 @@ public class PropertyController {
 
         String username = userDetails.getUsername();
         UserResponseDTO user = userService.findByUsername(username);
+
         propertyService.saveProperty(propertyRequestDTO, user.getId(), imageFiles);
 
-        if(!userService.usernameExists(username)){
+        if (!userService.usernameExists(username)) {
             throw new RuntimeException("Provided username does not exist when creating a new property: " + username);
         }
 
@@ -85,21 +138,33 @@ public class PropertyController {
         return "redirect:/dashboard";
     }
 
-    @PostMapping("/properties/update")
-    public String updateProperty(@Valid PropertyRequestDTO property,
-                                 BindingResult bindingResult,
-                                 @RequestParam("imageFiles") MultipartFile[] imageFiles,
-                                 @RequestParam(value = "deleteImageIds", required = false) List<String> imageUrlsToDelete,
-                                 Model model){
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("actions", ActionType.values());
-            model.addAttribute("propertyTypes", PropertyType.values());
-            model.addAttribute("propertyRequestDTO", property);
-            return "edit-property";
-        }
+//    @PostMapping("/properties/update")
+//    public String updateProperty(@Valid PropertyRequestDTO property,
+//                                 BindingResult bindingResult,
+//                                 @RequestParam("imageFiles") MultipartFile[] imageFiles,
+//                                 @RequestParam(value = "deleteImageIds", required = false) List<String> imageUrlsToDelete,
+//                                 Model model){
+//        if (bindingResult.hasErrors()) {
+//            model.addAttribute("actions", ActionType.values());
+//            model.addAttribute("propertyTypes", PropertyType.values());
+//            model.addAttribute("propertyRequestDTO", property);
+//            return "edit-property";
+//        }
+//
+//        propertyService.updateProperty(property.getId(), property, imageUrlsToDelete, imageFiles);
+//
+//        return "redirect:/dashboard";
+//    }
 
-        propertyService.updateProperty(property, imageUrlsToDelete, imageFiles);
+    @PostMapping("/approve/{id}")
+    public String approveProperty(@PathVariable Long id) {
+        propertyService.approveProperty(id);
+        return "redirect:/dashboard?approved";
+    }
 
-        return "redirect:/dashboard";
+    @PostMapping("/reject/{id}")
+    public String rejectProperty(@PathVariable Long id) {
+        propertyService.rejectProperty(id);
+        return "redirect:/dashboard?rejected";
     }
 }

@@ -30,6 +30,9 @@ public class Property {
     @Column(name = "property_type")
     private PropertyType propertyType;
     private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "moderation_status")
+    private ModerationStatus moderationStatus;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

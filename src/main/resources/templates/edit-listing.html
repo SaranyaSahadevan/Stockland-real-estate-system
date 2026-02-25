@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create Listing – STOCKLAND</title>
+    <title>Edit Listing – STOCKLAND</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
@@ -26,15 +26,8 @@
             color: var(--text-dark);
         }
 
-        a {
-            color: var(--brand-primary);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        a:hover {
-            color: var(--brand-accent);
-        }
+        a { color: var(--brand-primary); text-decoration: none; transition: var(--transition); }
+        a:hover { color: var(--brand-accent); }
 
         .navbar {
             background: var(--brand-primary);
@@ -45,33 +38,13 @@
             align-items: center;
         }
 
-        .navbar .logo {
-            font-size: 22px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        .navbar nav a {
-            color: #fff;
-            margin-left: 18px;
-            font-size: 14px;
-        }
-
-        .navbar nav a:hover {
-            color: #dfe6ff;
-        }
+        .navbar .logo { font-size: 22px; font-weight: bold; letter-spacing: 1px; }
+        .navbar nav a { color: #fff; margin-left: 18px; font-size: 14px; }
+        .navbar nav a:hover { color: #dfe6ff; }
 
         @media (max-width: 700px) {
-            .navbar {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .navbar nav {
-                margin-top: 10px;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
+            .navbar { flex-direction: column; align-items: flex-start; }
+            .navbar nav { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px; }
         }
 
         .container {
@@ -80,10 +53,7 @@
             padding: 0 15px;
         }
 
-        h1 {
-            margin-top: 0;
-            font-size: 26px;
-        }
+        h1 { margin-top: 0; font-size: 26px; }
 
         .card {
             background: var(--bg-white);
@@ -98,19 +68,11 @@
             gap: 18px;
         }
 
-        form .full {
-            grid-column: 1 / -1;
-        }
+        form .full { grid-column: 1 / -1; }
 
-        label {
-            display: block;
-            margin-bottom: 4px;
-            font-size: 14px;
-        }
+        label { display: block; margin-bottom: 4px; font-size: 14px; }
 
-        input,
-        select,
-        textarea {
+        input, select, textarea {
             width: 100%;
             padding: 10px;
             border-radius: var(--radius);
@@ -119,14 +81,9 @@
             font-size: 14px;
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
+        textarea { resize: vertical; min-height: 100px; }
 
-        .actions {
-            margin-top: 20px;
-        }
+        .actions { margin-top: 20px; }
 
         .btn-primary {
             padding: 10px 18px;
@@ -139,9 +96,7 @@
             transition: var(--transition);
         }
 
-        .btn-primary:hover {
-            background: var(--brand-primary-dark);
-        }
+        .btn-primary:hover { background: var(--brand-primary-dark); }
 
         .btn-secondary {
             padding: 10px 18px;
@@ -154,9 +109,7 @@
             margin-left: 10px;
         }
 
-        .btn-secondary:hover {
-            background: #ccc;
-        }
+        .btn-secondary:hover { background: #ccc; }
 
         footer {
             text-align: center;
@@ -167,9 +120,7 @@
         }
 
         @media (max-width: 700px) {
-            form {
-                grid-template-columns: 1fr;
-            }
+            form { grid-template-columns: 1fr; }
         }
 
         .input-error {
@@ -178,14 +129,6 @@
             margin-top: 5px;
             margin-bottom: 10px;
         }
-
-        .flash-success {
-            color: green;
-            font-size: 14px;
-            text-align: center;
-            margin: 15px 0;
-        }
-
     </style>
 </head>
 <body>
@@ -196,12 +139,12 @@
 </header>
 
 <div class="container">
-    <h1>Create New Listing</h1>
+    <h1>Edit Listing</h1>
 
     <div class="card">
-        <form th:action="@{/properties/create}" th:object="${propertyRequestDTO}" method="post" enctype="multipart/form-data">
-
-            <p th:if="${success}" th:text="${success}" class="flash-success"></p>
+        <form th:action="@{/properties/edit/{id}(id=${propertyRequestDTO.id})}"
+              th:object="${propertyRequestDTO}"
+              method="post">
 
             <div class="full">
                 <label>Title</label>
@@ -214,11 +157,6 @@
                 <input type="text" placeholder="Latvia, Riga" th:field="*{location}">
                 <p th:if="${#fields.hasErrors('location')}" th:errors="*{location}" class="input-error"></p>
             </div>
-
-<!--            <div>-->
-<!--                <label>Address</label>-->
-<!--                <input type="text" placeholder="Street, house number">-->
-<!--            </div>-->
 
             <div>
                 <label>Property Type</label>
@@ -250,47 +188,23 @@
                 <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="input-error"></p>
             </div>
 
-<!--            <div>-->
-<!--                <label>Area (m²)</label>-->
-<!--                <input type="number" min="0" placeholder="50">-->
-<!--            </div>-->
-
-<!--            <div>-->
-<!--                <label>Rooms</label>-->
-<!--                <input type="number" min="0" placeholder="2">-->
-<!--            </div>-->
-
-            <div class="full">
-                <label>Description</label>
-                <textarea placeholder="Describe the property..." th:field="*{description}" ></textarea>
-
-            </div>
-
             <div>
+                <label>Status</label>
                 <select th:field="*{status}">
                     <option value="">Select status</option>
                     <option value="OLD">OLD</option>
                     <option value="NEW">NEW</option>
                 </select>
-                    <p th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="input-error"></p>
+                <p th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="input-error"></p>
             </div>
 
             <div class="full">
-                <label>Images (static demo)</label>
-                <input type="file" name="imageFiles" multiple accept="image/*">
+                <label>Description</label>
+                <textarea placeholder="Describe the property..." th:field="*{description}"></textarea>
             </div>
 
-<!--            <div class="full">-->
-<!--                <label>Contact Phone</label>-->
-<!--                <input type="text" placeholder="+371 ...">-->
-<!--            </div>-->
-
-<!--            <div class="full">-->
-<!--                <label>Contact Email</label>-->
-<!--                <input type="email" placeholder="agent@example.com">-->
-<!--            </div>-->
-            <div class="actions">
-                <button class="btn-primary" type="submit">Save Listing</button>
+            <div class="actions full">
+                <button class="btn-primary" type="submit">Save Changes</button>
                 <button type="button"
                         class="btn-secondary"
                         th:onclick="|window.location.href='@{/dashboard}'|">
@@ -299,7 +213,6 @@
             </div>
 
         </form>
-
     </div>
 </div>
 
@@ -307,5 +220,7 @@
     STOCKLAND - Real Estate Property Listing & Management System
 </footer>
 
+<div th:replace="~{fragments/chatbot :: chatbot}"></div>
 </body>
 </html>
+
