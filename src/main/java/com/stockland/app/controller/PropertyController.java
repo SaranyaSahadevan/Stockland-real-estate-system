@@ -89,7 +89,7 @@ public class PropertyController {
     public String updateProperty(@Valid PropertyRequestDTO property,
                                  BindingResult bindingResult,
                                  @RequestParam("imageFiles") MultipartFile[] imageFiles,
-                                 @RequestParam(value = "deleteImageIds", required = false) List<String> imageUrls,
+                                 @RequestParam(value = "deleteImageIds", required = false) List<String> imageUrlsToDelete,
                                  Model model){
         if (bindingResult.hasErrors()) {
             model.addAttribute("actions", ActionType.values());
@@ -98,6 +98,7 @@ public class PropertyController {
             return "edit-property";
         }
 
+        propertyService.updateProperty(property, imageUrlsToDelete, imageFiles);
 
         return "redirect:/dashboard";
     }

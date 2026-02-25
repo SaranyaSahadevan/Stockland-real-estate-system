@@ -147,6 +147,13 @@ public class PropertyService {
         propertyRepository.deleteById(id);
     }
 
+    @Transactional
+    public void updateProperty(PropertyRequestDTO property, List<String> imageUrlsToDelete, MultipartFile[] files){
+        Property existing = propertyRepository.findById(property.getId())
+                .orElseThrow(() -> new RuntimeException("Property not found"));
+
+
+    }
 //    public List<PropertyResponseDTO> findPropertiesByUser(Long userId){
 //        List<Property> propertyList = propertyRepository.findAll();
 //
