@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -46,7 +47,7 @@ public class PropertyService {
                 .builder()
                 .title(propertyRequestDTO.getTitle())
                 .location(propertyRequestDTO.getLocation())
-                .price(propertyRequestDTO.getPrice())
+                .price(parsePrice(propertyRequestDTO.getPrice()))
                 .description(propertyRequestDTO.getDescription())
                 .actionType(propertyRequestDTO.getActionType())
                 .propertyType(propertyRequestDTO.getPropertyType())
@@ -54,6 +55,11 @@ public class PropertyService {
                 .roomCount(propertyRequestDTO.getRoomCount())
                 .area(propertyRequestDTO.getArea())
                 .build();
+    }
+
+    private Double parsePrice(String price) {
+        if (price == null || price.isBlank()) return null;
+        return Double.parseDouble(price.replace(",", "."));
     }
 
     private PropertyResponseDTO PropertyResponseDTOBuilder(Property property){
@@ -85,6 +91,8 @@ public class PropertyService {
                 .images(imageUrls)
                 .Area(property.getArea())
                 .roomCount(property.getRoomCount())
+                .createdAt(property.getCreatedAt())
+                .featured(property.isFeatured())
                 .build();
     }
 
@@ -161,8 +169,13 @@ public class PropertyService {
         propertyRepository.deleteById(id);
     }
 
+//    @Transactional
+//    public PropertyResponseDTO updateProperty(Long id, PropertyRequestDTO dto, MultipartFile[] newImages, List<String> imageUrlsToDelete, boolean isAdmin) {
+//    public PropertyResponseDTO updateProperty(Long id, PropertyRequestDTO dto) {
+//        return updateProperty(id, dto, true);
+//    }
     @Transactional
-    public PropertyResponseDTO updateProperty(Long id, PropertyRequestDTO dto, MultipartFile[] newImages, List<String> imageUrlsToDelete) {
+    public PropertyResponseDTO updateProperty(Long id, PropertyRequestDTO dto, MultipartFile[] newImages, List<String> imageUrlsToDelete, boolean isAdmin) {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Property not found with id: " + id));
 
@@ -183,7 +196,7 @@ public class PropertyService {
 
         property.setTitle(dto.getTitle());
         property.setLocation(dto.getLocation());
-        property.setPrice(dto.getPrice());
+        property.setPrice(parsePrice(dto.getPrice()));
         property.setDescription(dto.getDescription());
         property.setActionType(dto.getActionType());
         property.setPropertyType(dto.getPropertyType());
@@ -205,6 +218,10 @@ public class PropertyService {
                     property.getImages().add(newImg);
                 }
             }
+        }
+
+        if (!isAdmin) {
+            property.setModerationStatus(ModerationStatus.PENDING);
         }
 
         Property saved = propertyRepository.save(property);
@@ -361,6 +378,66 @@ public class PropertyService {
         return responseList;
     }
 
+    public List<PropertyResponseDTO> findAllForAdmin(String moderationFilter) {
+        return findAllForAdmin(moderationFilter, null, null);
+    }
+
+    public List<PropertyResponseDTO> findAllForAdmin(String moderationFilter, String sortField, String sortDir) {
+        List<Property> propertyList;
+
+        if (moderationFilter != null && !moderationFilter.isBlank()) {
+            try {
+                ModerationStatus status = ModerationStatus.valueOf(moderationFilter.toUpperCase());
+                propertyList = propertyRepository.findByModerationStatus(status);
+            } catch (IllegalArgumentException e) {
+                propertyList = propertyRepository.findAll();
+            }
+        } else {
+            propertyList = propertyRepository.findAll();
+        }
+
+        List<PropertyResponseDTO> responseList = new ArrayList<>();
+        for (Property property : propertyList) {
+            responseList.add(PropertyResponseDTOBuilder(property));
+        }
+
+        boolean desc = "desc".equalsIgnoreCase(sortDir);
+
+        if (sortField != null && !sortField.isBlank()) {
+            Comparator<PropertyResponseDTO> comparator = switch (sortField.toLowerCase()) {
+                case "id"        -> Comparator.comparingLong(p -> p.getId() != null ? p.getId() : 0L);
+                case "title"     -> Comparator.comparing(p -> p.getTitle() != null ? p.getTitle().toLowerCase() : "");
+                case "owner"     -> Comparator.comparing(p -> p.getUsername() != null ? p.getUsername().toLowerCase() : "");
+                case "price"     -> Comparator.comparingDouble(p -> p.getPrice() != null ? p.getPrice() : 0.0);
+                case "location"  -> Comparator.comparing(p -> p.getLocation() != null ? p.getLocation().toLowerCase() : "");
+                case "status"    -> Comparator.comparing(p -> p.getStatus() != null ? p.getStatus().toLowerCase() : "");
+                case "createdat" -> Comparator.comparing(
+                        PropertyResponseDTO::getCreatedAt,
+                        Comparator.nullsLast(Comparator.naturalOrder()));
+                case "featured"  -> Comparator.comparingInt(p -> p.isFeatured() ? 0 : 1);
+                default          -> null;
+            };
+
+            if (comparator != null) {
+                if (desc) comparator = comparator.reversed();
+                responseList.sort(comparator);
+            }
+        } else {
+            // Default: PENDING first, then APPROVED, then REJECTED; within each group newest first
+            responseList.sort(Comparator
+                    .<PropertyResponseDTO, Integer>comparing(p -> {
+                        if (p.getModerationStatus() == ModerationStatus.PENDING)  return 0;
+                        if (p.getModerationStatus() == ModerationStatus.APPROVED) return 1;
+                        return 2;
+                    })
+                    .thenComparing(PropertyResponseDTO::getCreatedAt,
+                            Comparator.nullsLast(Comparator.reverseOrder()))
+            );
+        }
+
+        return responseList;
+    }
+
     @Transactional
     public Page<PropertyResponseDTO> searchPropertiesWithFilterSortAndPagination(
             PropertyFilterRequestDTO filters,
@@ -426,12 +503,46 @@ public class PropertyService {
 
     @Transactional
     public List<PropertyResponseDTO> getPropertiesByUserId(Long userId) {
+        return getPropertiesByUserId(userId, null, null, null);
+    }
+
+    public List<PropertyResponseDTO> getPropertiesByUserId(Long userId, String sortField, String sortDir) {
+        return getPropertiesByUserId(userId, sortField, sortDir, null);
+    }
+
+    public List<PropertyResponseDTO> getPropertiesByUserId(Long userId, String sortField, String sortDir, String moderationFilter) {
         List<Property> properties = propertyRepository.findByUserId(userId);
 
         List<PropertyResponseDTO> responseList = new ArrayList<>();
 
         for (Property property : properties) {
             responseList.add(PropertyResponseDTOBuilder(property));
+        }
+
+        // Apply moderation filter
+        if (moderationFilter != null && !moderationFilter.isBlank()) {
+            try {
+                ModerationStatus status = ModerationStatus.valueOf(moderationFilter.toUpperCase());
+                responseList.removeIf(p -> p.getModerationStatus() != status);
+            } catch (IllegalArgumentException ignored) {}
+        }
+
+        // Apply sort
+        boolean desc = "desc".equalsIgnoreCase(sortDir);
+        if (sortField != null && !sortField.isBlank()) {
+            Comparator<PropertyResponseDTO> comparator = switch (sortField.toLowerCase()) {
+                case "title"     -> Comparator.comparing(p -> p.getTitle() != null ? p.getTitle().toLowerCase() : "");
+                case "price"     -> Comparator.comparingDouble(p -> p.getPrice() != null ? p.getPrice() : 0.0);
+                case "status"    -> Comparator.comparing(p -> p.getStatus() != null ? p.getStatus().toLowerCase() : "");
+                case "createdat" -> Comparator.comparing(
+                        PropertyResponseDTO::getCreatedAt,
+                        Comparator.nullsLast(Comparator.naturalOrder()));
+                default          -> null;
+            };
+            if (comparator != null) {
+                if (desc) comparator = comparator.reversed();
+                responseList.sort(comparator);
+            }
         }
 
         return responseList;
@@ -458,6 +569,22 @@ public class PropertyService {
             responseList.add(PropertyResponseDTOBuilder(property));
         }
 
+        return responseList;
+    }
+
+    public PropertyResponseDTO toggleFeatured(Long id) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found with id: " + id));
+        property.setFeatured(!property.isFeatured());
+        return PropertyResponseDTOBuilder(propertyRepository.save(property));
+    }
+
+    public List<PropertyResponseDTO> findFeatured() {
+        List<Property> properties = propertyRepository.findByFeaturedTrue();
+        List<PropertyResponseDTO> responseList = new ArrayList<>();
+        for (Property property : properties) {
+            responseList.add(PropertyResponseDTOBuilder(property));
+        }
         return responseList;
     }
 

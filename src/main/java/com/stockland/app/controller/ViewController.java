@@ -36,12 +36,7 @@ public class ViewController {
 
         model.addAttribute("filters", new PropertyFilterRequestDTO());
 
-
-
-        List<PropertyResponseDTO> featuredProperties = propertyService.findAll()
-                .stream()
-                .limit(2)
-                .toList();
+        List<PropertyResponseDTO> featuredProperties = propertyService.findFeatured();
 
         model.addAttribute("featuredProperties", featuredProperties);
         return "index";

@@ -246,7 +246,13 @@
 
             <div>
                 <label>Price (€)</label>
-                <input type="number" min="0" placeholder="150000" th:field="*{price}">
+                <input type="text"
+                       pattern="^\d{1,12}(,\d{1,2})?$"
+                       placeholder="150000,00"
+                       title="Use comma as decimal separator, max 2 decimal digits (e.g. 150000,99)"
+                       oninvalid="this.setCustomValidity('Please use format: 1234,99 – comma as decimal separator, max 2 digits after comma')"
+                       oninput="this.setCustomValidity('')"
+                       th:field="*{price}">
                 <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="input-error"></p>
             </div>
 

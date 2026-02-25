@@ -2,10 +2,9 @@ package com.stockland.app.dto;
 
 import com.stockland.app.model.ActionType;
 import com.stockland.app.model.PropertyType;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,9 +23,9 @@ public class PropertyRequestDTO {
     @NotBlank(message = "Location is required")
     private String location;
 
-    @NotNull(message = "Price is required")
-    @Positive(message = "Price must be positive")
-    private Double price;
+    @NotBlank(message = "Price is required")
+    @Pattern(regexp = "^\\d{1,12}(,\\d{1,2})?$", message = "Price must be in format: 1234,99 or 1234,00 (comma as decimal separator, max 2 decimal digits)")
+    private String price;
 
     @NotNull(message = "Area is required")
     @Positive(message = "Area must be positive")

@@ -217,7 +217,7 @@
                 <p th:text="${p.location}">location</p>
                 <p th:text="${p.propertyType}">Type</p>
                 <p th:text="${p.actionType}">Action</p>
-                <p th:text="${p.price}">€0</p>
+                <p style="white-space: nowrap;"><span th:text="${#numbers.formatDecimal(p.price, 1, 'WHITESPACE', 2, 'COMMA')}">0</span> €</p>
                 <p th:text="${p.status}">status</p>
                 <p th:text="${p.description}">description</p>
             </div>
