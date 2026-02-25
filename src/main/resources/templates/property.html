@@ -109,6 +109,12 @@
           opacity: 1;
           border: 2px solid #007bff;
         }
+
+        .mini-navigation{
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+        }
     </style>
 </head>
 <body>
@@ -131,16 +137,27 @@
 </header>
 
 <div class="container">
-    <a th:href="@{/favorites/add/{id}(id=${property.id})}" class="btn btn-warning">Add to Favorites</a>
-    <a class="back-link" th:href="@{/listings}">← Back to listings</a>
+    <div class="mini-navigation">
+        <th:block th:if="${#authentication != null and #authentication.name == property.username}">
+            <a th:href="@{/favorites/add/{id}(id=${property.id})}" class="btn btn-warning">Add to Favorites</a>
+        </th:block>
+
+        <a class="back-link" th:href="@{/listings}">← Back to listings</a>
+    </div>
 
     <div class="layout">
         <section>
             <section id="main-carousel" class="splide" aria-label="Property Images">
                 <div class="splide__track">
                     <ul class="splide__list">
-                        <li class="splide__slide" th:each="url : ${property.images}">
-                            <img th:src="${url}" alt="Property image">
+                        <th:block th:if="${property.images != null && property.images.length > 0}">
+                            <li class="splide__slide" th:each="url : ${property.images}">
+                                <img th:src="${url}" alt="Property image">
+                            </li>
+                        </th:block>
+
+                        <li class="splide__slide" th:if="${property.images == null || property.images.length == 0}">
+                            <img th:src="@{/images/placeholder_image.jpg}" alt="No image available">
                         </li>
                     </ul>
                 </div>
@@ -149,8 +166,14 @@
             <section id="thumbnail-carousel" class="splide" aria-label="The carousel with thumbnails.">
                 <div class="splide__track">
                     <ul class="splide__list">
-                        <li class="splide__slide" th:each="url : ${property.images}">
-                            <img th:src="${url}" alt="Miniature">
+                        <th:block th:if="${property.images != null && property.images.length > 0}">
+                            <li class="splide__slide" th:each="url : ${property.images}">
+                                <img th:src="${url}" alt="Miniature">
+                            </li>
+                        </th:block>
+
+                        <li class="splide__slide" th:if="${property.images == null || property.images.length == 0}">
+                            <img th:src="@{/images/placeholder_image.jpg}" alt="No image available">
                         </li>
                     </ul>
                 </div>

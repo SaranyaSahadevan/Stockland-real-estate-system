@@ -162,6 +162,7 @@ public class PropertyService {
         return PropertyResponseDTOBuilder(property);
     }
 
+    @Transactional
     public void deleteById(long id) {
         if (!propertyRepository.existsById(id)) {
             throw new RuntimeException("Property not found with id: " + id);
@@ -169,8 +170,6 @@ public class PropertyService {
         propertyRepository.deleteById(id);
     }
 
-//    @Transactional
-//    public PropertyResponseDTO updateProperty(Long id, PropertyRequestDTO dto, MultipartFile[] newImages, List<String> imageUrlsToDelete, boolean isAdmin) {
 //    public PropertyResponseDTO updateProperty(Long id, PropertyRequestDTO dto) {
 //        return updateProperty(id, dto, true);
 //    }
