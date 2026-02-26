@@ -7,6 +7,8 @@ import com.stockland.app.model.ActionType;
 import com.stockland.app.model.Property;
 import com.stockland.app.model.PropertyType;
 import com.stockland.app.model.User;
+import com.stockland.app.repository.FavoriteRepository;
+import com.stockland.app.repository.ImageRepository;
 import com.stockland.app.repository.PropertyRepository;
 import com.stockland.app.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,49 +33,53 @@ class PropertyServiceTest {
     private PropertyRepository propertyRepository;
     private UserRepository userRepository;
     private PropertyService propertyService;
-//
-//    @BeforeEach
-//    void setUp() {
-//        propertyRepository = mock(PropertyRepository.class);
-//        userRepository = mock(UserRepository.class);
-//        propertyService = new PropertyService(propertyRepository, userRepository);
-//    }
+    private ImageRepository imageRepository;
+    private FavoriteRepository favoriteRepository;
 
-//    @Test
-//    @DisplayName("saveProperty should save property and return DTO")
-//    void saveProperty_Success() {
-//        User user = new User();
-//        user.setId(1L);
-//        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-//
-//        PropertyRequestDTO dto = new PropertyRequestDTO();
-//        dto.setTitle("Test Property");
-//
-//        Property savedProperty = new Property();
-//        savedProperty.setId(1L);
-//        savedProperty.setTitle("Test Property");
-//        savedProperty.setUser(user);
-//
-//        when(propertyRepository.save(any(Property.class))).thenReturn(savedProperty);
-//
-//        PropertyResponseDTO result = propertyService.saveProperty(dto, 1L);
-//
-//        assertNotNull(result);
-//        assertEquals("Test Property", result.getTitle());
-//        assertEquals(1L, result.getUserID());
-//    }
+    @BeforeEach
+    void setUp() {
+        propertyRepository = mock(PropertyRepository.class);
+        userRepository = mock(UserRepository.class);
+        imageRepository = mock(ImageRepository.class);
+        favoriteRepository = mock(FavoriteRepository.class);
+        propertyService = new PropertyService(propertyRepository, userRepository, imageRepository, favoriteRepository);
+    }
 
-//    @Test
-//    @DisplayName("saveProperty should throw exception if user not found")
-//    void saveProperty_UserNotFound() {
-//        when(userRepository.findById(1L)).thenReturn(Optional.empty());
-//        PropertyRequestDTO dto = new PropertyRequestDTO();
-//
-//        RuntimeException exception = assertThrows(RuntimeException.class,
-//                () -> propertyService.saveProperty(dto, 1L));
-//
-//        assertTrue(exception.getMessage().contains("User couldn't be found"));
-//    }
+    @Test
+    @DisplayName("saveProperty should save property and return DTO")
+    void saveProperty_Success() {
+        User user = new User();
+        user.setId(1L);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        PropertyRequestDTO dto = new PropertyRequestDTO();
+        dto.setTitle("Test Property");
+
+        Property savedProperty = new Property();
+        savedProperty.setId(1L);
+        savedProperty.setTitle("Test Property");
+        savedProperty.setUser(user);
+
+        when(propertyRepository.save(any(Property.class))).thenReturn(savedProperty);
+
+        PropertyResponseDTO result = propertyService.saveProperty(dto, 1L, new MultipartFile[0]);
+
+        assertNotNull(result);
+        assertEquals("Test Property", result.getTitle());
+        assertEquals(1L, result.getUserID());
+    }
+
+    @Test
+    @DisplayName("saveProperty should throw exception if user not found")
+    void saveProperty_UserNotFound() {
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        PropertyRequestDTO dto = new PropertyRequestDTO();
+
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> propertyService.saveProperty(dto, 1L, new MultipartFile[0]));
+
+        assertTrue(exception.getMessage().contains("User couldn't be found"));
+    }
 
     @Test
     @DisplayName("findById should return DTO if property exists")
