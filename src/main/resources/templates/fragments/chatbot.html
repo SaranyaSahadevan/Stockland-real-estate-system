@@ -5,102 +5,128 @@
 
     <style>
         #helpFab{
-         position:fixed;
-         right:20px;
-         bottom:20px;
-         background:#1f3c88;
-         color:#fff;
-         border:none;
-         padding:12px 20px;
-         border-radius:999px;
-         font-weight:bold;
-         cursor:pointer;
-         box-shadow:0 10px 25px rgba(0,0,0,.25);
-         z-index:9999;
-        }
-        #helpFab:hover{background:#162b5c}
+     position:fixed;
+     right:20px;
+     bottom:20px;
+     background:#1f3c88;
+     color:#fff;
+     border:none;
+     padding:12px 20px;
+     border-radius:999px;
+     font-weight:bold;
+     cursor:pointer;
+     box-shadow:0 10px 25px rgba(0,0,0,.25);
+     z-index:9999;
+ }
+ #helpFab:hover{background:#162b5c}
 
-        #chatWidget{
-         position:fixed;
-         right:20px;
-         bottom:80px;
-         width:460px;
-         height:680px;
-         background:#fff;
-         border-radius:16px;
-         box-shadow:0 18px 45px rgba(0,0,0,.25);
-         display:none;
-         flex-direction:column;
-         overflow:hidden;
-         font-family:Segoe UI,Arial,sans-serif;
-         z-index:9999;
-        }
+ /* CHAT WIDGET — LIGHT THEME */
+ #chatWidget{
+     position:fixed;
+     right:20px;
+     bottom:80px;
+     width:460px;
+     height:680px;
+     background:#ffffff;
+     border-radius:16px;
+     box-shadow:0 18px 45px rgba(0,0,0,.25);
+     display:none;
+     flex-direction:column;
+     overflow:hidden;
+     font-family:Segoe UI,Arial,sans-serif;
+     z-index:9999;
+     color:#222; /* dark text */
+ }
 
-        #chatHeader{
-         background:#1f3c88;
-         color:#fff;
-         padding:14px;
-         display:flex;
-         justify-content:space-between;
-         align-items:center;
-         font-weight:bold;
-        }
+ /* HEADER */
+ #chatHeader{
+     background:#1f3c88;
+     color:#fff;
+     padding:14px;
+     display:flex;
+     justify-content:space-between;
+     align-items:center;
+     font-weight:bold;
+ }
 
-        #chatClose{
-         background:none;
-         border:none;
-         color:#fff;
-         font-size:18px;
-         cursor:pointer;
-        }
+ #chatClose{
+     background:none;
+     border:none;
+     color:#fff;
+     font-size:18px;
+     cursor:pointer;
+ }
 
-        #chatBody{
-         flex:1;
-         padding:12px;
-         overflow-y:auto;
-         background:#f5f6fa;
-        }
+ /* CHAT BODY — LIGHT */
+ #chatBody{
+     flex:1;
+     padding:12px;
+     overflow-y:auto;
+     background:#f2f4f8; /* light grey */
+     color:#222;
+ }
 
-        .msg{
-         padding:10px 14px;
-         border-radius:12px;
-         margin:8px 0;
-         max-width:90%;
-         font-size:14px;
-        }
-        .user{margin-left:auto;background:#cfe9c9;}
-        .ai{margin-right:auto;background:#fff;}
+ /* MESSAGES */
+ .msg{
+     padding:10px 14px;
+     border-radius:12px;
+     margin:8px 0;
+     max-width:90%;
+     font-size:14px;
+     color:#222;
+ }
+ .user{
+     margin-left:auto;
+     background:#d7f5d0; /* light green bubble */
+ }
+ .ai{
+     margin-right:auto;
+     background:#ffffff; /* white bubble */
+     border:1px solid #e6e6e6;
+ }
 
-        .feedbackRow{margin-top:6px;}
-        .feedbackBtn{
-         border:none;
-         background:#eef1ff;
-         color:#1f3c88;
-         padding:6px 12px;
-         margin-right:6px;
-         border-radius:20px;
-         cursor:pointer;
-         font-size:13px;
-        }
+ /* FEEDBACK */
+ .feedbackRow{
+     margin-top:6px;
+     color:#333;
+ }
+ .feedbackBtn{
+     border:none;
+     background:#eef1ff;
+     color:#1f3c88;
+     padding:6px 12px;
+     margin-right:6px;
+     border-radius:20px;
+     cursor:pointer;
+     font-size:13px;
+ }
+ .feedbackBtn:hover{
+     background:#dfe6ff;
+ }
 
-        #quickActions{
-         padding:12px;
-         border-top:1px solid #eee;
-         background:#fff;
-         max-height:200px;
-         overflow-y:auto;
-        }
+ /* QUICK ACTIONS */
+ #quickActions{
+     padding:12px;
+     border-top:1px solid #ddd;
+     background:#fff;
+     max-height:200px;
+     overflow-y:auto;
+     color:#222;
+ }
 
-        .chip{
-         display:inline-block;
-         padding:8px 14px;
-         margin:6px;
-         background:#eef1ff;
-         border-radius:20px;
-         cursor:pointer;
-         font-size:13px;
-        }
-        .chip:hover{background:#dfe6ff}
+ .chip{
+     display:inline-block;
+     padding:8px 14px;
+     margin:6px;
+     background:#eef1ff;
+     border-radius:20px;
+     cursor:pointer;
+     font-size:13px;
+     color:#1f3c88;
+ }
+ .chip:hover{
+     background:#dfe6ff;
+ }
     </style>
 
     <button id="helpFab">Help ?</button>

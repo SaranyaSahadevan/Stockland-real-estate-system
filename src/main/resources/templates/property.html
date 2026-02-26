@@ -5,115 +5,229 @@
     <meta charset="UTF-8">
     <title th:text="${property.title}">Property Details – STOCKLAND</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="
-    https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css
-    " rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
+
     <style>
         :root {
             --brand-primary: #1f3c88;
             --brand-primary-dark: #162b5c;
             --brand-accent: #4a6cf7;
-            --bg-light: #f5f5f5;
-            --bg-white: #ffffff;
-            --text-dark: #222;
-            --text-light: #666;
-            --radius: 8px;
-            --shadow: 0 2px 6px rgba(0,0,0,0.08);
+            --text-light: #ccc;
+            --radius: 10px;
             --transition: 0.25s ease;
         }
 
-        body { margin:0; font-family: Arial, sans-serif; background: var(--bg-light); color: var(--text-dark); }
-        a { color: var(--brand-primary); text-decoration:none; transition: var(--transition); }
-        a:hover { color: var(--brand-accent); }
-
-        .navbar { background: var(--brand-primary); color:#fff; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; }
-        .navbar .logo { font-size:22px; font-weight:bold; letter-spacing:1px; }
-        .navbar nav a { color:#fff; margin-left:18px; font-size:14px; }
-        .navbar nav a:hover { color:#dfe6ff; }
-
-        @media (max-width:700px){
-            .navbar { flex-direction:column; align-items:flex-start; }
-            .navbar nav { margin-top:10px; display:flex; flex-wrap:wrap; gap:10px; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #eee;
+            background: linear-gradient(120deg, #141824, #1f2a3d, #263a55, #1c2740, #141824);
+            background-size: 400% 400%;
+            animation: gradientFlow 16s ease infinite;
         }
 
-        .container { max-width:1100px; margin:25px auto; padding:0 15px; }
-        .back-link { margin-bottom:15px; display:inline-block; font-size:14px; }
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-        .layout { display:grid; grid-template-columns:2fr 1fr; gap:20px; }
-        @media (max-width:900px){ .layout { grid-template-columns:1fr; } }
-
-        .gallery { background: var(--bg-white); border-radius: var(--radius); box-shadow: var(--shadow); overflow:hidden; }
-        .gallery-main { height:300px; background:#d0d6ff; }
-        .gallery-thumbs { display:flex; gap:8px; padding:10px; background:#f0f2ff; }
-        .thumb { flex:1; height:70px; background:#c0c6f0; border-radius:6px; }
-
-        .details { background: var(--bg-white); padding:20px; border-radius: var(--radius); box-shadow: var(--shadow); }
-        .details h1 { margin-top:0; font-size:26px; }
-        .meta { font-size:14px; color: var(--text-light); margin-bottom:10px; }
-        .price .area .rooms{ font-size:22px; font-weight:bold; margin:10px 0; }
-
-        .tags span { display:inline-block; background:#eef1ff; padding:5px 10px; border-radius:20px; font-size:12px; margin-right:6px; margin-bottom:6px; }
-
-        .description { margin-top:15px; font-size:14px; line-height:1.6; }
-
-        .sidebar-card { background: var(--bg-white); padding:18px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom:20px; }
-        .sidebar-card h2 { margin-top:0; font-size:18px; }
-        .sidebar-card form input, .sidebar-card form textarea { width:100%; padding:10px; border-radius: var(--radius); border:1px solid #ccc; margin-bottom:12px; }
-        .sidebar-card button { width:100%; padding:10px; background: var(--brand-primary); color:#fff; border:none; border-radius: var(--radius); cursor:pointer; transition: var(--transition); }
-        .sidebar-card button:hover { background: var(--brand-primary-dark); }
-
-        footer { text-align:center; padding:20px; font-size:13px; color: var(--text-light); margin-top:40px; }
-        .btn-danger { display:inline-block; padding:9px 16px; background:#c0392b; color:#fff; border:none; border-radius: var(--radius); cursor:pointer; font-size:14px; width:100%; transition: var(--transition); }
-        .btn-danger:hover { background:#a93226; }
-        .btn-approve { display:inline-block; padding:9px 16px; background:#27ae60; color:#fff; border:none; border-radius: var(--radius); cursor:pointer; font-size:14px; width:100%; transition: var(--transition); margin-bottom:10px; }
-        .btn-approve:hover { background:#1e8449; }
-        .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:bold; margin-bottom:10px; }
-        .badge-pending  { background:#fff3cd; color:#856404; border:1px solid #ffc107; }
-        .badge-approved { background:#d1e7dd; color:#155724; border:1px solid #28a745; }
-        .badge-rejected { background:#f8d7da; color:#721c24; border:1px solid #dc3545; }
-        .toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #2e7d32;
+        .navbar {
+            background: var(--brand-primary);
             color: #fff;
-            padding: 14px 24px;
-            border-radius: var(--radius);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            font-size: 15px;
-            z-index: 9999;
+            padding: 15px 30px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            animation: fadeInOut 4s forwards;
         }
-        @keyframes fadeInOut {
-            0%   { opacity: 0; top: 10px; }
-            10%  { opacity: 1; top: 20px; }
-            80%  { opacity: 1; top: 20px; }
-            100% { opacity: 0; top: 10px; }
+        .navbar .logo {
+            font-size: 22px;
+            font-weight: bold;
         }
 
-        .splide__slide img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
+        .navbar nav a {
+    display: inline-block;
+    padding: 10px 18px;
+    margin-left: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    background: rgba(255,255,255,0.12);
+    border-radius: 10px;
+    text-decoration: none;
+    transition: 0.25s ease;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+}
+
+.navbar nav a:hover {
+    background: #4a6cf7;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+}
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
         }
 
-        #thumbnail-carousel .splide__slide {
-          opacity: 0.6;
-        }
-
-        #thumbnail-carousel .splide__slide.is-active {
-          opacity: 1;
-          border: 2px solid #007bff;
-        }
-
-        .mini-navigation{
+        .mini-navigation {
             display: flex;
-            gap: 10px;
-            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            padding: 8px 14px;
+            background: rgba(255,255,255,0.12);
+            border-radius: 8px;
+            color: #eee;
+            font-size: 14px;
+            text-decoration: none;
+            transition: 0.25s ease;
+        }
+        .back-link:hover {
+            background: rgba(255,255,255,0.22);
+        }
+
+        .layout {
+            display: flex;
+            gap: 30px;
+        }
+        .layout section { flex: 3; }
+        .layout aside { flex: 1.2; }
+
+        #main-carousel img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: var(--radius);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+        }
+
+        #thumbnail-carousel img {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            opacity: 0.8;
+            transition: 0.25s;
+        }
+        #thumbnail-carousel .is-active img {
+            opacity: 1;
+            border: 2px solid var(--brand-accent);
+        }
+
+        .details {
+            margin-top: 25px;
+            background: rgba(255,255,255,0.06);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+            backdrop-filter: blur(6px);
+        }
+
+        .details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .details-heart {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255,255,255,0.12);
+            transition: 0.25s ease;
+        }
+        .details-heart.heart-off { color: #bbb; }
+        .details-heart.heart-off:hover { background: rgba(255,255,255,0.18); color: #eee; }
+        .details-heart.heart-on {
+            color: #ff4d4d;
+            background: rgba(255,0,0,0.18);
+            box-shadow: 0 0 10px rgba(255,0,0,0.4);
+        }
+        .details-heart.heart-on:hover { background: rgba(255,0,0,0.28); }
+
+        .sidebar-card {
+            background: rgba(255,255,255,0.06);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+            backdrop-filter: blur(6px);
+            margin-bottom: 20px;
+        }
+
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 12px; }
+        .badge-pending { background: #f1c40f; color: #000; }
+        .badge-approved { background: #2ecc71; }
+        .badge-rejected { background: #e74c3c; }
+
+        .btn-danger, .btn-approve {
+            padding: 8px 14px;
+            border-radius: var(--radius);
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .btn-danger { background: #c0392b; color: #fff; }
+        .btn-danger:hover { background: #e74c3c; }
+        .btn-approve { background: #27ae60; color: #fff; }
+        .btn-approve:hover { background: #2ecc71; }
+
+        .admin-actions-box {
+            background: rgba(255,255,255,0.08);
+            border-left: 4px solid #e67e22;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            backdrop-filter: blur(6px);
+        }
+
+        .admin-actions-box form,
+.admin-actions-box a {
+    display: block;
+    margin-bottom: 10px;
+}
+
+        .admin-actions-box h3 {
+            margin-top: 0;
+            font-size: 18px;
+            color: #e67e22;
+        }
+
+        .full-width-btn {
+    display: block;
+    width: 91%;
+    margin-bottom: 10px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    text-align: center;
+    color: #fff;
+    text-decoration: none;
+}
+
+.description {
+white-space: pre-wrap;
+word-wrap: break-word;
+overflow-wrap: break-word;
+max-width: 500px;
+}
+
+        @media (max-width: 900px) {
+            .layout { flex-direction: column; }
+            #main-carousel img { height: 260px; }
         }
 
         .description {
@@ -124,19 +238,8 @@
         }
     </style>
 </head>
+
 <body>
-
-<div th:if="${param.approved}" class="toast" style="background:#27ae60;">
-    ✓ Listing approved and is now publicly visible.
-</div>
-
-<div th:if="${param.rejected}" class="toast" style="background:#c0392b;">
-    ✓ Listing has been rejected.
-</div>
-
-<div th:if="${param.updated}" class="toast" style="background:#1f3c88;">
-    ✓ Listing updated successfully.
-</div>
 
 <header class="navbar">
     <div class="logo">STOCKLAND</div>
@@ -144,159 +247,137 @@
 </header>
 
 <div class="container">
-    <div class="mini-navigation">
-        <th:block th:if="${#authentication != null and #authentication.name == property.username}">
-            <a th:href="@{/favorites/add/{id}(id=${property.id})}" class="btn btn-warning">Add to Favorites</a>
-        </th:block>
 
+    <div class="mini-navigation">
         <a class="back-link" th:href="@{/listings}">← Back to listings</a>
     </div>
 
     <div class="layout">
+
+        <!-- LEFT SIDE -->
         <section>
-            <section id="main-carousel" class="splide" aria-label="Property Images">
+
+            <!-- MAIN CAROUSEL -->
+            <section id="main-carousel" class="splide">
                 <div class="splide__track">
                     <ul class="splide__list">
+
                         <th:block th:if="${property.images != null && property.images.length > 0}">
                             <li class="splide__slide" th:each="url : ${property.images}">
-                                <img th:src="${url}" alt="Property image">
+                                <img th:src="${url}">
                             </li>
                         </th:block>
 
-                        <li class="splide__slide" th:if="${property.images == null || property.images.length == 0}">
-                            <img th:src="@{/images/placeholder_image.jpg}" alt="No image available">
+                        <li class="splide__slide"
+                            th:if="${property.images == null || property.images.length == 0}">
+                            <img th:src="@{/images/placeholder_image.jpg}">
                         </li>
+
                     </ul>
                 </div>
             </section>
 
-            <section id="thumbnail-carousel" class="splide" aria-label="The carousel with thumbnails.">
-                <div class="splide__track">
-                    <ul class="splide__list">
-                        <th:block th:if="${property.images != null && property.images.length > 0}">
-                            <li class="splide__slide" th:each="url : ${property.images}">
-                                <img th:src="${url}" alt="Miniature">
-                            </li>
-                        </th:block>
-
-                        <li class="splide__slide" th:if="${property.images == null || property.images.length == 0}">
-                            <img th:src="@{/images/placeholder_image.jpg}" alt="No image available">
-                        </li>
-                    </ul>
-                </div>
-            </section>
-
+            <!-- DETAILS -->
             <div class="details">
-                <h1 th:text="${property.title}">Property Title</h1>
+
+                <div class="details-header">
+                    <h1 th:text="${property.title}">Property Title</h1>
+
+                    <form th:action="@{/favorites/toggle/{id}(id=${property.id})}" method="post">
+                        <button type="submit"
+                                class="details-heart"
+                                th:classappend="${isFavorite} ? 'heart-on' : 'heart-off'">
+                            ♥
+                        </button>
+                    </form>
+                </div>
 
                 <div class="meta">
-                    <span th:text="${property.location}">Location</span> •
-                    <span th:text="${property.propertyType}">Type</span> •
+                    <span th:text="${property.location}"></span> •
+                    <span th:text="${property.propertyType}"></span>
                 </div>
 
-                <div class="price" style="white-space: nowrap;"><span th:text="${#numbers.formatDecimal(property.price, 1, 'WHITESPACE', 2, 'COMMA')}">0</span> €</div>
-
-                <div class="area"><span th:text="${property.area}">0</span> m²</div>
-
-                <div class="rooms">Rooms: <span th:text="${property.roomCount}">0</span></div>
-
-<!--                <div class="tags">-->
-<!--                    <span th:each="tag : ${property.tags}" th:text="${tag}">Tag</span>-->
-<!--                </div>-->
-
-                <div class="description" th:text="${property.description}">
-                    Property description goes here.
+                <div class="price">
+                    <span th:text="${#numbers.formatDecimal(property.price, 1, 'WHITESPACE', 2, 'COMMA')}"></span> €
                 </div>
+
+                <div class="area"><span th:text="${property.area}"></span> m²</div>
+                <div class="rooms">Rooms: <span th:text="${property.roomCount}"></span></div>
+
+                <div class="description" th:text="${property.description}"></div>
+
             </div>
+
+            <!-- THUMBNAILS -->
+            <section id="thumbnail-carousel" class="splide">
+                <div class="splide__track">
+                    <ul class="splide__list">
+
+                        <th:block th:if="${property.images != null && property.images.length > 0}">
+                            <li class="splide__slide" th:each="url : ${property.images}">
+                                <img th:src="${url}">
+                            </li>
+                        </th:block>
+
+                        <li class="splide__slide"
+                            th:if="${property.images == null || property.images.length == 0}">
+                            <img th:src="@{/images/placeholder_image.jpg}">
+                        </li>
+
+                    </ul>
+                </div>
+            </section>
+
         </section>
 
+        <!-- RIGHT SIDE -->
         <aside>
+
             <div class="sidebar-card">
                 <h2>Contact agent</h2>
                 <p>
-                    <strong th:text="${user.username}">username</strong><br>
-                    <span th:text="${user.email}">email@example.com</span><br>
-                    <span th:if="${user.phoneNumber != null and !user.phoneNumber.isEmpty()}">
+                    <strong th:text="${user.username}"></strong><br>
+                    <span th:text="${user.email}"></span><br>
+                    <span th:if="${user.phoneNumber != null}">
                         <span th:text="${user.phoneNumber}"></span>
                     </span>
                 </p>
-
-<!--                <form>-->
-<!--                    <input type="text" placeholder="Your name">-->
-<!--                    <input type="email" placeholder="Your email">-->
-<!--                    <textarea rows="4" placeholder="Your message"></textarea>-->
-<!--                    <button type="submit">Send inquiry</button>-->
-<!--                </form>-->
             </div>
 
             <div class="sidebar-card">
                 <h2>Actions</h2>
-                <p>Available for registered users:</p>
-                <ul style="padding-left: 18px; font-size: 14px;">
+                <ul>
                     <li>Save to favorites</li>
                     <li>Track inquiries</li>
                     <li>View in dashboard</li>
                 </ul>
-
-                <!-- Admin-only actions -->
-                <div sec:authorize="hasRole('ADMIN')" style="margin-top:14px;">
-                    <hr style="border:none;border-top:1px solid #eee;margin-bottom:12px;">
-                    <p style="font-size:15px;color:#c0392b;margin:0 0 8px;"><strong>Admin Actions</strong></p>
-
-                    <div style="margin-bottom:10px;">
-                        <span th:if="${property.moderationStatus?.name() == 'PENDING'}"  class="badge badge-pending">⏳ Pending Review</span>
-                        <span th:if="${property.moderationStatus?.name() == 'APPROVED'}" class="badge badge-approved">✅ Approved</span>
-                        <span th:if="${property.moderationStatus?.name() == 'REJECTED'}" class="badge badge-rejected">❌ Rejected</span>
-                    </div>
-
-                    <a th:href="@{/properties/edit/{id}(id=${property.id}, redirectUrl='/property/' + ${property.id})}"
-                       style="display:block; text-align:center; padding:9px 16px; background:#1f3c88; color:#fff; border-radius:8px; font-size:14px; margin-bottom:10px; transition:0.25s ease;"
-                       onmouseover="this.style.background='#162b5c'" onmouseout="this.style.background='#1f3c88'">
-                        Edit Listing
-                    </a>
-                    <form th:action="@{/properties/delete/{id}(id=${property.id})}" method="post"
-                          onsubmit="return confirm('Permanently delete this listing? This cannot be undone.');"
-                          style="margin-bottom:10px;">
-                        <button type="submit" class="btn-danger">Delete Listing</button>
-                    </form>
-
-                    <hr style="border:none;border-top:1px solid #eee;margin-bottom:12px;">
-                    <form th:if="${property.moderationStatus?.name() != 'APPROVED'}"
-                          th:action="@{/properties/approve/{id}(id=${property.id})}" method="post">
-                        <input type="hidden" name="redirectUrl" th:value="'/property/' + ${property.id} + '?approved'">
-                        <button type="submit" class="btn-approve">✔ Approve Listing</button>
-                    </form>
-                    <form th:if="${property.moderationStatus?.name() != 'REJECTED'}"
-                          th:action="@{/properties/reject/{id}(id=${property.id})}" method="post">
-                        <input type="hidden" name="redirectUrl" th:value="'/property/' + ${property.id} + '?rejected'">
-                        <button type="submit" class="btn-danger">✘ Reject Listing</button>
-                    </form>
-                </div>
-
-                <!-- Owner-only actions (non-admin listing owner) -->
-                <div th:if="${#authentication != null and #authentication.name == property.username and not #authorization.expression('hasRole(''ADMIN'')')}"
-                     style="margin-top:14px;">
-                    <hr style="border:none;border-top:1px solid #eee;margin-bottom:12px;">
-                    <p style="font-size:15px;color:#1f3c88;margin:0 0 8px;"><strong>Your Listing</strong></p>
-
-                    <div style="margin-bottom:10px;">
-                        <span th:if="${property.moderationStatus?.name() == 'PENDING'}"  class="badge badge-pending">⏳ Pending Review</span>
-                        <span th:if="${property.moderationStatus?.name() == 'APPROVED'}" class="badge badge-approved">✅ Approved</span>
-                        <span th:if="${property.moderationStatus?.name() == 'REJECTED'}" class="badge badge-rejected">❌ Rejected</span>
-                    </div>
-
-                    <a th:href="@{/properties/edit/{id}(id=${property.id}, redirectUrl='/property/' + ${property.id})}"
-                       style="display:block; text-align:center; padding:9px 16px; background:#1f3c88; color:#fff; border-radius:8px; font-size:14px; margin-bottom:10px; transition:0.25s ease;"
-                       onmouseover="this.style.background='#162b5c'" onmouseout="this.style.background='#1f3c88'">
-                        Edit Listing
-                    </a>
-                    <form th:action="@{/properties/delete/{id}(id=${property.id})}" method="post"
-                          onsubmit="return confirm('Permanently delete this listing? This cannot be undone.');">
-                        <button type="submit" class="btn-danger">Delete Listing</button>
-                    </form>
-                </div>
             </div>
+
+            <!-- ADMIN ACTIONS -->
+            <div sec:authorize="hasRole('ADMIN')" class="admin-actions-box">
+                <h3>Admin Actions</h3>
+
+                <a th:href="@{/properties/edit/{id}(id=${property.id})}"
+                   class="full-width-btn" style="background:#1f3c88;">Edit Listing</a>
+
+                <form th:action="@{/properties/delete/{id}(id=${property.id})}" method="post"
+                      onsubmit="return confirm('Delete permanently?');">
+                    <button type="submit" class="btn-danger">Delete Listing</button>
+                </form>
+
+                <form th:if="${property.moderationStatus?.name() != 'APPROVED'}"
+                      th:action="@{/properties/approve/{id}(id=${property.id})}" method="post">
+                    <button type="submit" class="btn-approve">Approve</button>
+                </form>
+
+                <form th:if="${property.moderationStatus?.name() != 'REJECTED'}"
+                      th:action="@{/properties/reject/{id}(id=${property.id})}" method="post">
+                    <button type="submit" class="btn-danger">Reject</button>
+                </form>
+            </div>
+
         </aside>
+
     </div>
 </div>
 
@@ -304,42 +385,33 @@
     STOCKLAND - Real Estate Property Listing & Management System
 </footer>
 
-<div th:replace="~{fragments/chatbot :: chatbot}"></div>
-
-<script src="
-    https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js
-"></script>
+<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-      var main = new Splide('#main-carousel', {
-        fixedHeight: 400,
-        type: 'fade',
-        rewind: true,
-        pagination: false,
-        arrows: true,
-      });
+        var main = new Splide('#main-carousel', {
+            fixedHeight: 400,
+            type: 'fade',
+            rewind: true,
+            pagination: false,
+            arrows: true,
+        });
 
-      var thumbnails = new Splide('#thumbnail-carousel', {
-        fixedWidth: 100,
-        fixedHeight: 60,
-        gap: 10,
-        rewind: true,
-        isNavigation: true,
-        pagination: false,
-        focus: 'center',
-        breakpoints:{
-          600:{
-            fixedWidth: 60,
-            fixedHeight: 44,
-          },
-        },
-      });
+        var thumbnails = new Splide('#thumbnail-carousel', {
+            fixedWidth: 100,
+            fixedHeight: 60,
+            gap: 10,
+            rewind: true,
+            isNavigation: true,
+            pagination: false,
+            focus: 'center',
+        });
 
-      main.sync(thumbnails);
-      main.mount();
-      thumbnails.mount();
+        main.sync(thumbnails);
+        main.mount();
+        thumbnails.mount();
     });
 </script>
+
 </body>
 </html>

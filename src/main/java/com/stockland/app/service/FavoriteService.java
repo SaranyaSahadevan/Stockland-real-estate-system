@@ -31,4 +31,8 @@ public class FavoriteService {
     public List<Favorite> getFavorites(User user) {
         return favoriteRepository.findByUser(user);
     }
+
+    public boolean isFavorite(User user, Property property) {
+        return false;
+    }
 }
