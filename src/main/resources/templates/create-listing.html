@@ -199,7 +199,7 @@
     <h1>Create New Listing</h1>
 
     <div class="card">
-        <form th:action="@{/properties/create}" th:object="${propertyRequestDTO}" method="post" enctype="multipart/form-data">
+        <form id="propertyForm" th:action="@{/properties/create}" th:object="${propertyRequestDTO}" method="post" enctype="multipart/form-data">
 
             <p th:if="${success}" th:text="${success}" class="flash-success"></p>
 
@@ -284,6 +284,7 @@
             <div class="full">
                 <label>Images (static demo)</label>
                 <input type="file" name="imageFiles" multiple accept="image/*">
+                <p th:if="${errorMessage}" th:text="${errorMessage}" class="input-error"></p>
             </div>
 
 <!--            <div class="full">-->
@@ -312,6 +313,36 @@
 <footer>
     STOCKLAND - Real Estate Property Listing & Management System
 </footer>
+<script>
+    const myForm = document.getElementById('propertyForm');
 
+    if (myForm) {
+        myForm.addEventListener('submit', function(e) {
+            console.log("Validation script triggered!");
+
+            const fileInput = document.querySelector('input[name="imageFiles"]');
+            const maxFiles = 20;
+
+            if (fileInput && fileInput.files.length > maxFiles) {
+                alert("Too many files! Max allowed: " + maxFiles);
+                e.preventDefault();
+                return false;
+            }
+
+            let totalSize = 0;
+            for (let i = 0; i < fileInput.files.length; i++) {
+                totalSize += fileInput.files[i].size;
+            }
+
+            if (totalSize > 50 * 1024 * 1024) {
+                alert("Total file size exceeds storage limit.");
+                e.preventDefault();
+                return false;
+            }
+        });
+    } else {
+        console.error("Could not find propertyForm ID!");
+    }
+</script>
 </body>
 </html>

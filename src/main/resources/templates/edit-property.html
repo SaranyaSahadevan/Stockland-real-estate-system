@@ -1,306 +1,306 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Create Listing – STOCKLAND</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Create Listing – STOCKLAND</title>-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1">-->
 
-    <style>
-        :root {
-            --brand-primary: #1f3c88;
-            --brand-primary-dark: #162b5c;
-            --brand-accent: #4a6cf7;
-            --bg-light: #f5f5f5;
-            --bg-white: #ffffff;
-            --text-dark: #222;
-            --text-light: #666;
-            --radius: 8px;
-            --shadow: 0 2px 6px rgba(0,0,0,0.08);
-            --transition: 0.25s ease;
-        }
+<!--    <style>-->
+<!--        :root {-->
+<!--            &#45;&#45;brand-primary: #1f3c88;-->
+<!--            &#45;&#45;brand-primary-dark: #162b5c;-->
+<!--            &#45;&#45;brand-accent: #4a6cf7;-->
+<!--            &#45;&#45;bg-light: #f5f5f5;-->
+<!--            &#45;&#45;bg-white: #ffffff;-->
+<!--            &#45;&#45;text-dark: #222;-->
+<!--            &#45;&#45;text-light: #666;-->
+<!--            &#45;&#45;radius: 8px;-->
+<!--            &#45;&#45;shadow: 0 2px 6px rgba(0,0,0,0.08);-->
+<!--            &#45;&#45;transition: 0.25s ease;-->
+<!--        }-->
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: var(--bg-light);
-            color: var(--text-dark);
-        }
+<!--        body {-->
+<!--            margin: 0;-->
+<!--            font-family: Arial, sans-serif;-->
+<!--            background: var(&#45;&#45;bg-light);-->
+<!--            color: var(&#45;&#45;text-dark);-->
+<!--        }-->
 
-        a {
-            color: var(--brand-primary);
-            text-decoration: none;
-            transition: var(--transition);
-        }
+<!--        a {-->
+<!--            color: var(&#45;&#45;brand-primary);-->
+<!--            text-decoration: none;-->
+<!--            transition: var(&#45;&#45;transition);-->
+<!--        }-->
 
-        a:hover {
-            color: var(--brand-accent);
-        }
+<!--        a:hover {-->
+<!--            color: var(&#45;&#45;brand-accent);-->
+<!--        }-->
 
-        .navbar {
-            background: var(--brand-primary);
-            color: #fff;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+<!--        .navbar {-->
+<!--            background: var(&#45;&#45;brand-primary);-->
+<!--            color: #fff;-->
+<!--            padding: 15px 30px;-->
+<!--            display: flex;-->
+<!--            justify-content: space-between;-->
+<!--            align-items: center;-->
+<!--        }-->
 
-        .navbar .logo {
-            font-size: 22px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
+<!--        .navbar .logo {-->
+<!--            font-size: 22px;-->
+<!--            font-weight: bold;-->
+<!--            letter-spacing: 1px;-->
+<!--        }-->
 
-        .navbar nav a {
-            color: #fff;
-            margin-left: 18px;
-            font-size: 14px;
-        }
+<!--        .navbar nav a {-->
+<!--            color: #fff;-->
+<!--            margin-left: 18px;-->
+<!--            font-size: 14px;-->
+<!--        }-->
 
-        .navbar nav a:hover {
-            color: #dfe6ff;
-        }
+<!--        .navbar nav a:hover {-->
+<!--            color: #dfe6ff;-->
+<!--        }-->
 
-        @media (max-width: 700px) {
-            .navbar {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .navbar nav {
-                margin-top: 10px;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-        }
+<!--        @media (max-width: 700px) {-->
+<!--            .navbar {-->
+<!--                flex-direction: column;-->
+<!--                align-items: flex-start;-->
+<!--            }-->
+<!--            .navbar nav {-->
+<!--                margin-top: 10px;-->
+<!--                display: flex;-->
+<!--                flex-wrap: wrap;-->
+<!--                gap: 10px;-->
+<!--            }-->
+<!--        }-->
 
-        .container {
-            max-width: 900px;
-            margin: 25px auto;
-            padding: 0 15px;
-        }
+<!--        .container {-->
+<!--            max-width: 900px;-->
+<!--            margin: 25px auto;-->
+<!--            padding: 0 15px;-->
+<!--        }-->
 
-        h1 {
-            margin-top: 0;
-            font-size: 26px;
-        }
+<!--        h1 {-->
+<!--            margin-top: 0;-->
+<!--            font-size: 26px;-->
+<!--        }-->
 
-        .card {
-            background: var(--bg-white);
-            padding: 25px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-        }
+<!--        .card {-->
+<!--            background: var(&#45;&#45;bg-white);-->
+<!--            padding: 25px;-->
+<!--            border-radius: var(&#45;&#45;radius);-->
+<!--            box-shadow: var(&#45;&#45;shadow);-->
+<!--        }-->
 
-        form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
+<!--        form {-->
+<!--            display: grid;-->
+<!--            grid-template-columns: 1fr 1fr;-->
+<!--            gap: 18px;-->
+<!--        }-->
 
-        form .full {
-            grid-column: 1 / -1;
-        }
+<!--        form .full {-->
+<!--            grid-column: 1 / -1;-->
+<!--        }-->
 
-        label {
-            display: block;
-            margin-bottom: 4px;
-            font-size: 14px;
-        }
+<!--        label {-->
+<!--            display: block;-->
+<!--            margin-bottom: 4px;-->
+<!--            font-size: 14px;-->
+<!--        }-->
 
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            border-radius: var(--radius);
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
+<!--        input,-->
+<!--        select,-->
+<!--        textarea {-->
+<!--            width: 100%;-->
+<!--            padding: 10px;-->
+<!--            border-radius: var(&#45;&#45;radius);-->
+<!--            border: 1px solid #ccc;-->
+<!--            box-sizing: border-box;-->
+<!--            font-size: 14px;-->
+<!--        }-->
 
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
+<!--        textarea {-->
+<!--            resize: vertical;-->
+<!--            min-height: 100px;-->
+<!--        }-->
 
-        .actions {
-            margin-top: 20px;
-        }
+<!--        .actions {-->
+<!--            margin-top: 20px;-->
+<!--        }-->
 
-        .btn-primary {
-            padding: 10px 18px;
-            background: var(--brand-primary);
-            color: #fff;
-            border-radius: var(--radius);
-            font-size: 15px;
-            border: none;
-            cursor: pointer;
-            transition: var(--transition);
-        }
+<!--        .btn-primary {-->
+<!--            padding: 10px 18px;-->
+<!--            background: var(&#45;&#45;brand-primary);-->
+<!--            color: #fff;-->
+<!--            border-radius: var(&#45;&#45;radius);-->
+<!--            font-size: 15px;-->
+<!--            border: none;-->
+<!--            cursor: pointer;-->
+<!--            transition: var(&#45;&#45;transition);-->
+<!--        }-->
 
-        .btn-primary:hover {
-            background: var(--brand-primary-dark);
-        }
+<!--        .btn-primary:hover {-->
+<!--            background: var(&#45;&#45;brand-primary-dark);-->
+<!--        }-->
 
-        .btn-secondary {
-            padding: 10px 18px;
-            background: #ddd;
-            color: #333;
-            border-radius: var(--radius);
-            font-size: 15px;
-            border: none;
-            cursor: pointer;
-            margin-left: 10px;
-        }
+<!--        .btn-secondary {-->
+<!--            padding: 10px 18px;-->
+<!--            background: #ddd;-->
+<!--            color: #333;-->
+<!--            border-radius: var(&#45;&#45;radius);-->
+<!--            font-size: 15px;-->
+<!--            border: none;-->
+<!--            cursor: pointer;-->
+<!--            margin-left: 10px;-->
+<!--        }-->
 
-        .btn-secondary:hover {
-            background: #ccc;
-        }
+<!--        .btn-secondary:hover {-->
+<!--            background: #ccc;-->
+<!--        }-->
 
-        footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 13px;
-            color: var(--text-light);
-            margin-top: 40px;
-        }
+<!--        footer {-->
+<!--            text-align: center;-->
+<!--            padding: 20px;-->
+<!--            font-size: 13px;-->
+<!--            color: var(&#45;&#45;text-light);-->
+<!--            margin-top: 40px;-->
+<!--        }-->
 
-        @media (max-width: 700px) {
-            form {
-                grid-template-columns: 1fr;
-            }
-        }
+<!--        @media (max-width: 700px) {-->
+<!--            form {-->
+<!--                grid-template-columns: 1fr;-->
+<!--            }-->
+<!--        }-->
 
-        .input-error {
-            color: red;
-            font-size: 12px;
-            margin-top: 5px;
-            margin-bottom: 10px;
-        }
+<!--        .input-error {-->
+<!--            color: red;-->
+<!--            font-size: 12px;-->
+<!--            margin-top: 5px;-->
+<!--            margin-bottom: 10px;-->
+<!--        }-->
 
-        .flash-success {
-            color: green;
-            font-size: 14px;
-            text-align: center;
-            margin: 15px 0;
-        }
+<!--        .flash-success {-->
+<!--            color: green;-->
+<!--            font-size: 14px;-->
+<!--            text-align: center;-->
+<!--            margin: 15px 0;-->
+<!--        }-->
 
-    </style>
-</head>
-<body>
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
 
-<header class="navbar">
-    <div class="logo">STOCKLAND</div>
-    <div th:replace="fragments/navbar :: navbar"></div>
-</header>
+<!--<header class="navbar">-->
+<!--    <div class="logo">STOCKLAND</div>-->
+<!--    <div th:replace="fragments/navbar :: navbar"></div>-->
+<!--</header>-->
 
-<div class="container">
-    <h1>Create New Listing</h1>
+<!--<div class="container">-->
+<!--    <h1>Create New Listing</h1>-->
 
-    <div class="card">
-        <form th:action="@{/properties/update}" th:object="${property}" method="post" enctype="multipart/form-data">
+<!--    <div class="card">-->
+<!--        <form th:action="@{/properties/update}" th:object="${property}" method="post" enctype="multipart/form-data">-->
 
-            <p th:if="${success}" th:text="${success}" class="flash-success"></p>
+<!--            <p th:if="${success}" th:text="${success}" class="flash-success"></p>-->
 
-            <input type="hidden" th:field="*{id}">
+<!--            <input type="hidden" th:field="*{id}">-->
 
-            <div class="full">
-                <label>Title</label>
-                <input type="text" placeholder="Modern apartment in Riga center" th:field="*{title}">
-                <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="input-error"></p>
-            </div>
+<!--            <div class="full">-->
+<!--                <label>Title</label>-->
+<!--                <input type="text" placeholder="Modern apartment in Riga center" th:field="*{title}">-->
+<!--                <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="input-error"></p>-->
+<!--            </div>-->
 
-            <div>
-                <label>Location</label>
-                <input type="text" placeholder="Latvia, Riga" th:field="*{location}">
-                <p th:if="${#fields.hasErrors('location')}" th:errors="*{location}" class="input-error"></p>
-            </div>
-            <div>
-                <label>Property Type</label>
-                <select th:field="*{propertyType}">
-                    <option value="">Select type</option>
-                    <option th:each="t : ${propertyTypes}"
-                            th:value="${t}"
-                            th:text="${t}">
-                    </option>
-                </select>
-                <p th:if="${#fields.hasErrors('propertyType')}" th:errors="*{propertyType}" class="input-error"></p>
-            </div>
+<!--            <div>-->
+<!--                <label>Location</label>-->
+<!--                <input type="text" placeholder="Latvia, Riga" th:field="*{location}">-->
+<!--                <p th:if="${#fields.hasErrors('location')}" th:errors="*{location}" class="input-error"></p>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <label>Property Type</label>-->
+<!--                <select th:field="*{propertyType}">-->
+<!--                    <option value="">Select type</option>-->
+<!--                    <option th:each="t : ${propertyTypes}"-->
+<!--                            th:value="${t}"-->
+<!--                            th:text="${t}">-->
+<!--                    </option>-->
+<!--                </select>-->
+<!--                <p th:if="${#fields.hasErrors('propertyType')}" th:errors="*{propertyType}" class="input-error"></p>-->
+<!--            </div>-->
 
-            <div>
-                <label>Deal Type</label>
-                <select th:field="*{actionType}">
-                    <option value="">Select deal</option>
-                    <option th:each="t : ${actions}"
-                            th:value="${t}"
-                            th:text="${t}">
-                    </option>
-                </select>
-                <p th:if="${#fields.hasErrors('actionType')}" th:errors="*{actionType}" class="input-error"></p>
-            </div>
+<!--            <div>-->
+<!--                <label>Deal Type</label>-->
+<!--                <select th:field="*{actionType}">-->
+<!--                    <option value="">Select deal</option>-->
+<!--                    <option th:each="t : ${actions}"-->
+<!--                            th:value="${t}"-->
+<!--                            th:text="${t}">-->
+<!--                    </option>-->
+<!--                </select>-->
+<!--                <p th:if="${#fields.hasErrors('actionType')}" th:errors="*{actionType}" class="input-error"></p>-->
+<!--            </div>-->
 
-            <div>
-                <label>Price (€)</label>
-                <input type="number" min="0" placeholder="150000" th:field="*{price}">
-                <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="input-error"></p>
-            </div>
+<!--            <div>-->
+<!--                <label>Price (€)</label>-->
+<!--                <input type="number" min="0" placeholder="150000" th:field="*{price}">-->
+<!--                <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="input-error"></p>-->
+<!--            </div>-->
 
-            <div class="full">
-                <label>Description</label>
-                <textarea placeholder="Describe the property..." th:field="*{description}" ></textarea>
+<!--            <div class="full">-->
+<!--                <label>Description</label>-->
+<!--                <textarea placeholder="Describe the property..." th:field="*{description}" ></textarea>-->
 
-            </div>
+<!--            </div>-->
 
-            <div>
-                <select th:field="*{status}">
-                    <option value="">Select status</option>
-                    <option value="OLD">OLD</option>
-                    <option value="NEW">NEW</option>
-                </select>
-                <p th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="input-error"></p>
-            </div>
+<!--            <div>-->
+<!--                <select th:field="*{status}">-->
+<!--                    <option value="">Select status</option>-->
+<!--                    <option value="OLD">OLD</option>-->
+<!--                    <option value="NEW">NEW</option>-->
+<!--                </select>-->
+<!--                <p th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="input-error"></p>-->
+<!--            </div>-->
 
 
 
-            <div class="full">
-                <label>Current Images (Check to delete)</label>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
-                    <div th:each="url : ${property.images}" style="position: relative; width: 100px;">
-                        <img th:src="${url}" style="width: 100px; height: 75px; object-fit: cover; border-radius: 4px;">
-                        <div style="text-align: center;">
-                            <input type="checkbox" name="deleteImageIds" th:value="${url}">
-                            <span style="font-size: 10px; color: red;">Delete</span>
-                        </div>
-                    </div>
-                </div>
+<!--            <div class="full">-->
+<!--                <label>Current Images (Check to delete)</label>-->
+<!--                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">-->
+<!--                    <div th:each="url : ${property.images}" style="position: relative; width: 100px;">-->
+<!--                        <img th:src="${url}" style="width: 100px; height: 75px; object-fit: cover; border-radius: 4px;">-->
+<!--                        <div style="text-align: center;">-->
+<!--                            <input type="checkbox" name="deleteImageIds" th:value="${url}">-->
+<!--                            <span style="font-size: 10px; color: red;">Delete</span>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
 
-                <label>Add More Images</label>
-                <input type="file" name="imageFiles" multiple accept="image/*">
-            </div>
+<!--                <label>Add More Images</label>-->
+<!--                <input type="file" name="imageFiles" multiple accept="image/*">-->
+<!--            </div>-->
 
-            <!--            <div class="full">-->
-            <!--                <label>Contact Phone</label>-->
-            <!--                <input type="text" placeholder="+371 ...">-->
-            <!--            </div>-->
+<!--            &lt;!&ndash;            <div class="full">&ndash;&gt;-->
+<!--            &lt;!&ndash;                <label>Contact Phone</label>&ndash;&gt;-->
+<!--            &lt;!&ndash;                <input type="text" placeholder="+371 ...">&ndash;&gt;-->
+<!--            &lt;!&ndash;            </div>&ndash;&gt;-->
 
-            <!--            <div class="full">-->
-            <!--                <label>Contact Email</label>-->
-            <!--                <input type="email" placeholder="agent@example.com">-->
-            <!--            </div>-->
-            <div class="actions">
-                <button class="btn-primary" type="submit">Save changes</button>
-                <button class="btn-secondary" onclick="window.location.href='dashboard.html'" type="reset">Cancel</button>
-            </div>
+<!--            &lt;!&ndash;            <div class="full">&ndash;&gt;-->
+<!--            &lt;!&ndash;                <label>Contact Email</label>&ndash;&gt;-->
+<!--            &lt;!&ndash;                <input type="email" placeholder="agent@example.com">&ndash;&gt;-->
+<!--            &lt;!&ndash;            </div>&ndash;&gt;-->
+<!--            <div class="actions">-->
+<!--                <button class="btn-primary" type="submit">Save changes</button>-->
+<!--                <button class="btn-secondary" onclick="window.location.href='dashboard.html'" type="reset">Cancel</button>-->
+<!--            </div>-->
 
-        </form>
+<!--        </form>-->
 
-    </div>
-</div>
+<!--    </div>-->
+<!--</div>-->
 
-<footer>
-    STOCKLAND - Real Estate Property Listing & Management System
-</footer>
+<!--<footer>-->
+<!--    STOCKLAND - Real Estate Property Listing & Management System-->
+<!--</footer>-->
 
-</body>
-</html>
+<!--</body>-->
+<!--</html>-->
