@@ -106,19 +106,32 @@
             object-fit: cover;
             border-radius: var(--radius);
             box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+            display: block;
         }
 
+        #thumbnail-carousel {
+            margin-top: 10px;
+        }
+
+        #thumbnail-carousel .splide__slide {
+            border: 2px solid transparent !important;
+            border-radius: 6px;
+            overflow: hidden;
+            opacity: 0.6;
+            transition: opacity var(--transition), border-color var(--transition);
+            cursor: pointer;
+        }
+        #thumbnail-carousel .splide__slide.is-active {
+            border-color: var(--brand-accent) !important;
+            opacity: 1;
+            box-shadow: 0 0 8px rgba(74, 108, 247, 0.6);
+        }
         #thumbnail-carousel img {
             width: 100%;
             height: 60px;
             object-fit: cover;
-            border-radius: 6px;
-            opacity: 0.8;
-            transition: 0.25s;
-        }
-        #thumbnail-carousel .is-active img {
-            opacity: 1;
-            border: 2px solid var(--brand-accent);
+            display: block;
+            border: none;
         }
 
         .details {
@@ -172,19 +185,6 @@
         .badge-approved { background: #2ecc71; }
         .badge-rejected { background: #e74c3c; }
 
-        .btn-danger, .btn-approve {
-            padding: 8px 14px;
-            border-radius: var(--radius);
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-        .btn-danger { background: #c0392b; color: #fff; }
-        .btn-danger:hover { background: #e74c3c; }
-        .btn-approve { background: #27ae60; color: #fff; }
-        .btn-approve:hover { background: #2ecc71; }
-
         .admin-actions-box {
             background: rgba(255,255,255,0.08);
             border-left: 4px solid #e67e22;
@@ -195,28 +195,48 @@
             backdrop-filter: blur(6px);
         }
 
-        .admin-actions-box form,
-.admin-actions-box a {
-    display: block;
-    margin-bottom: 10px;
-}
-
         .admin-actions-box h3 {
             margin-top: 0;
             font-size: 18px;
             color: #e67e22;
         }
 
-        .full-width-btn {
-    display: block;
-    width: 91%;
-    margin-bottom: 10px;
-    padding: 8px 14px;
-    border-radius: 10px;
-    text-align: center;
-    color: #fff;
-    text-decoration: none;
-}
+        .admin-btn {
+            display: block;
+            width: 100%;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            transition: 0.25s ease;
+            box-sizing: border-box;
+        }
+
+        .admin-btn-edit  { background: #1f3c88; }
+        .admin-btn-edit:hover  { background: #2a50b5; }
+
+        .admin-btn-approve { background: #27ae60; }
+        .admin-btn-approve:hover { background: #2ecc71; }
+
+        .admin-btn-reject  { background: #d35400; }
+        .admin-btn-reject:hover  { background: #e67e22; }
+
+        .admin-btn-delete  { background: #922b21; }
+        .admin-btn-delete:hover  { background: #c0392b; }
+
+        .admin-actions-box form { margin-bottom: 0; }
+
+        .admin-group-divider {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.15);
+            margin: 12px 0;
+        }
 
 .description {
 white-space: pre-wrap;
@@ -224,6 +244,14 @@ word-wrap: break-word;
 overflow-wrap: break-word;
 max-width: 500px;
 }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            color: #aaa;
+            margin-top: 40px;
+        }
 
         @media (max-width: 900px) {
             .layout { flex-direction: column; }
@@ -243,7 +271,7 @@ max-width: 500px;
 
 <header class="navbar">
     <div class="logo">STOCKLAND</div>
-    <div th:replace="fragments/navbar :: navbar"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 </header>
 
 <div class="container">
@@ -344,35 +372,51 @@ max-width: 500px;
                 </p>
             </div>
 
-            <div class="sidebar-card">
-                <h2>Actions</h2>
-                <ul>
-                    <li>Save to favorites</li>
-                    <li>Track inquiries</li>
-                    <li>View in dashboard</li>
-                </ul>
+            <!-- USER ACTIONS (owner, non-admin) -->
+            <div sec:authorize="isAuthenticated() and !hasRole('ADMIN')"
+                 th:if="${#authentication.name == property.username}"
+                 class="admin-actions-box">
+                <h3>Your Listing</h3>
+                <a th:href="${'/properties/edit/' + property.id + '?redirectUrl=/property/' + property.id}"
+                   class="admin-btn admin-btn-edit">✏ Edit Listing</a>
+
+                <hr class="admin-group-divider">
+
+                <form th:action="@{/properties/delete/{id}(id=${property.id})}" method="post"
+                      onsubmit="return confirm('Delete permanently? This cannot be undone.');">
+                    <button type="submit" class="admin-btn admin-btn-delete">🗑 Delete Listing</button>
+                </form>
             </div>
 
             <!-- ADMIN ACTIONS -->
             <div sec:authorize="hasRole('ADMIN')" class="admin-actions-box">
                 <h3>Admin Actions</h3>
 
-                <a th:href="@{/properties/edit/{id}(id=${property.id})}"
-                   class="full-width-btn" style="background:#1f3c88;">Edit Listing</a>
+                <!-- Group 1: Edit -->
+                <a th:href="${'/properties/edit/' + property.id + '?redirectUrl=/property/' + property.id}"
+                   class="admin-btn admin-btn-edit">✏ Edit Listing</a>
 
-                <form th:action="@{/properties/delete/{id}(id=${property.id})}" method="post"
-                      onsubmit="return confirm('Delete permanently?');">
-                    <button type="submit" class="btn-danger">Delete Listing</button>
-                </form>
+                <hr class="admin-group-divider">
 
+                <!-- Group 2: Moderation -->
                 <form th:if="${property.moderationStatus?.name() != 'APPROVED'}"
                       th:action="@{/properties/approve/{id}(id=${property.id})}" method="post">
-                    <button type="submit" class="btn-approve">Approve</button>
+                    <input type="hidden" name="redirectUrl" th:value="'/property/' + ${property.id}">
+                    <button type="submit" class="admin-btn admin-btn-approve">✔ Approve</button>
                 </form>
 
                 <form th:if="${property.moderationStatus?.name() != 'REJECTED'}"
                       th:action="@{/properties/reject/{id}(id=${property.id})}" method="post">
-                    <button type="submit" class="btn-danger">Reject</button>
+                    <input type="hidden" name="redirectUrl" th:value="'/property/' + ${property.id}">
+                    <button type="submit" class="admin-btn admin-btn-reject">✖ Reject</button>
+                </form>
+
+                <hr class="admin-group-divider">
+
+                <!-- Group 3: Danger zone -->
+                <form th:action="@{/properties/delete/{id}(id=${property.id})}" method="post"
+                      onsubmit="return confirm('Delete permanently?');">
+                    <button type="submit" class="admin-btn admin-btn-delete">🗑 Delete Listing</button>
                 </form>
             </div>
 

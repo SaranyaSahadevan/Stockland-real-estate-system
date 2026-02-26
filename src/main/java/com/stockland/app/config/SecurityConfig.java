@@ -111,6 +111,7 @@ public class SecurityConfig {
     }
 
     private boolean pathExists(String path) {
-        return path.startsWith("/dashboard") || path.startsWith("/create-listing") || path.startsWith("/settings");
+        return path.startsWith("/dashboard") || path.startsWith("/create-listing") || path.startsWith("/settings")
+                || path.startsWith("/favorites");
     }
 }

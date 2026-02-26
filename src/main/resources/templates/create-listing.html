@@ -302,11 +302,13 @@ footer {
             <div>
                 <label>Area (m²)</label>
                 <input type="number" min="0" placeholder="50" th:field="*{area}">
+                <p th:if="${#fields.hasErrors('area')}" th:errors="*{area}" class="input-error"></p>
             </div>
 
             <div>
                 <label>Rooms</label>
                 <input type="number" min="0" placeholder="2" th:field="*{roomCount}">
+                <p th:if="${#fields.hasErrors('roomCount')}" th:errors="*{roomCount}" class="input-error"></p>
             </div>
 
             <div class="full">
@@ -316,6 +318,7 @@ footer {
             </div>
 
             <div>
+                <label>Status</label>
                 <select th:field="*{status}">
                     <option value="">Select status</option>
                     <option value="OLD">OLD</option>
