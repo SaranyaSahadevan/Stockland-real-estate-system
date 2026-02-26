@@ -360,7 +360,7 @@
 
 <header class="navbar">
     <div class="logo">STOCKLAND</div>
-    <div th:replace="fragments/navbar :: navbar"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 </header>
 
 <div class="container">
@@ -371,7 +371,7 @@
             Browse listings, save favorites and publish your own properties.
         </p>
 
-        <form th:action="@{/properties}" method="get" class="search-box">
+        <form th:action="@{/listings}" method="get" class="search-box">
             <input type="text" name="location" placeholder="City, street or keyword" th:value="${filters.location}">
             <select name="actionType">
                 <option value=""></option>

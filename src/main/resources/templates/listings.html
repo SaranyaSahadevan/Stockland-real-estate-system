@@ -183,21 +183,21 @@ select option {
 /* CARD IMAGE */
 .card-img img {
     width: 100%;
-    height: 160px; /* меньше чем в index.html */
+    height: 160px;
     object-fit: cover;
     border-radius: 8px;
 }
 
 /* CARD BODY */
 .card-body h3 {
-    font-size: 18px; /* меньше */
+    font-size: 18px;
     margin: 10px 0 6px;
     color: #fff;
 }
 
 .card-body p {
     margin: 4px 0;
-    font-size: 13px; /* меньше */
+    font-size: 13px;
     color: #ccc;
 }
 
@@ -254,7 +254,7 @@ footer {
 
 <header class="navbar">
     <div class="logo">STOCKLAND</div>
-    <div th:replace="fragments/navbar :: navbar"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 </header>
 
 <div class="container">

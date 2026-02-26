@@ -125,24 +125,10 @@ public class PropertyController {
         }
 
         if (bindingResult.hasErrors()) {
-            PropertyRequestDTO dto = PropertyRequestDTO.builder()
-                    .id(property.getId())
-                    .title(property.getTitle())
-                    .location(property.getLocation())
-                    .price(property.getPrice() != null ? String.format("%.2f", property.getPrice()).replace(".", ",") : "")
-                    .description(property.getDescription())
-                    .actionType(property.getActionType())
-                    .propertyType(property.getPropertyType())
-                    .status(property.getStatus())
-                    .area(property.getArea())
-                    .roomCount(property.getRoomCount())
-                    .build();
+            propertyRequestDTO.setId(property.getId());
 
-            String[] images = property.getImages();
-
-            model.addAttribute("propertyRequestDTO", dto);
-            model.addAttribute("images", images);
-
+            model.addAttribute("propertyRequestDTO", propertyRequestDTO);
+            model.addAttribute("images", property.getImages());
             model.addAttribute("actions", ActionType.values());
             model.addAttribute("propertyTypes", PropertyType.values());
             model.addAttribute("redirectUrl", redirectUrl);
