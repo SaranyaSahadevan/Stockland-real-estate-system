@@ -42,42 +42,55 @@ body {
 }
 
 /* NAVBAR */
-.navbar {
-    background: var(--brand-primary);
-    color: #fff;
-    padding: 15px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+        .navbar {
+        background: var(--brand-primary);
+        color: #fff;
+        padding: 6px 20px;
+        height: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        }
+
+.navbar .logo img {
+    height: 90px;
+    width: auto;
+    display: block;
 }
 
-.navbar .logo {
-    font-size: 22px;
-    font-weight: bold;
-    letter-spacing: 1px;
-}
-
-/* NAVBAR BUTTON STYLE (APPLIES TO ALL LINKS INCLUDING LOGOUT) */
-.navbar nav a,
-.navbar form button {
+        .navbar nav a {
     display: inline-block;
-    padding: 10px 18px;
+    padding: 6px 14px;
     margin-left: 12px;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: #ffffff;
-    background: #4a6cf7; /* same blue as other buttons */
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
+    background: rgba(255,255,255,0.12);
+    border-radius: 8px;
     text-decoration: none;
     transition: 0.25s ease;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+}
+.nav-btn {
+    display: inline-block;
+    padding: 6px 14px;
+    margin-left: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    background: rgba(255,255,255,0.12);
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: 0.25s ease;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.25);
 }
 
-.navbar nav a:hover,
-.navbar form button:hover {
-    background: #6f8cff;
+.nav-btn:hover {
+    background: #4a6cf7;
+    color: #fff;
     transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.35);
 }
 
 
@@ -183,21 +196,21 @@ select option {
 /* CARD IMAGE */
 .card-img img {
     width: 100%;
-    height: 160px;
+    height: 160px; /* меньше чем в index.html */
     object-fit: cover;
     border-radius: 8px;
 }
 
 /* CARD BODY */
 .card-body h3 {
-    font-size: 18px;
+    font-size: 18px; /* меньше */
     margin: 10px 0 6px;
     color: #fff;
 }
 
 .card-body p {
     margin: 4px 0;
-    font-size: 13px;
+    font-size: 13px; /* меньше */
     color: #ccc;
 }
 
@@ -253,8 +266,10 @@ footer {
 <body>
 
 <header class="navbar">
-    <div class="logo">STOCKLAND</div>
-    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <a href="/" class="logo">
+        <img src="/images/logo.png" alt="Logo">
+    </a>
+    <div th:replace="fragments/navbar :: navbar"></div>
 </header>
 
 <div class="container">
