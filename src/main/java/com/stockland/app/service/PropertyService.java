@@ -6,6 +6,7 @@ import com.stockland.app.dto.PropertyResponseDTO;
 import com.stockland.app.model.Image;
 import com.stockland.app.model.Property;
 import com.stockland.app.model.User;
+import com.stockland.app.repository.FavoriteRepository;
 import com.stockland.app.repository.ImageRepository;
 import com.stockland.app.repository.PropertyRepository;
 import com.stockland.app.model.ActionType;
@@ -35,11 +36,13 @@ public class PropertyService {
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
+    private final FavoriteRepository favoriteRepository;
 
-    public PropertyService(PropertyRepository propertyRepository, UserRepository userRepository, ImageRepository imageRepository){
+    public PropertyService(PropertyRepository propertyRepository, UserRepository userRepository, ImageRepository imageRepository, FavoriteRepository favoriteRepository){
         this.propertyRepository = propertyRepository;
         this.userRepository = userRepository;
         this.imageRepository = imageRepository;
+        this.favoriteRepository = favoriteRepository;
     }
 
     private Property PropertyBuilder(PropertyRequestDTO propertyRequestDTO){
@@ -164,10 +167,10 @@ public class PropertyService {
 
     @Transactional
     public void deleteById(long id) {
-        if (!propertyRepository.existsById(id)) {
-            throw new RuntimeException("Property not found with id: " + id);
-        }
-        propertyRepository.deleteById(id);
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found with id: " + id));
+        favoriteRepository.deleteByProperty(property);
+        propertyRepository.delete(property);
     }
 
 //    public PropertyResponseDTO updateProperty(Long id, PropertyRequestDTO dto) {

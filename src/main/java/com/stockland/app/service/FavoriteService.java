@@ -33,6 +33,6 @@ public class FavoriteService {
     }
 
     public boolean isFavorite(User user, Property property) {
-        return false;
+        return favoriteRepository.existsByUserAndProperty(user, property);
     }
 }

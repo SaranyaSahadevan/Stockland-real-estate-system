@@ -5,7 +5,11 @@ import com.stockland.app.dto.PropertyRequestDTO;
 import com.stockland.app.dto.PropertyResponseDTO;
 import com.stockland.app.dto.UserResponseDTO;
 import com.stockland.app.model.ActionType;
+import com.stockland.app.model.Property;
 import com.stockland.app.model.PropertyType;
+import com.stockland.app.model.User;
+import com.stockland.app.repository.UserRepository;
+import com.stockland.app.service.FavoriteService;
 import com.stockland.app.service.PropertyService;
 import com.stockland.app.service.UserService;
 import jakarta.validation.Valid;
@@ -14,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,6 +35,12 @@ public class ViewController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    FavoriteService favoriteService;
+
+    @Autowired
+    UserRepository userRepository;
 
     @GetMapping({"/", "/index"})
     public String index(Model model) {
@@ -91,6 +103,19 @@ public class ViewController {
 
         model.addAttribute("user", user);
         model.addAttribute("property", property);
+
+        boolean isFavorite = false;
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+            String username = auth.getName();
+            User currentUser = userRepository.findByUsername(username)
+                    .orElseGet(() -> userRepository.findByEmail(username).orElse(null));
+            if (currentUser != null) {
+                Property propertyEntity = propertyService.getPropertyById(property.getId());
+                isFavorite = favoriteService.isFavorite(currentUser, propertyEntity);
+            }
+        }
+        model.addAttribute("isFavorite", isFavorite);
 
         return "property";
     }
