@@ -7,128 +7,331 @@
 
     <style>
         :root {
-            --brand-primary: #1f3c88;
-            --brand-primary-dark: #162b5c;
-            --brand-accent: #4a6cf7;
-            --bg-light: #f5f5f5;
-            --bg-white: #ffffff;
-            --text-dark: #222;
-            --text-light: #666;
-            --radius: 8px;
-            --shadow: 0 2px 6px rgba(0,0,0,0.08);
-            --transition: 0.25s ease;
-        }
+        --brand-primary: #1f3c88;
+  --brand-primary-dark: #162b5c;
+  --brand-accent: #4a6cf7;
+  --text-light: #ccc;
+  --text-muted: #999;
+  --radius: 8px;
+  --transition: 0.25s ease;
+}
 
-        body { margin:0; font-family:Arial, sans-serif; background:var(--bg-light); color:var(--text-dark); }
-        a { color: var(--brand-primary); text-decoration:none; transition: var(--transition); }
-        a:hover { color: var(--brand-accent); }
+.dashboard-container {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 20px;
+}
 
-        .navbar { background: var(--brand-primary); color:#fff; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; }
-        .navbar .logo { font-size:22px; font-weight:bold; letter-spacing:1px; }
-        .navbar nav a { color:#fff; margin-left:18px; font-size:14px; }
-        .navbar nav a:hover { color:#dfe6ff; }
+/* BACKGROUND LIKE INDEX.HTML */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #eee;
 
-        @media (max-width:700px){
-            .navbar { flex-direction:column; align-items:flex-start; }
-            .navbar nav { margin-top:10px; display:flex; flex-wrap:wrap; gap:10px; }
-        }
+  background: linear-gradient(120deg,
+      #141824,
+      #1f2a3d,
+      #263a55,
+      #1c2740,
+      #141824
+  );
+  background-size: 400% 400%;
+  animation: gradientFlow 16s ease infinite;
+}
 
-        .container { max-width:1600px; margin:25px auto; padding:0 30px; }
-        h1 { margin-top:0; font-size:26px; }
+@keyframes gradientFlow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 
-        .layout { display:grid; grid-template-columns:260px 1fr; gap:20px; }
-        @media (max-width:900px){ .layout { grid-template-columns:1fr; } }
+/* NAVBAR */
+.navbar {
+  background: var(--brand-primary);
+  color: #fff;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.navbar .logo {
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+.navbar nav a {
+  display: inline-block;
+  padding: 10px 18px;
+  margin-left: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background: rgba(255,255,255,0.12);
+  border-radius: 10px;
+  text-decoration: none;
+  transition: 0.25s ease;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+}
 
-        .sidebar { background:var(--bg-white); padding:20px; border-radius:var(--radius); box-shadow:var(--shadow); }
-        .sidebar h2 { margin-top:0; font-size:18px; }
-        .sidebar p { margin:6px 0; font-size:14px; }
-        .btn-logout { display:inline-block; margin-top:10px; padding:8px 12px; background:#eee; border-radius:6px; font-size:13px; color:#444; }
-        .btn-logout:hover { background:#ddd; }
+.navbar nav a:hover {
+  background: #4a6cf7;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+}
 
-        .card { background:var(--bg-white); padding:20px; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:20px; }
-        .card h2 { margin-top:0; font-size:20px; }
+/* TOAST */
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2e7d32;
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  font-size: 15px;
+  z-index: 9999;
+  animation: fadeInOut 4s forwards;
+}
+@keyframes fadeInOut {
+  0%   { opacity: 0; top: 10px; }
+  10%  { opacity: 1; top: 20px; }
+  80%  { opacity: 1; top: 20px; }
+  100% { opacity: 0; top: 10px; }
+}
 
-        table { width:100%; border-collapse:collapse; background:var(--bg-white); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
-        th { background:#eef1ff; padding:10px 8px; text-align:center; font-size:13px; }
-        td { padding:10px 8px; border-bottom:1px solid #eee; font-size:13px; text-align:center; }
-        tr:hover td { background:#fafbff; }
+/* CONTAINER */
+.container {
+  max-width: 1300px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
 
-        .table-scroll { overflow-x:auto; }
+/* PAGE TITLE */
+h1 {
+  font-size: 30px;
+  margin-bottom: 20px;
+  color: #fff;
+}
+.admin-badge {
+  background: #c0392b;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-left: 10px;
+}
 
-        .actions a { margin-right:10px; font-size:13px; }
+/* LAYOUT */
+.layout {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 25px;
+}
 
-        .btn-primary { padding:8px 14px; background:var(--brand-primary); color:#fff; border-radius:6px; font-size:14px; }
-        .btn-primary:hover { background:var(--brand-primary-dark); }
+/* SIDEBAR */
+.sidebar {
+  width: 100%;
+  height: fit-content;
+  margin: 0;
+  padding: 30px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+  backdrop-filter: blur(6px);
+}
 
-        footer { text-align:center; padding:20px; font-size:13px; color:var(--text-light); margin-top:40px; }
+.sidebar h2 {
+  margin-top: 0;
+  font-size: 20px;
+  color: #fff;
+}
+.sidebar p {
+  font-size: 14px;
+  color: var(--text-light);
+  margin: 6px 0;
+}
+.btn-logout {
+  margin-top: 15px;
+  background: #c0392b;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  border: none;
+  width: 100%;
+  font-size: 15px;
+  transition: var(--transition);
+}
+.btn-logout:hover {
+  background: #e74c3c;
+}
 
-        .toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #2e7d32;
-            color: #fff;
-            padding: 14px 24px;
-            border-radius: var(--radius);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            font-size: 15px;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            animation: fadeInOut 4s forwards;
-        }
-        @keyframes fadeInOut {
-            0%   { opacity: 0; top: 10px; }
-            10%  { opacity: 1; top: 20px; }
-            80%  { opacity: 1; top: 20px; }
-            100% { opacity: 0; top: 10px; }
-        }
-        .btn-danger { padding:6px 12px; background:#c0392b; color:#fff; border:none; border-radius:6px; font-size:13px; cursor:pointer; transition: var(--transition); }
-        .btn-danger:hover { background:#a93226; }
-        .btn-edit { padding:6px 12px; background:#e67e22; color:#fff; border-radius:6px; font-size:13px; text-decoration:none; transition: var(--transition); }
-        .btn-edit:hover { background:#ca6f1e; color:#fff; }
-        .admin-badge { display:inline-block; background:#c0392b; color:#fff; font-size:11px; padding:2px 8px; border-radius:20px; vertical-align:middle; margin-left:8px; }
+/* CARDS */
+.card {
+  background: rgba(255,255,255,0.06);
+  padding: 25px;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+  backdrop-filter: blur(6px);
+  margin-bottom: 30px;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+.card h2 {
+  margin-top: 0;
+  font-size: 22px;
+  color: #fff;
+}
 
-        .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:bold; }
-        .badge-pending  { background:#fff3cd; color:#856404; border:1px solid #ffc107; }
-        .badge-approved { background:#d1e7dd; color:#155724; border:1px solid #28a745; }
-        .badge-rejected { background:#f8d7da; color:#721c24; border:1px solid #dc3545; }
-        .btn-approve { padding:6px 12px; background:#27ae60; color:#fff; border:none; border-radius:6px; font-size:13px; cursor:pointer; transition: var(--transition); }
-        .btn-approve:hover { background:#1e8449; }
-        .pending-count { display:inline-block; background:#ffc107; color:#333; font-size:12px; padding:2px 8px; border-radius:20px; margin-left:8px; font-weight:bold; }
+/* FILTER BAR */
+.filter-bar {
+  margin: 15px 0 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.filter-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.1);
+  color: #eee;
+  font-size: 13px;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.filter-btn:hover {
+  background: rgba(255,255,255,0.2);
+}
+.active { background: rgba(255,255,255,0.3); }
+.active-pending { background: #f1c40f; color: #000; }
+.active-approved { background: #2ecc71; }
+.active-rejected { background: #e74c3c; }
 
-        .btn-feature {
-            padding:4px 10px; border:none; border-radius:6px; font-size:16px;
-            cursor:pointer; background:transparent; transition: var(--transition);
-            line-height:1;
-        }
-        .btn-feature:hover { transform: scale(1.25); }
+/* TABLES */
+.table-scroll {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  color: #eee;
+}
+thead {
+  background: rgba(255,255,255,0.08);
+}
+th, td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+tbody tr:hover {
+  background: rgba(255,255,255,0.05);
+}
 
-        /* Admin filter bar */
-        .filter-bar { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; align-items:center; }
-        .filter-bar span { font-size:13px; color:var(--text-light); margin-right:4px; }
-        .filter-btn {
-            display:inline-block; padding:5px 14px; border-radius:20px; font-size:13px; font-weight:600;
-            border:2px solid transparent; cursor:pointer; text-decoration:none; transition:var(--transition);
-            background:#eef1ff; color:var(--brand-primary);
-        }
-        .filter-btn:hover { background:var(--brand-accent); color:#fff; border-color:var(--brand-accent); }
-        .filter-btn.active { background:var(--brand-primary); color:#fff; border-color:var(--brand-primary); }
-        .filter-btn.active-pending  { background:#856404; color:#fff; border-color:#ffc107; }
-        .filter-btn.active-approved { background:#155724; color:#fff; border-color:#28a745; }
-        .filter-btn.active-rejected { background:#721c24; color:#fff; border-color:#dc3545; }
+/* SORTABLE HEADERS */
+.sortable a {
+  color: #fff;
+  text-decoration: none;
+}
+.sort-active {
+  color: var(--brand-accent);
+}
+.sort-icon {
+  margin-left: 6px;
+  font-size: 12px;
+}
 
-        /* Sortable column headers */
-        th.sortable a {
-            display: inline-flex; align-items: center; gap: 4px;
-            color: var(--brand-primary); text-decoration: none; font-weight: 700;
-            transition: var(--transition);
-        }
-        th.sortable a:hover { color: var(--brand-accent); }
-        th.sortable a .sort-icon { font-size: 10px; color: #aaa; }
-        th.sortable a.sort-active .sort-icon { color: var(--brand-primary); }
+/* BADGES */
+.badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.badge-pending { background: #f1c40f; color: #000; }
+.badge-approved { background: #2ecc71; }
+.badge-rejected { background: #e74c3c; }
+
+/* BUTTONS */
+
+.btn-secondary {
+  display: inline-block;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #eee;
+  background: rgba(255, 0, 0, 1);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.28);
+  border-color: rgba(255,255,255,0.45);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.btn-primary,
+.btn-edit,
+.btn-danger,
+.btn-approve,
+.btn-feature,
+.btn-secondary {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-primary { background: var(--brand-primary); color: #fff; }
+.btn-primary:hover { background: var(--brand-primary-dark); }
+
+.btn-edit { background: #2980b9; color: #fff; }
+.btn-edit:hover { background: #3498db; }
+
+.btn-danger { background: #c0392b; color: #fff; }
+.btn-danger:hover { background: #e74c3c; }
+
+.btn-approve { background: #27ae60; color: #fff; }
+.btn-approve:hover { background: #2ecc71; }
+
+.btn-feature {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 18px;
+  padding: 4px 10px;
+}
+.btn-feature:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 13px;
+  color: #aaa;
+  margin-top: 40px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .layout {
+      flex-direction: column;
+  }
+  .sidebar {
+      width: 100%;
+  }
+}
     </style>
 </head>
 <body>
@@ -155,7 +358,7 @@
 
 <header class="navbar">
     <div class="logo">STOCKLAND</div>
-    <div th:replace="fragments/navbar :: navbar"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 </header>
 
 <div class="container">
@@ -349,118 +552,118 @@
                 </div>
 
                 <div class="table-scroll">
-                <table>
-                    <thead>
-                    <tr>
-                        <th class="sortable"
-                            th:with="active=${sortField == 'id'}, nextDir=${sortField == 'id' and sortDir == 'asc'} ? 'desc' : 'asc'">
-                            <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='id', dir=${nextDir})}"
-                               th:classappend="${active} ? 'sort-active' : ''">
-                                ID <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
-                            </a>
-                        </th>
-                        <th class="sortable"
-                            th:with="active=${sortField == 'title'}, nextDir=${sortField == 'title' and sortDir == 'asc'} ? 'desc' : 'asc'">
-                            <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='title', dir=${nextDir})}"
-                               th:classappend="${active} ? 'sort-active' : ''">
-                                Title <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
-                            </a>
-                        </th>
-                        <th class="sortable"
-                            th:with="active=${sortField == 'owner'}, nextDir=${sortField == 'owner' and sortDir == 'asc'} ? 'desc' : 'asc'">
-                            <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='owner', dir=${nextDir})}"
-                               th:classappend="${active} ? 'sort-active' : ''">
-                                Owner <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
-                            </a>
-                        </th>
-                        <th class="sortable"
-                            th:with="active=${sortField == 'location'}, nextDir=${sortField == 'location' and sortDir == 'asc'} ? 'desc' : 'asc'">
-                            <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='location', dir=${nextDir})}"
-                               th:classappend="${active} ? 'sort-active' : ''">
-                                Location <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
-                            </a>
-                        </th>
-                        <th class="sortable"
-                            th:with="active=${sortField == 'price'}, nextDir=${sortField == 'price' and sortDir == 'asc'} ? 'desc' : 'asc'">
-                            <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='price', dir=${nextDir})}"
-                               th:classappend="${active} ? 'sort-active' : ''">
-                                Price <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
-                            </a>
-                        </th>
-                        <th class="sortable"
-                            th:with="active=${sortField == 'status'}, nextDir=${sortField == 'status' and sortDir == 'asc'} ? 'desc' : 'asc'">
-                            <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='status', dir=${nextDir})}"
-                               th:classappend="${active} ? 'sort-active' : ''">
-                                Status <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
-                            </a>
-                        </th>
-                        <th class="sortable"
-                            th:with="active=${sortField == 'createdat'}, nextDir=${sortField == 'createdat' and sortDir == 'asc'} ? 'desc' : 'asc'">
-                            <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='createdat', dir=${nextDir})}"
-                               th:classappend="${active} ? 'sort-active' : ''">
-                                Created At <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
-                            </a>
-                        </th>
-                        <th>Moderation</th>
-                        <th>Actions</th>
-                        <th>Review</th>
-                        <th class="sortable"
-                            th:with="active=${sortField == 'featured'}, nextDir=${sortField == 'featured' and sortDir == 'asc'} ? 'desc' : 'asc'">
-                            <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='featured', dir=${nextDir})}"
-                               th:classappend="${active} ? 'sort-active' : ''">
-                                Featured <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
-                            </a>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="p : ${allListings}">
-                        <td th:text="${p.id}"></td>
-                        <td th:text="${p.title}"></td>
-                        <td th:text="${p.username}"></td>
-                        <td th:text="${p.location}"></td>
-                        <td style="white-space: nowrap;"><span th:text="${#numbers.formatDecimal(p.price, 1, 'WHITESPACE', 2, 'COMMA')}"></span> €</td>
-                        <td th:text="${p.status}"></td>
-                        <td style="white-space:nowrap; font-size:13px; color:var(--text-light);">
-                            <span th:if="${p.createdAt != null}" th:text="${#temporals.format(p.createdAt, 'dd MMM yyyy HH:mm', #locale.forLanguageTag('en'))}"></span>
-                            <span th:if="${p.createdAt == null}" style="color:#ccc;">—</span>
-                        </td>
-                        <td>
-                            <span th:if="${p.moderationStatus?.name() == 'PENDING'}"  class="badge badge-pending">Pending</span>
-                            <span th:if="${p.moderationStatus?.name() == 'APPROVED'}" class="badge badge-approved">Approved</span>
-                            <span th:if="${p.moderationStatus?.name() == 'REJECTED'}" class="badge badge-rejected">Rejected</span>
-                        </td>
-                        <td style="white-space:nowrap; vertical-align:middle;">
-                            <a th:href="@{/property/{id}(id=${p.id})}" class="btn-primary" style="padding:6px 12px; font-size:13px; margin-right:4px;">View</a>
-                            <a th:href="@{/properties/edit/{id}(id=${p.id}, redirectUrl='/property/' + ${p.id})}" class="btn-edit" style="margin-right:4px;">Edit</a>
-                            <form th:action="@{/properties/delete/{id}(id=${p.id})}" method="post" style="display:inline;"
-                                  onsubmit="return confirm('Delete this listing? This cannot be undone.');">
-                                <button type="submit" class="btn-danger">Delete</button>
-                            </form>
-                        </td>
-                        <td style="white-space:nowrap; vertical-align:middle;">
-                            <form th:if="${p.moderationStatus?.name() != 'APPROVED'}" th:action="@{/properties/approve/{id}(id=${p.id})}" method="post" style="display:inline; margin-right:4px;">
-                                <input type="hidden" name="redirectUrl" value="/dashboard?approved">
-                                <button type="submit" class="btn-approve">Approve</button>
-                            </form>
-                            <form th:if="${p.moderationStatus?.name() != 'REJECTED'}" th:action="@{/properties/reject/{id}(id=${p.id})}" method="post" style="display:inline;">
-                                <input type="hidden" name="redirectUrl" value="/dashboard?rejected">
-                                <button type="submit" class="btn-danger">Reject</button>
-                            </form>
-                        </td>
-                        <td style="text-align:center; vertical-align:middle;">
-                            <form th:action="@{/properties/feature/{id}(id=${p.id})}" method="post" style="display:inline;">
-                                <button type="submit" class="btn-feature"
-                                        th:title="${p.featured} ? 'Remove from home page' : 'Show on home page'"
-                                        th:text="${p.featured} ? '⭐' : '☆'">☆</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(allListings)}">
-                        <td colspan="11">No listings in the system.</td>
-                    </tr>
-                    </tbody>
-                </table>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th class="sortable"
+                                th:with="active=${sortField == 'id'}, nextDir=${sortField == 'id' and sortDir == 'asc'} ? 'desc' : 'asc'">
+                                <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='id', dir=${nextDir})}"
+                                   th:classappend="${active} ? 'sort-active' : ''">
+                                    ID <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                                </a>
+                            </th>
+                            <th class="sortable"
+                                th:with="active=${sortField == 'title'}, nextDir=${sortField == 'title' and sortDir == 'asc'} ? 'desc' : 'asc'">
+                                <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='title', dir=${nextDir})}"
+                                   th:classappend="${active} ? 'sort-active' : ''">
+                                    Title <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                                </a>
+                            </th>
+                            <th class="sortable"
+                                th:with="active=${sortField == 'owner'}, nextDir=${sortField == 'owner' and sortDir == 'asc'} ? 'desc' : 'asc'">
+                                <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='owner', dir=${nextDir})}"
+                                   th:classappend="${active} ? 'sort-active' : ''">
+                                    Owner <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                                </a>
+                            </th>
+                            <th class="sortable"
+                                th:with="active=${sortField == 'location'}, nextDir=${sortField == 'location' and sortDir == 'asc'} ? 'desc' : 'asc'">
+                                <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='location', dir=${nextDir})}"
+                                   th:classappend="${active} ? 'sort-active' : ''">
+                                    Location <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                                </a>
+                            </th>
+                            <th class="sortable"
+                                th:with="active=${sortField == 'price'}, nextDir=${sortField == 'price' and sortDir == 'asc'} ? 'desc' : 'asc'">
+                                <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='price', dir=${nextDir})}"
+                                   th:classappend="${active} ? 'sort-active' : ''">
+                                    Price <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                                </a>
+                            </th>
+                            <th class="sortable"
+                                th:with="active=${sortField == 'status'}, nextDir=${sortField == 'status' and sortDir == 'asc'} ? 'desc' : 'asc'">
+                                <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='status', dir=${nextDir})}"
+                                   th:classappend="${active} ? 'sort-active' : ''">
+                                    Status <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                                </a>
+                            </th>
+                            <th class="sortable"
+                                th:with="active=${sortField == 'createdat'}, nextDir=${sortField == 'createdat' and sortDir == 'asc'} ? 'desc' : 'asc'">
+                                <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='createdat', dir=${nextDir})}"
+                                   th:classappend="${active} ? 'sort-active' : ''">
+                                    Created At <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                                </a>
+                            </th>
+                            <th>Moderation</th>
+                            <th>Actions</th>
+                            <th>Review</th>
+                            <th class="sortable"
+                                th:with="active=${sortField == 'featured'}, nextDir=${sortField == 'featured' and sortDir == 'asc'} ? 'desc' : 'asc'">
+                                <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='featured', dir=${nextDir})}"
+                                   th:classappend="${active} ? 'sort-active' : ''">
+                                    Featured <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                                </a>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="p : ${allListings}">
+                            <td th:text="${p.id}"></td>
+                            <td th:text="${p.title}"></td>
+                            <td th:text="${p.username}"></td>
+                            <td th:text="${p.location}"></td>
+                            <td style="white-space: nowrap;"><span th:text="${#numbers.formatDecimal(p.price, 1, 'WHITESPACE', 2, 'COMMA')}"></span> €</td>
+                            <td th:text="${p.status}"></td>
+                            <td style="white-space:nowrap; font-size:13px; color:var(--text-light);">
+                                <span th:if="${p.createdAt != null}" th:text="${#temporals.format(p.createdAt, 'dd MMM yyyy HH:mm', #locale.forLanguageTag('en'))}"></span>
+                                <span th:if="${p.createdAt == null}" style="color:#ccc;">—</span>
+                            </td>
+                            <td>
+                                <span th:if="${p.moderationStatus?.name() == 'PENDING'}"  class="badge badge-pending">Pending</span>
+                                <span th:if="${p.moderationStatus?.name() == 'APPROVED'}" class="badge badge-approved">Approved</span>
+                                <span th:if="${p.moderationStatus?.name() == 'REJECTED'}" class="badge badge-rejected">Rejected</span>
+                            </td>
+                            <td style="white-space:nowrap; vertical-align:middle;">
+                                <a th:href="@{/property/{id}(id=${p.id})}" class="btn-primary" style="padding:6px 12px; font-size:13px; margin-right:4px;">View</a>
+                                <a th:href="@{/properties/edit/{id}(id=${p.id}, redirectUrl='/property/' + ${p.id})}" class="btn-edit" style="margin-right:4px;">Edit</a>
+                                <form th:action="@{/properties/delete/{id}(id=${p.id})}" method="post" style="display:inline;"
+                                      onsubmit="return confirm('Delete this listing? This cannot be undone.');">
+                                    <button type="submit" class="btn-danger">Delete</button>
+                                </form>
+                            </td>
+                            <td style="white-space:nowrap; vertical-align:middle;">
+                                <form th:if="${p.moderationStatus?.name() != 'APPROVED'}" th:action="@{/properties/approve/{id}(id=${p.id})}" method="post" style="display:inline; margin-right:4px;">
+                                    <input type="hidden" name="redirectUrl" value="/dashboard?approved">
+                                    <button type="submit" class="btn-approve">Approve</button>
+                                </form>
+                                <form th:if="${p.moderationStatus?.name() != 'REJECTED'}" th:action="@{/properties/reject/{id}(id=${p.id})}" method="post" style="display:inline;">
+                                    <input type="hidden" name="redirectUrl" value="/dashboard?rejected">
+                                    <button type="submit" class="btn-danger">Reject</button>
+                                </form>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle;">
+                                <form th:action="@{/properties/feature/{id}(id=${p.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn-feature"
+                                            th:title="${p.featured} ? 'Remove from home page' : 'Show on home page'"
+                                            th:text="${p.featured} ? '⭐' : '☆'">☆</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(allListings)}">
+                            <td colspan="11">No listings in the system.</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 

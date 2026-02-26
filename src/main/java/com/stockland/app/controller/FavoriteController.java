@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class FavoriteController {
@@ -49,5 +50,18 @@ public class FavoriteController {
         Property property = propertyService.getPropertyById(id);
         favoriteService.removeFavorite(user, property);
         return "redirect:/dashboard";
+    }
+    @PostMapping("/favorites/toggle/{id}")
+    public String toggleFavorite(@PathVariable Long id) {
+        User user = getCurrentUser();
+        Property property = propertyService.getPropertyById(id);
+
+        if (favoriteService.isFavorite(user, property)) {
+            favoriteService.removeFavorite(user, property);
+        } else {
+            favoriteService.addFavorite(user, property);
+        }
+
+        return "redirect:/property/" + id;
     }
 }
