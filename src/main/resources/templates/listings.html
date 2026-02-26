@@ -219,7 +219,6 @@
                 <p th:text="${p.actionType}">Action</p>
                 <p style="white-space: nowrap;"><span th:text="${#numbers.formatDecimal(p.price, 1, 'WHITESPACE', 2, 'COMMA')}">0</span> €</p>
                 <p th:text="${p.status}">status</p>
-                <p th:text="${p.description}">description</p>
             </div>
             <div class="card-footer">
                 <a th:href="@{/property/{id}(id=${p.id})}">View</a>
