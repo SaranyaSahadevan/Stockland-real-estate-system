@@ -142,12 +142,15 @@
     <h1>Edit Listing</h1>
 
     <div class="card">
-        <form th:action="@{/properties/edit/{id}(id=${propertyRequestDTO.id})}"
+        <form id="propertyForm"
+              th:action="@{/properties/edit/{id}(id=${propertyRequestDTO.id})}"
               th:object="${propertyRequestDTO}"
               method="post"
               enctype="multipart/form-data">
 
             <input type="hidden" name="redirectUrl" th:value="${redirectUrl}">
+
+            <input type="hidden" th:field="*{id}">
 
             <div class="full">
                 <label>Title</label>
@@ -198,6 +201,18 @@
             </div>
 
             <div>
+                <label>Area (m²)</label>
+                <input type="number" min="0" placeholder="100.00" th:field="*{area}">
+                <p th:if="${#fields.hasErrors('area')}" th:errors="*{area}" class="input-error"></p>
+            </div>
+
+            <div>
+                <label>Rooms</label>
+                <input type="number" min="0" placeholder="1" th:field="*{roomCount}">
+                <p th:if="${#fields.hasErrors('roomCount')}" th:errors="*{roomCount}" class="input-error"></p>
+            </div>
+
+            <div>
                 <label>Status</label>
                 <select th:field="*{status}">
                     <option value="">Select status</option>
@@ -227,6 +242,7 @@
 
                 <label>Add More Images</label>
                 <input type="file" name="imageFiles" multiple accept="image/*">
+                <p th:if="${errorMessage}" th:text="${errorMessage}" class="input-error"></p>
             </div>
 
             <div class="actions full">
@@ -245,6 +261,38 @@
 </footer>
 
 <div th:replace="~{fragments/chatbot :: chatbot}"></div>
+
+<script>
+    const myForm = document.getElementById('propertyForm');
+
+    if (myForm) {
+        myForm.addEventListener('submit', function(e) {
+            console.log("Validation script triggered!");
+
+            const fileInput = document.querySelector('input[name="imageFiles"]');
+            const maxFiles = 20;
+
+            if (fileInput && fileInput.files.length > maxFiles) {
+                alert("Too many files! Max allowed: " + maxFiles);
+                e.preventDefault();
+                return false;
+            }
+
+            let totalSize = 0;
+            for (let i = 0; i < fileInput.files.length; i++) {
+                totalSize += fileInput.files[i].size;
+            }
+
+            if (totalSize > 50 * 1024 * 1024) {
+                alert("Total file size exceeds storage limit.");
+                e.preventDefault();
+                return false;
+            }
+        });
+    } else {
+        console.error("Could not find propertyForm ID!");
+    }
+</script>
 </body>
 </html>
 

@@ -107,7 +107,7 @@ public class PropertyController {
                                @AuthenticationPrincipal UserDetails userDetails,
                                @Valid PropertyRequestDTO propertyRequestDTO,
                                BindingResult bindingResult,
-                               @RequestParam("imageFiles") MultipartFile[] imageFiles,
+                               @RequestParam(value = "imageFiles", required = false) MultipartFile[] imageFiles,
                                @RequestParam(value = "deleteImageIds", required = false) List<String> imageUrlsToDelete,
                                @RequestParam(value = "redirectUrl", defaultValue = "/dashboard") String redirectUrl,
                                HttpServletRequest request,
@@ -125,6 +125,24 @@ public class PropertyController {
         }
 
         if (bindingResult.hasErrors()) {
+            PropertyRequestDTO dto = PropertyRequestDTO.builder()
+                    .id(property.getId())
+                    .title(property.getTitle())
+                    .location(property.getLocation())
+                    .price(property.getPrice() != null ? String.format("%.2f", property.getPrice()).replace(".", ",") : "")
+                    .description(property.getDescription())
+                    .actionType(property.getActionType())
+                    .propertyType(property.getPropertyType())
+                    .status(property.getStatus())
+                    .area(property.getArea())
+                    .roomCount(property.getRoomCount())
+                    .build();
+
+            String[] images = property.getImages();
+
+            model.addAttribute("propertyRequestDTO", dto);
+            model.addAttribute("images", images);
+
             model.addAttribute("actions", ActionType.values());
             model.addAttribute("propertyTypes", PropertyType.values());
             model.addAttribute("redirectUrl", redirectUrl);
@@ -139,7 +157,7 @@ public class PropertyController {
     public String createProperty(@AuthenticationPrincipal UserDetails userDetails,
                                  @Valid PropertyRequestDTO propertyRequestDTO,
                                  BindingResult bindingResult,
-                                 @RequestParam("imageFiles") MultipartFile[] imageFiles,
+                                 @RequestParam(value = "imageFiles" , required = false) MultipartFile[] imageFiles,
                                  Model model){
         if (bindingResult.hasErrors()) {
             model.addAttribute("actions", ActionType.values());
