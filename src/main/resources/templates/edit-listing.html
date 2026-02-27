@@ -48,9 +48,9 @@
             align-items: center;
         }
         .navbar .logo {
-            font-size: 22px;
-            font-weight: bold;
             letter-spacing: 1px;
+            display: flex;
+            align-items: center;
         }
         .navbar nav a {
     display: inline-block;
@@ -122,7 +122,7 @@
             display: block;
             margin-bottom: 4px;
             font-size: 14px;
-            color: #ddd;
+            color: #cfd8ff;
         }
 
         /* INPUTS */
@@ -137,6 +137,18 @@
             color: #eee;
             box-sizing: border-box;
             font-size: 14px;
+            transition: var(--transition);
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--brand-accent);
+            box-shadow: 0 0 6px rgba(74,108,247,0.6);
+            outline: none;
+        }
+        select option {
+            background: #ffffff !important;
+            color: #222 !important;
         }
         textarea {
             resize: vertical;
@@ -144,7 +156,7 @@
         }
         input::placeholder,
         textarea::placeholder {
-            color: #888;
+            color: #9ca3c7;
         }
 
         /* IMAGE PREVIEW */
@@ -214,7 +226,7 @@
 <body>
 
 <header class="navbar">
-    <div class="logo">STOCKLAND</div>
+    <div class="logo"><img th:src="@{/images/logo.png}" alt="Stockland" style="height:80px;vertical-align:middle;margin-top:-20px;margin-bottom:-20px;"></div>
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 </header>
 

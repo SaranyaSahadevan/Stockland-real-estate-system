@@ -42,8 +42,9 @@
             align-items: center;
         }
         .navbar .logo {
-            font-size: 22px;
-            font-weight: bold;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
         }
 
         .navbar nav a {
@@ -270,7 +271,7 @@ max-width: 500px;
 <body>
 
 <header class="navbar">
-    <div class="logo">STOCKLAND</div>
+    <div class="logo"><img th:src="@{/images/logo.png}" alt="Stockland" style="height:80px;vertical-align:middle;margin-top:-20px;margin-bottom:-20px;"></div>
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 </header>
 
@@ -457,5 +458,6 @@ max-width: 500px;
     });
 </script>
 
+<div th:replace="~{fragments/chatbot :: chatbot}"></div>
 </body>
 </html>

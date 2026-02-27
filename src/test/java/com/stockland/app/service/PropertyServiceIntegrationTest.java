@@ -3,15 +3,16 @@ package com.stockland.app.service;
 import com.stockland.app.dto.PropertyFilterRequestDTO;
 import com.stockland.app.dto.PropertyResponseDTO;
 import com.stockland.app.model.*;
+import com.stockland.app.repository.FavoriteRepository;
+import com.stockland.app.repository.ImageRepository;
 import com.stockland.app.repository.PropertyRepository;
 import com.stockland.app.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
@@ -20,8 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Import(PropertyService.class)
 class PropertyServiceIntegrationTest {
+
+    @MockitoBean
+    private CloudinaryServiceImpl cloudinaryService;
 
     @Autowired
     private PropertyService propertyService;
@@ -32,9 +35,17 @@ class PropertyServiceIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ImageRepository imageRepository;
+
+    @Autowired
+    private FavoriteRepository favoriteRepository;
+
     // The setUp method initializes the test data before each test case is executed.
     @BeforeEach
     void setUp() {
+        favoriteRepository.deleteAll();
+        imageRepository.deleteAll();
         propertyRepository.deleteAll();
         userRepository.deleteAll();
 
@@ -46,10 +57,13 @@ class PropertyServiceIntegrationTest {
                 .fullName("John Doe")
                 .build());
 
+        // area=80, rooms=3, price=120k, BUY, APARTMENTS, available, APPROVED
         propertyRepository.save(Property.builder()
                 .title("Downtown Apartment")
                 .location("Riga")
                 .price(120000.0)
+                .area(80.0)
+                .roomCount(3)
                 .actionType(ActionType.BUY)
                 .propertyType(PropertyType.APARTMENTS)
                 .status("available")
@@ -57,22 +71,49 @@ class PropertyServiceIntegrationTest {
                 .user(savedUser)
                 .build());
 
+        // area=200, rooms=6, price=300k, RENT, HOUSE, sold, APPROVED
         propertyRepository.save(Property.builder()
                 .title("City House")
                 .location("Jurmala")
                 .price(300000.0)
+                .area(200.0)
+                .roomCount(6)
                 .actionType(ActionType.RENT)
                 .propertyType(PropertyType.HOUSE)
                 .status("sold")
                 .moderationStatus(ModerationStatus.APPROVED)
                 .user(savedUser)
                 .build());
+
+        // PENDING — must never appear in search results (base spec filters it out)
+        propertyRepository.save(Property.builder()
+                .title("Pending Property")
+                .location("Liepaja")
+                .price(50000.0)
+                .area(50.0)
+                .roomCount(1)
+                .actionType(ActionType.BUY)
+                .propertyType(PropertyType.APARTMENTS)
+                .status("available")
+                .moderationStatus(ModerationStatus.PENDING)
+                .user(savedUser)
+                .build());
     }
 
-    // Each test focuses on verifying that the correct lambda is executed for the corresponding filter field
+    // ── base moderationStatus == APPROVED spec ────────────────────────────────
 
-    // For example, when filtering by location, we check that only properties with "riga" in the location are returned,
-    // which indicates that the cb.like lambda for location is working as expected.
+    @Test
+    @DisplayName("Base spec — only APPROVED properties returned; PENDING excluded")
+    void searchProperties_BaseSpec_ExcludesPending() {
+        Page<PropertyResponseDTO> result = propertyService
+                .searchPropertiesWithFilterSortAndPagination(new PropertyFilterRequestDTO(), Pageable.unpaged());
+
+        assertEquals(2, result.getTotalElements());
+        assertTrue(result.getContent().stream().noneMatch(p -> p.getTitle().equals("Pending Property")));
+    }
+
+    // ── location ──────────────────────────────────────────────────────────────
+
     @Test
     @DisplayName("Filter by location — cb.like on location executes")
     void searchProperties_FilterByLocation_ExecutesLambda() {
@@ -86,8 +127,8 @@ class PropertyServiceIntegrationTest {
         assertEquals("Downtown Apartment", result.getContent().get(0).getTitle());
     }
 
-    // Similarly, for price filters, we check that the correct properties are returned based on the minPrice and maxPrice values,
-    // which confirms that the cb.greaterThanOrEqualTo and cb.lessThanOrEqual
+    // ── price ─────────────────────────────────────────────────────────────────
+
     @Test
     @DisplayName("Filter by minPrice — cb.greaterThanOrEqualTo on price executes")
     void searchProperties_FilterByMinPrice_ExecutesLambda() {
@@ -101,8 +142,6 @@ class PropertyServiceIntegrationTest {
         assertEquals("City House", result.getContent().get(0).getTitle());
     }
 
-    // By testing each filter individually and then all combined, we can be confident that the correct lambdas are
-    // executed for each filter field in the searchPropertiesWithFilterSortAndPagination method.
     @Test
     @DisplayName("Filter by maxPrice — cb.lessThanOrEqualTo on price executes")
     void searchProperties_FilterByMaxPrice_ExecutesLambda() {
@@ -116,8 +155,64 @@ class PropertyServiceIntegrationTest {
         assertEquals("Downtown Apartment", result.getContent().get(0).getTitle());
     }
 
-    // For enum filters like actionType and propertyType, we check that only properties matching the specified
-    // enum value are returned, which confirms that the cb.equal lambda for those fields is working correctly.
+    // ── area ──────────────────────────────────────────────────────────────────
+
+    @Test
+    @DisplayName("Filter by minArea — cb.greaterThanOrEqualTo on area executes")
+    void searchProperties_FilterByMinArea_ExecutesLambda() {
+        PropertyFilterRequestDTO filter = new PropertyFilterRequestDTO();
+        filter.setMinArea(150.0);   // only City House (200) qualifies
+
+        Page<PropertyResponseDTO> result = propertyService
+                .searchPropertiesWithFilterSortAndPagination(filter, Pageable.unpaged());
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals("City House", result.getContent().get(0).getTitle());
+    }
+
+    @Test
+    @DisplayName("Filter by maxArea — cb.lessThanOrEqualTo on area executes")
+    void searchProperties_FilterByMaxArea_ExecutesLambda() {
+        PropertyFilterRequestDTO filter = new PropertyFilterRequestDTO();
+        filter.setMaxArea(100.0);   // only Downtown Apartment (80) qualifies
+
+        Page<PropertyResponseDTO> result = propertyService
+                .searchPropertiesWithFilterSortAndPagination(filter, Pageable.unpaged());
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals("Downtown Apartment", result.getContent().get(0).getTitle());
+    }
+
+    // ── rooms ─────────────────────────────────────────────────────────────────
+
+    @Test
+    @DisplayName("Filter by minRooms — cb.greaterThanOrEqualTo on roomCount executes")
+    void searchProperties_FilterByMinRooms_ExecutesLambda() {
+        PropertyFilterRequestDTO filter = new PropertyFilterRequestDTO();
+        filter.setMinRooms(5);   // only City House (6) qualifies
+
+        Page<PropertyResponseDTO> result = propertyService
+                .searchPropertiesWithFilterSortAndPagination(filter, Pageable.unpaged());
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals("City House", result.getContent().get(0).getTitle());
+    }
+
+    @Test
+    @DisplayName("Filter by maxRooms — cb.lessThanOrEqualTo on roomCount executes")
+    void searchProperties_FilterByMaxRooms_ExecutesLambda() {
+        PropertyFilterRequestDTO filter = new PropertyFilterRequestDTO();
+        filter.setMaxRooms(4);   // only Downtown Apartment (3) qualifies
+
+        Page<PropertyResponseDTO> result = propertyService
+                .searchPropertiesWithFilterSortAndPagination(filter, Pageable.unpaged());
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals("Downtown Apartment", result.getContent().get(0).getTitle());
+    }
+
+    // ── actionType ────────────────────────────────────────────────────────────
+
     @Test
     @DisplayName("Filter by actionType — cb.equal on actionType executes")
     void searchProperties_FilterByActionType_ExecutesLambda() {
@@ -131,8 +226,8 @@ class PropertyServiceIntegrationTest {
         assertEquals("City House", result.getContent().get(0).getTitle());
     }
 
-    // For the status filter, we check that properties with a status containing the specified string are returned,
-    // which confirms that the cb.like lambda for status is functioning as intended.
+    // ── propertyType ──────────────────────────────────────────────────────────
+
     @Test
     @DisplayName("Filter by propertyType — cb.equal on propertyType executes")
     void searchProperties_FilterByPropertyType_ExecutesLambda() {
@@ -146,9 +241,8 @@ class PropertyServiceIntegrationTest {
         assertEquals("Downtown Apartment", result.getContent().get(0).getTitle());
     }
 
-    // Finally, by testing the combination of all filters together, we can confirm that the method correctly applies
-    // all the specified filters and returns only the properties that match all criteria, which indicates that
-    // all the corresponding lambdas are executed properly in conjunction.
+    // ── status ────────────────────────────────────────────────────────────────
+
     @Test
     @DisplayName("Filter by status — cb.like on status executes")
     void searchProperties_FilterByStatus_ExecutesLambda() {
@@ -162,22 +256,19 @@ class PropertyServiceIntegrationTest {
         assertEquals("City House", result.getContent().get(0).getTitle());
     }
 
-    // This test verifies that when no filters are applied, all properties are returned, which confirms that the method
-    // correctly handles the case where no filtering criteria are specified and does not apply any unintended filters.
-    @Test
-    @DisplayName("No filters — all properties returned")
-    void searchProperties_NoFilters_ReturnsAll() {
-        PropertyFilterRequestDTO filter = new PropertyFilterRequestDTO();
+    // ── no filters ────────────────────────────────────────────────────────────
 
+    @Test
+    @DisplayName("No filters — all APPROVED properties returned")
+    void searchProperties_NoFilters_ReturnsAll() {
         Page<PropertyResponseDTO> result = propertyService
-                .searchPropertiesWithFilterSortAndPagination(filter, Pageable.unpaged());
+                .searchPropertiesWithFilterSortAndPagination(new PropertyFilterRequestDTO(), Pageable.unpaged());
 
         assertEquals(2, result.getTotalElements());
     }
 
-    // This test verifies that when all filters are applied together, only the properties that match all criteria are
-    // returned, which confirms that the method correctly combines all the filters and executes the corresponding
-    // lambdas for each filter field to return the expected results.
+    // ── all filters combined ──────────────────────────────────────────────────
+
     @Test
     @DisplayName("All filters combined — only exact match returned")
     void searchProperties_AllFilters_ReturnsExactMatch() {
@@ -185,6 +276,10 @@ class PropertyServiceIntegrationTest {
         filter.setLocation("riga");
         filter.setMinPrice(100000.0);
         filter.setMaxPrice(150000.0);
+        filter.setMinArea(50.0);
+        filter.setMaxArea(100.0);
+        filter.setMinRooms(2);
+        filter.setMaxRooms(4);
         filter.setActionType(ActionType.BUY);
         filter.setPropertyType(PropertyType.APARTMENTS);
         filter.setStatus("available");
@@ -194,5 +289,19 @@ class PropertyServiceIntegrationTest {
 
         assertEquals(1, result.getTotalElements());
         assertEquals("Downtown Apartment", result.getContent().get(0).getTitle());
+    }
+
+    // ── no match ─────────────────────────────────────────────────────────────
+
+    @Test
+    @DisplayName("Filter with no match returns empty page")
+    void searchProperties_NoMatch_ReturnsEmpty() {
+        PropertyFilterRequestDTO filter = new PropertyFilterRequestDTO();
+        filter.setLocation("nonexistent-city");
+
+        Page<PropertyResponseDTO> result = propertyService
+                .searchPropertiesWithFilterSortAndPagination(filter, Pageable.unpaged());
+
+        assertEquals(0, result.getTotalElements());
     }
 }

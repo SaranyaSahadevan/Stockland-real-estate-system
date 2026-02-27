@@ -52,9 +52,9 @@ body {
 }
 
 .navbar .logo {
-    font-size: 22px;
-    font-weight: bold;
     letter-spacing: 1px;
+    display: flex;
+    align-items: center;
 }
 
 /* NAVBAR BUTTON STYLE (APPLIES TO ALL LINKS INCLUDING LOGOUT) */
@@ -253,7 +253,7 @@ footer {
 <body>
 
 <header class="navbar">
-    <div class="logo">STOCKLAND</div>
+    <div class="logo"><img th:src="@{/images/logo.png}" alt="Stockland" style="height:80px;vertical-align:middle;margin-top:-20px;margin-bottom:-20px;"></div>
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 </header>
 

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -15,6 +16,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.util.List;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -160,6 +164,32 @@ class CustomErrorControllerTest {
 
         performWithStatus(404)
                 .andExpect(model().attribute("isLoggedIn", true));
+    }
+
+    // Test isLoggedIn is false when auth is present but isAuthenticated() returns false
+    @Test
+    @DisplayName("GET /error sets isLoggedIn to false when Authentication.isAuthenticated() is false")
+    void handleError_SetsIsLoggedIn_False_WhenAuthNotAuthenticated() throws Exception {
+        Authentication auth = mock(Authentication.class);
+        when(auth.isAuthenticated()).thenReturn(false);
+        // getPrincipal() is never reached due to short-circuit &&
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        performWithStatus(404)
+                .andExpect(model().attribute("isLoggedIn", false));
+    }
+
+    // Test isLoggedIn is false when principal is the "anonymousUser" string
+    @Test
+    @DisplayName("GET /error sets isLoggedIn to false when principal is anonymousUser")
+    void handleError_SetsIsLoggedIn_False_WhenPrincipalIsAnonymousUser() throws Exception {
+        Authentication auth = mock(Authentication.class);
+        when(auth.isAuthenticated()).thenReturn(true);
+        when(auth.getPrincipal()).thenReturn("anonymousUser");
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        performWithStatus(404)
+                .andExpect(model().attribute("isLoggedIn", false));
     }
 }
 

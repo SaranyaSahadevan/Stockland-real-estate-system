@@ -2,10 +2,6 @@ package com.stockland.app.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
-import jakarta.validation.Constraint;
-import java.lang.annotation.*;
 
 @Data
 public class UserRegistrationDTO {

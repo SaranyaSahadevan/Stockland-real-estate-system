@@ -47,10 +47,11 @@
       justify-content: space-between;
       align-items: center;
   }
-  .navbar .logo {
-      font-size: 22px;
-      font-weight: bold;
-  }
+        .navbar .logo {
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
 .navbar nav a {
     display: inline-block;
     padding: 10px 18px;
@@ -181,7 +182,7 @@
 <body>
 
 <header class="navbar">
-    <div class="logo">STOCKLAND</div>
+    <div class="logo"><img th:src="@{/images/logo.png}" alt="Stockland" style="height:80px;vertical-align:middle;margin-top:-20px;margin-bottom:-20px;"></div>
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 </header>
 

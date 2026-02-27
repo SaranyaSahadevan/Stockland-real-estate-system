@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,7 +13,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 @Configuration
 @EnableWebSecurity
@@ -31,6 +29,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/chat").permitAll()
                         .requestMatchers(HttpMethod.POST, "/properties/delete/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/properties/create").authenticated()
                         .requestMatchers(HttpMethod.GET, "/properties/edit/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/properties/edit/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/properties/approve/**").hasRole("ADMIN")
@@ -111,7 +110,8 @@ public class SecurityConfig {
     }
 
     private boolean pathExists(String path) {
-        return path.startsWith("/dashboard") || path.startsWith("/create-listing") || path.startsWith("/settings")
-                || path.startsWith("/favorites");
+        return path.startsWith("/dashboard") || path.startsWith("/create-listing")
+                || path.startsWith("/settings") || path.startsWith("/favorites")
+                || path.startsWith("/properties/create");
     }
 }
