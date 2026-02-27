@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="chatbot">
+
+    <style>
+        #helpFab{
+     position:fixed;
+     right:20px;
+     bottom:20px;
+     background:#1f3c88;
+     color:#fff;
+     border:none;
+     padding:12px 20px;
+     border-radius:999px;
+     font-weight:bold;
+     cursor:pointer;
+     box-shadow:0 10px 25px rgba(0,0,0,.25);
+     z-index:9999;
+ }
+ #helpFab:hover{background:#162b5c}
+
+ /* CHAT WIDGET — LIGHT THEME */
+ #chatWidget{
+     position:fixed;
+     right:20px;
+     bottom:80px;
+     width:460px;
+     height:680px;
+     background:#ffffff;
+     border-radius:16px;
+     box-shadow:0 18px 45px rgba(0,0,0,.25);
+     display:none;
+     flex-direction:column;
+     overflow:hidden;
+     font-family:Segoe UI,Arial,sans-serif;
+     z-index:9999;
+     color:#222; /* dark text */
+ }
+
+ /* HEADER */
+ #chatHeader{
+     background:#1f3c88;
+     color:#fff;
+     padding:14px;
+     display:flex;
+     justify-content:space-between;
+     align-items:center;
+     font-weight:bold;
+ }
+
+ #chatClose{
+     background:none;
+     border:none;
+     color:#fff;
+     font-size:18px;
+     cursor:pointer;
+ }
+
+ /* CHAT BODY — LIGHT */
+ #chatBody{
+     flex:1;
+     padding:12px;
+     overflow-y:auto;
+     background:#f2f4f8; /* light grey */
+     color:#222;
+ }
+
+ /* MESSAGES */
+ .msg{
+     padding:10px 14px;
+     border-radius:12px;
+     margin:8px 0;
+     max-width:90%;
+     font-size:14px;
+     color:#222;
+ }
+ .user{
+     margin-left:auto;
+     background:#d7f5d0; /* light green bubble */
+ }
+ .ai{
+     margin-right:auto;
+     background:#ffffff; /* white bubble */
+     border:1px solid #e6e6e6;
+ }
+
+ /* FEEDBACK */
+ .feedbackRow{
+     margin-top:6px;
+     color:#333;
+ }
+ .feedbackBtn{
+     border:none;
+     background:#eef1ff;
+     color:#1f3c88;
+     padding:6px 12px;
+     margin-right:6px;
+     border-radius:20px;
+     cursor:pointer;
+     font-size:13px;
+ }
+ .feedbackBtn:hover{
+     background:#dfe6ff;
+ }
+
+ /* QUICK ACTIONS */
+ #quickActions{
+     padding:12px;
+     border-top:1px solid #ddd;
+     background:#fff;
+     max-height:200px;
+     overflow-y:auto;
+     color:#222;
+ }
+
+ .chip{
+     display:inline-block;
+     padding:8px 14px;
+     margin:6px;
+     background:#eef1ff;
+     border-radius:20px;
+     cursor:pointer;
+     font-size:13px;
+     color:#1f3c88;
+ }
+ .chip:hover{
+     background:#dfe6ff;
+ }
+    </style>
+
+    <button id="helpFab">Help ?</button>
+
+    <div id="chatWidget">
+        <div id="chatHeader">
+            STOCKLAND Assistant
+            <button id="chatClose">✕</button>
+        </div>
+
+        <div id="chatBody"></div>
+
+        <div id="quickActions">
+            <div style="font-weight:normal;margin-bottom:8px;">
+                Quick Questions
+            </div>
+            <div id="chips"></div>
+        </div>
+    </div>
+
+
+    <script>
+        (function(){
+
+        const helpFab=document.getElementById("helpFab");
+        const chatWidget=document.getElementById("chatWidget");
+        const chatClose=document.getElementById("chatClose");
+        const chatBody=document.getElementById("chatBody");
+        const chips=document.getElementById("chips");
+
+        const FAQ=[
+        {q:"How do I register?",a:"Click Sign Up → Enter details → Submit registration form."},
+        {q:"How do I login?",a:"Click Login → Enter username and password."},
+        {q:"How do I post a property?",a:"Login → Post Property → Fill details → Save."},
+        {q:"How do I edit a listing?",a:"Dashboard → My Listings → Edit."},
+        {q:"How do I delete a listing?",a:"Dashboard → My Listings → Delete."},
+        {q:"How can I contact an agent?",a:"Open property → Contact Agent section."},
+        {q:"How do I search properties?",a:"Use filters on Listings page."},
+        {q:"How do I save favorites?",a:"Open property → Save to favorites."},
+        {q:"How to reach customer care?",a:"Call 1800-123-456 or support@stockland.com."},
+        {q:"Do listings need approval?",a:"Yes. Admin approval is required before publishing."},
+        {q:"I need more information",a: "For More information please Call 1800-123-456 or support@stockland.com."}
+
+        ];
+
+        function addMsg(text,who){
+         const d=document.createElement("div");
+         d.className="msg "+who;
+         d.innerText=text;
+         chatBody.appendChild(d);
+         chatBody.scrollTop=chatBody.scrollHeight;
+        }
+
+        function addFeedback(){
+         const f=document.createElement("div");
+         f.className="feedbackRow";
+         f.innerHTML=`
+        <div style="font-family:Segoe UI, Arial, sans-serif; font-style:italic; font-size:12px;">
+    Did I help you?
+</div>
+          <button class="feedbackBtn" onclick="yes(this)">👍 Yes</button>
+          <button class="feedbackBtn" onclick="no(this)">👎 No</button>
+         `;
+         chatBody.appendChild(f);
+        }
+
+        window.yes=function(btn){
+         const row=btn.closest(".feedbackRow");
+         if(row) row.remove();
+         addMsg("Thank you! 😊 Happy to help you.","ai");
+        };
+
+        window.no=function(btn){
+         const row=btn.closest(".feedbackRow");
+         if(row) row.remove();
+         addMsg("Sorry for the inconvenience. 🙁 For more information Please contact 1800-123-456 or support@stockland.com","ai");
+        };
+
+        FAQ.forEach(item=>{
+         const c=document.createElement("span");
+         c.className="chip";
+         c.innerText=item.q;
+         c.onclick=()=>{
+          addMsg(item.q,"user");
+          addMsg(item.a,"ai");
+          addFeedback();
+         };
+         chips.appendChild(c);
+        });
+
+        helpFab.onclick=()=>{
+         if(chatWidget.style.display==="flex"){
+          chatWidget.style.display="none";
+          return;
+         }
+         chatWidget.style.display="flex";
+         if(chatBody.childElementCount===0){
+          addMsg("Hi! I'm your STOCKLAND assistant. Please select a question below.","ai");
+         }
+        };
+
+        chatClose.onclick=()=>chatWidget.style.display="none";
+
+        })();
+    </script>
+
+</div>
+</body>
+</html>

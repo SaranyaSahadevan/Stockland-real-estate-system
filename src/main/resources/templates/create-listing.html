@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Listing – STOCKLAND</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>:root {
+    --brand-primary: #1f3c88;
+    --brand-primary-dark: #162b5c;
+    --brand-accent: #4a6cf7;
+    --bg-light: #f5f5f5;
+    --bg-white: #ffffff;
+    --text-dark: #222;
+    --text-light: #ccc;
+    --radius: 10px;
+    --shadow: 0 8px 25px rgba(0,0,0,0.25);
+    --transition: 0.25s ease;
+}
+
+/* GLOBAL */
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #eee;
+    background: linear-gradient(120deg,
+        #141824,
+        #1f2a3d,
+        #263a55,
+        #1c2740,
+        #141824
+    );
+    background-size: 400% 400%;
+    animation: gradientFlow 16s ease infinite;
+}
+
+@keyframes gradientFlow {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* NAVBAR */
+
+.navbar {
+    background: var(--brand-primary);
+    color: #fff;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow);
+}
+
+.navbar .logo {
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+}
+
+.navbar nav a {
+    display: inline-block;
+    padding: 10px 18px;
+    margin-left: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    background: rgba(255,255,255,0.12);
+    border-radius: 10px;
+    transition: var(--transition);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+}
+
+.navbar nav a:hover {
+    background: var(--brand-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+}
+
+/* CONTAINER */
+
+.container {
+    max-width: 900px;
+    margin: 35px auto;
+    padding: 0 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #fff;
+    font-size: 30px;
+}
+
+/* CARD */
+
+.card {
+    background: rgba(255,255,255,0.06);
+    padding: 35px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(8px);
+}
+
+/* FORM GRID */
+
+form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.full {
+    grid-column: 1 / 3;
+}
+
+/* INPUTS */
+
+label {
+    font-size: 14px;
+    margin-bottom: 6px;
+    display: block;
+    color: #cfd8ff;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--radius);
+    border: 1px solid #555;
+    background: rgba(0,0,0,0.25);
+    color: #eee;
+    font-size: 14px;
+    transition: var(--transition);
+    box-sizing: border-box;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #9ca3c7;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--brand-accent);
+    box-shadow: 0 0 6px rgba(74,108,247,0.6);
+    outline: none;
+}
+
+textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+/* FIX: dropdown options readable */
+
+select option {
+    background: #ffffff !important;
+    color: #222 !important;
+}
+
+/* ERRORS */
+
+.input-error {
+    color: #ff6b6b;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* BUTTONS */
+
+.btn-primary {
+    background: var(--brand-accent);
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.btn-primary:hover {
+    background: #6c85ff;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: rgba(255,255,255,0.14);
+    color: #eee;
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 12px 20px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.btn-secondary:hover {
+    background: rgba(255,255,255,0.26);
+    transform: translateY(-2px);
+}
+
+.actions {
+    grid-column: 1 / 3;
+    display: flex;
+    gap: 14px;
+    margin-top: 10px;
+}
+
+/* FOOTER */
+
+footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 13px;
+    color: #aaa;
+    margin-top: 40px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 700px) {
+    form {
+        grid-template-columns: 1fr;
+    }
+    .full {
+        grid-column: 1;
+    }
+}</style>
+</head>
+<body>
+
+<header class="navbar">
+    <div class="logo"><img th:src="@{/images/logo.png}" alt="Stockland" style="height:80px;vertical-align:middle;margin-top:-20px;margin-bottom:-20px;"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+</header>
+
+<div class="container">
+    <h1>Create New Listing</h1>
+
+    <div class="card">
+        <form id="propertyForm" th:action="@{/properties/create}" th:object="${propertyRequestDTO}" method="post" enctype="multipart/form-data">
+
+            <p th:if="${success}" th:text="${success}" class="flash-success"></p>
+
+            <div class="full">
+                <label>Title</label>
+                <input type="text" placeholder="Modern apartment in Riga center" th:field="*{title}">
+                <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="input-error"></p>
+            </div>
+
+            <div>
+                <label>Location</label>
+                <input type="text" placeholder="Latvia, Riga" th:field="*{location}">
+                <p th:if="${#fields.hasErrors('location')}" th:errors="*{location}" class="input-error"></p>
+            </div>
+
+            <!--            <div>-->
+            <!--                <label>Address</label>-->
+            <!--                <input type="text" placeholder="Street, house number">-->
+            <!--            </div>-->
+
+            <div>
+                <label>Property Type</label>
+                <select th:field="*{propertyType}">
+                    <option value="">Select type</option>
+                    <option th:each="t : ${propertyTypes}"
+                            th:value="${t}"
+                            th:text="${t}">
+                    </option>
+                </select>
+                <p th:if="${#fields.hasErrors('propertyType')}" th:errors="*{propertyType}" class="input-error"></p>
+            </div>
+
+            <div>
+                <label>Deal Type</label>
+                <select th:field="*{actionType}">
+                    <option value="">Select deal</option>
+                    <option th:each="t : ${actions}"
+                            th:value="${t}"
+                            th:text="${t}">
+                    </option>
+                </select>
+                <p th:if="${#fields.hasErrors('actionType')}" th:errors="*{actionType}" class="input-error"></p>
+            </div>
+
+            <div>
+                <label>Price (€)</label>
+                <input type="text"
+                       pattern="^\d{1,12}(,\d{1,2})?$"
+                       placeholder="150000,00"
+                       title="Use comma as decimal separator, max 2 decimal digits (e.g. 150000,99)"
+                       oninvalid="this.setCustomValidity('Please use format: 1234,99 – comma as decimal separator, max 2 digits after comma')"
+                       oninput="this.setCustomValidity('')"
+                       th:field="*{price}">
+                <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="input-error"></p>
+            </div>
+
+            <div>
+                <label>Area (m²)</label>
+                <input type="number" min="0" placeholder="50" th:field="*{area}">
+                <p th:if="${#fields.hasErrors('area')}" th:errors="*{area}" class="input-error"></p>
+            </div>
+
+            <div>
+                <label>Rooms</label>
+                <input type="number" min="0" placeholder="2" th:field="*{roomCount}">
+                <p th:if="${#fields.hasErrors('roomCount')}" th:errors="*{roomCount}" class="input-error"></p>
+            </div>
+
+            <div class="full">
+                <label>Description</label>
+                <textarea placeholder="Describe the property..." th:field="*{description}" ></textarea>
+
+            </div>
+
+            <div>
+                <label>Status</label>
+                <select th:field="*{status}">
+                    <option value="">Select status</option>
+                    <option value="OLD">OLD</option>
+                    <option value="NEW">NEW</option>
+                </select>
+                <p th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="input-error"></p>
+            </div>
+
+            <div class="full">
+                <label>Images (static demo)</label>
+                <input type="file" name="imageFiles" multiple accept="image/*">
+                <p th:if="${errorMessage}" th:text="${errorMessage}" class="input-error"></p>
+            </div>
+
+            <!--            <div class="full">-->
+            <!--                <label>Contact Phone</label>-->
+            <!--                <input type="text" placeholder="+371 ...">-->
+            <!--            </div>-->
+
+            <!--            <div class="full">-->
+            <!--                <label>Contact Email</label>-->
+            <!--                <input type="email" placeholder="agent@example.com">-->
+            <!--            </div>-->
+            <div class="actions">
+                <button class="btn-primary" type="submit">Save Listing</button>
+                <button type="button"
+                        class="btn-secondary"
+                        th:onclick="|window.location.href='@{/dashboard}'|">
+                    Cancel
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<footer>
+    STOCKLAND - Real Estate Property Listing & Management System
+</footer>
+<script>
+    const myForm = document.getElementById('propertyForm');
+
+    if (myForm) {
+        myForm.addEventListener('submit', function(e) {
+            console.log("Validation script triggered!");
+
+            const fileInput = document.querySelector('input[name="imageFiles"]');
+            const maxFiles = 20;
+
+            if (fileInput && fileInput.files.length > maxFiles) {
+                alert("Too many files! Max allowed: " + maxFiles);
+                e.preventDefault();
+                return false;
+            }
+
+            let totalSize = 0;
+            for (let i = 0; i < fileInput.files.length; i++) {
+                totalSize += fileInput.files[i].size;
+            }
+
+            if (totalSize > 50 * 1024 * 1024) {
+                alert("Total file size exceeds storage limit.");
+                e.preventDefault();
+                return false;
+            }
+        });
+    } else {
+        console.error("Could not find propertyForm ID!");
+    }
+</script>
+
+<div th:replace="~{fragments/chatbot :: chatbot}"></div>
+</body>
+</html>

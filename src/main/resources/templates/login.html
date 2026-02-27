@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login – STOCKLAND</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        :root {
+      --brand-primary: #1f3c88;
+      --brand-primary-dark: #162b5c;
+      --brand-accent: #4a6cf7;
+      --text-light: #ccc;
+      --radius: 8px;
+      --transition: 0.25s ease;
+  }
+
+  /* BACKGROUND LIKE INDEX.HTML */
+  body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: #eee;
+
+      background: linear-gradient(120deg,
+          #141824,
+          #1f2a3d,
+          #263a55,
+          #1c2740,
+          #141824
+      );
+      background-size: 400% 400%;
+      animation: gradientFlow 16s ease infinite;
+  }
+
+  @keyframes gradientFlow {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+  }
+
+  /* NAVBAR */
+  .navbar {
+    background: #1f3c88;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+        .navbar .logo {
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+
+/* BUTTON‑STYLE NAV LINKS */
+.navbar nav a {
+    display: inline-block;
+    padding: 10px 18px;
+    margin-left: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    background: #4a6cf7;        /* bright blue like screenshot */
+    border-radius: 10px;
+    text-decoration: none;
+    transition: 0.25s ease;
+}
+
+.navbar nav a:hover {
+    background: #6f8cff;
+    transform: translateY(-2px);
+}
+
+
+  @media (max-width: 700px) {
+      .navbar {
+          flex-direction: column;
+          align-items: flex-start;
+      }
+      .navbar nav {
+          margin-top: 10px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+      }
+  }
+
+  /* CONTAINER */
+  .container {
+      max-width: 420px;
+      margin: 80px auto;
+      padding: 0 15px;
+  }
+
+  /* CARD (GLASS STYLE) */
+  .card {
+      background: rgba(255,255,255,0.06);
+      padding: 30px;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+      backdrop-filter: blur(6px);
+  }
+
+  h1 {
+      margin-top: 0;
+      font-size: 26px;
+      color: #fff;
+      text-align: center;
+  }
+
+  /* FORM */
+  label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+      color: #ddd;
+  }
+
+  input {
+      width: 94%;
+      padding: 10px;
+      border-radius: var(--radius);
+      border: 1px solid #555;
+      background: rgba(0,0,0,0.25);
+      color: #eee;
+      margin-bottom: 15px;
+      font-size: 14px;
+  }
+  input::placeholder {
+      color: #888;
+  }
+
+  /* BUTTON */
+  .btn-primary {
+      width: 100%;
+      padding: 12px;
+      background: var(--brand-primary);
+      color: #fff;
+      border-radius: var(--radius);
+      border: none;
+      font-size: 15px;
+      cursor: pointer;
+      transition: var(--transition);
+  }
+  .btn-primary:hover {
+      background: var(--brand-primary-dark);
+  }
+
+  /* HELPER TEXT */
+  .helper {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+  }
+  .helper a {
+      color: #9fc7ff;
+  }
+  .helper a:hover {
+      color: #cfe2ff;
+  }
+
+  /* ERROR MESSAGE */
+  .flash-error {
+      color: #ff6b6b;
+      text-align: center;
+      margin: 20px 0;
+      font-weight: bold;
+      font-size: 14px;
+  }
+
+  /* TOAST */
+  .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2e7d32;
+      color: #fff;
+      padding: 14px 24px;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      font-size: 15px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: fadeInOut 4s forwards;
+  }
+
+  @keyframes fadeInOut {
+      0%   { opacity: 0; top: 10px; }
+      10%  { opacity: 1; top: 20px; }
+      80%  { opacity: 1; top: 20px; }
+      100% { opacity: 0; top: 10px; }
+  }
+
+  /* FOOTER */
+  footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 13px;
+      color: #aaa;
+      margin-top: 40px;
+  }
+
+    </style>
+</head>
+<body>
+
+<div th:if="${param.registered}" class="toast">
+    ✓ Registration successful! You can now log in.
+</div>
+
+<header class="navbar">
+    <div class="logo"><img th:src="@{/images/logo.png}" alt="Stockland" style="height:80px;vertical-align:middle;margin-top:-20px;margin-bottom:-20px;"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+</header>
+
+<div class="container">
+    <div class="card">
+        <h1>Login</h1>
+
+
+        <p th:if="${error}" th:text="${error}" class="flash-error"></p>
+
+        <!-- If you want Spring Security login to work, use POST /login with name=username,password -->
+        <form th:action="@{/login}" method="post">
+            <label>Username or Email</label>
+            <input type="text" name="username" placeholder="Username or Email">
+
+            <label>Password</label>
+            <input type="password" name="password" placeholder="••••••••">
+
+            <label><input type="checkbox" name="remember-me" style="width:auto; margin-right:8px;"> Remember me</label>
+
+            <button class="btn-primary" type="submit">Login</button>
+        </form>
+
+        <div class="helper">
+            Don't have an account?
+            <a th:href="@{/register}">Create one</a>
+        </div>
+    </div>
+</div>
+
+<footer>
+    STOCKLAND - Real Estate Property Listing & Management System
+</footer>
+
+<div th:replace="~{fragments/chatbot :: chatbot}"></div>
+</body>
+</html>

@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard – STOCKLAND</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        :root {
+        --brand-primary: #1f3c88;
+  --brand-primary-dark: #162b5c;
+  --brand-accent: #4a6cf7;
+  --text-light: #ccc;
+  --text-muted: #999;
+  --radius: 8px;
+  --transition: 0.25s ease;
+}
+
+.dashboard-container {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* BACKGROUND LIKE INDEX.HTML */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #eee;
+
+  background: linear-gradient(120deg,
+      #141824,
+      #1f2a3d,
+      #263a55,
+      #1c2740,
+      #141824
+  );
+  background-size: 400% 400%;
+  animation: gradientFlow 16s ease infinite;
+}
+
+@keyframes gradientFlow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* NAVBAR */
+.navbar {
+  background: var(--brand-primary);
+  color: #fff;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.navbar .logo {
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+}
+.navbar nav a {
+  display: inline-block;
+  padding: 10px 18px;
+  margin-left: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background: rgba(255,255,255,0.12);
+  border-radius: 10px;
+  text-decoration: none;
+  transition: 0.25s ease;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+}
+
+.navbar nav a:hover {
+  background: #4a6cf7;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2e7d32;
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  font-size: 15px;
+  z-index: 9999;
+  animation: fadeInOut 4s forwards;
+}
+@keyframes fadeInOut {
+  0%   { opacity: 0; top: 10px; }
+  10%  { opacity: 1; top: 20px; }
+  80%  { opacity: 1; top: 20px; }
+  100% { opacity: 0; top: 10px; }
+}
+
+/* CONTAINER */
+.container {
+  max-width: 1300px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+/* PAGE TITLE */
+h1 {
+  font-size: 30px;
+  margin-bottom: 20px;
+  color: #fff;
+}
+.admin-badge {
+  background: #c0392b;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-left: 10px;
+}
+
+/* LAYOUT */
+.layout {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 25px;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 100%;
+  min-width: 180px;
+  max-width: 220px;
+  height: fit-content;
+  margin: 0;
+  padding: 30px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+  backdrop-filter: blur(6px);
+  flex-shrink: 0;
+}
+
+.sidebar h2 {
+  margin-top: 0;
+  font-size: 20px;
+  color: #fff;
+}
+.sidebar p {
+  font-size: 14px;
+  color: var(--text-light);
+  margin: 6px 0;
+}
+.btn-logout {
+  margin-top: 15px;
+  background: #c0392b;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  border: none;
+  width: 100%;
+  font-size: 15px;
+  transition: var(--transition);
+}
+.btn-logout:hover {
+  background: #e74c3c;
+}
+/* CARDS */
+.card {
+  background: rgba(255,255,255,0.06);
+  padding: 25px;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+  backdrop-filter: blur(6px);
+  margin-bottom: 30px;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+.card h2 {
+  margin-top: 0;
+  font-size: 22px;
+  color: #fff;
+}
+
+/* FILTER BAR */
+.filter-bar {
+  margin: 15px 0 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.filter-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.1);
+  color: #eee;
+  font-size: 13px;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.filter-btn:hover {
+  background: rgba(255,255,255,0.2);
+}
+.active { background: rgba(255,255,255,0.3); }
+.active-pending { background: #f1c40f; color: #000; }
+.active-approved { background: #2ecc71; }
+.active-rejected { background: #e74c3c; }
+
+/* TABLES */
+.table-scroll {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  color: #eee;
+}
+thead {
+  background: rgba(255,255,255,0.08);
+}
+th, td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Keep action buttons aligned nicely even when cell contents are centered */
+td:last-child {
+  text-align: center;
+}
+
+tbody tr:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+/* SORTABLE HEADERS */
+.sortable a {
+  color: #fff;
+  text-decoration: none;
+}
+.sort-active {
+  color: var(--brand-accent);
+}
+.sort-icon {
+  margin-left: 6px;
+  font-size: 12px;
+}
+
+/* BADGES */
+.badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.badge-pending { background: #f1c40f; color: #000; }
+.badge-approved { background: #2ecc71; }
+.badge-rejected { background: #e74c3c; }
+
+/* BUTTONS */
+
+.btn-secondary {
+  display: inline-block;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #eee;
+  background: rgba(255, 0, 0, 1);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.28);
+  border-color: rgba(255,255,255,0.45);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.btn-primary,
+.btn-edit,
+.btn-danger,
+.btn-approve,
+.btn-feature,
+.btn-secondary {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-primary { background: var(--brand-primary); color: #fff; }
+.btn-primary:hover { background: var(--brand-primary-dark); }
+
+.btn-edit { background: #2980b9; color: #fff; }
+.btn-edit:hover { background: #3498db; }
+
+.btn-danger { background: #c0392b; color: #fff; }
+.btn-danger:hover { background: #e74c3c; }
+
+.btn-approve { background: #27ae60; color: #fff; }
+.btn-approve:hover { background: #2ecc71; }
+
+.btn-feature {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 18px;
+  padding: 4px 10px;
+}
+.btn-feature:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 13px;
+  color: #aaa;
+  margin-top: 40px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .layout {
+      flex-direction: column;
+  }
+  .sidebar {
+      width: 100%;
+  }
+}
+    </style>
+</head>
+<body>
+
+<div th:if="${param.login}" class="toast">
+    ✓ Welcome back, <span th:text="${user.fullName + '!'}" style="font-weight:normal;margin-left:-8px;">there</span>
+</div>
+
+<div th:if="${param.deleted}" class="toast" style="background:#c0392b;">
+    ✓ Property listing deleted successfully.
+</div>
+
+<div th:if="${param.updated}" class="toast" style="background:#1565c0;">
+    ✓ Property listing updated successfully.
+</div>
+
+<div th:if="${param.approved}" class="toast" style="background:#27ae60;">
+    ✓ Listing approved and is now publicly visible.
+</div>
+
+<div th:if="${param.rejected}" class="toast" style="background:#c0392b;">
+    ✓ Listing has been rejected.
+</div>
+
+<header class="navbar">
+    <div class="logo"><img th:src="@{/images/logo.png}" alt="Stockland" style="height:80px;vertical-align:middle;margin-top:-20px;margin-bottom:-20px;"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+</header>
+
+<div class="container">
+    <h1>User Dashboard <span th:if="${user.role == 'ROLE_ADMIN'}" class="admin-badge">ADMIN</span></h1>
+
+    <div class="layout">
+
+        <aside class="sidebar">
+            <h2>Profile</h2>
+            <p><strong>Username:</strong> <span th:text="${user.username}">demo_user</span></p>
+            <p><strong>Email:</strong> <span th:text="${user.email}">demo@example.com</span></p>
+            <p><strong>Full Name:</strong> <span th:text="${user.fullName}">Demo User</span></p>
+            <p th:if="${user.phoneNumber != null and !user.phoneNumber.isEmpty()}">
+                <strong>Phone:</strong> <span th:text="${user.phoneNumber}"></span>
+            </p>
+
+            <a th:href="@{/settings}" class="btn-primary" style="display:block; margin-top:20px; text-align:center; padding:10px 18px; font-size:15px; box-sizing:border-box;">
+                Settings
+            </a>
+
+            <form th:action="@{/logout}" method="post" style="display:block; margin-top:10px;">
+                <button type="submit" class="btn-logout" style="cursor:pointer;">Logout</button>
+            </form>
+        </aside>
+
+        <section>
+
+            <div class="card">
+                <h2>My Favorites</h2>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th class="sortable"
+                            th:with="active=${favSort == 'title'}, nextDir=${favSort == 'title' and favDir == 'asc'} ? 'desc' : 'asc'">
+                            <a th:href="@{/dashboard(favSort='title', favDir=${nextDir}, listSort=${listSort}, listDir=${listDir})}"
+                               th:classappend="${active} ? 'sort-active' : ''">
+                                Title <span class="sort-icon" th:text="${active} ? (${favDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                            </a>
+                        </th>
+                        <th class="sortable"
+                            th:with="active=${favSort == 'location'}, nextDir=${favSort == 'location' and favDir == 'asc'} ? 'desc' : 'asc'">
+                            <a th:href="@{/dashboard(favSort='location', favDir=${nextDir}, listSort=${listSort}, listDir=${listDir})}"
+                               th:classappend="${active} ? 'sort-active' : ''">
+                                Location <span class="sort-icon" th:text="${active} ? (${favDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                            </a>
+                        </th>
+                        <th class="sortable"
+                            th:with="active=${favSort == 'price'}, nextDir=${favSort == 'price' and favDir == 'asc'} ? 'desc' : 'asc'">
+                            <a th:href="@{/dashboard(favSort='price', favDir=${nextDir}, listSort=${listSort}, listDir=${listDir})}"
+                               th:classappend="${active} ? 'sort-active' : ''">
+                                Price <span class="sort-icon" th:text="${active} ? (${favDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                            </a>
+                        </th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="fav : ${favorites}">
+                        <td th:text="${fav.property.title}"></td>
+                        <td th:text="${fav.property.location}"></td>
+                        <td style="white-space: nowrap;"><span th:text="${#numbers.formatDecimal(fav.property.price, 1, 'WHITESPACE', 2, 'COMMA')}"></span> €</td>
+
+                        <td style="white-space:nowrap;">
+                            <a th:href="@{/property/{id}(id=${fav.property.id})}" class="btn-primary" style="display:inline-block; width:80px; text-align:center; padding:6px 0; font-size:13px; box-sizing:border-box;">Open</a>
+                            <a th:href="@{/favorites/remove/{id}(id=${fav.property.id})}" class="btn-secondary" style="display:inline-block; width:80px; text-align:center; padding:6px 0; font-size:13px; box-sizing:border-box;">Remove</a>
+                        </td>
+
+
+                    <tr th:if="${#lists.isEmpty(favorites)}">
+                        <td colspan="4">No favorites yet.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h2>My Listings</h2>
+                    <a class="btn-primary" th:href="@{/create-listing}">+ Create Listing</a>
+                </div>
+
+                <!-- Moderation filter bar -->
+                <div class="filter-bar">
+                    <span>Filter by Moderation Status:</span>
+                    <a th:href="@{/dashboard(listModeration='',         listSort=${listSort}, listDir=${listDir}, favSort=${favSort}, favDir=${favDir})}"
+                       th:classappend="${listModeration == null or listModeration == ''} ? 'active' : ''"
+                       class="filter-btn">All</a>
+                    <a th:href="@{/dashboard(listModeration='PENDING',  listSort=${listSort}, listDir=${listDir}, favSort=${favSort}, favDir=${favDir})}"
+                       th:classappend="${listModeration == 'PENDING'} ? 'active-pending' : ''"
+                       class="filter-btn">⏳ Pending</a>
+                    <a th:href="@{/dashboard(listModeration='APPROVED', listSort=${listSort}, listDir=${listDir}, favSort=${favSort}, favDir=${favDir})}"
+                       th:classappend="${listModeration == 'APPROVED'} ? 'active-approved' : ''"
+                       class="filter-btn">✅ Approved</a>
+                    <a th:href="@{/dashboard(listModeration='REJECTED', listSort=${listSort}, listDir=${listDir}, favSort=${favSort}, favDir=${favDir})}"
+                       th:classappend="${listModeration == 'REJECTED'} ? 'active-rejected' : ''"
+                       class="filter-btn">❌ Rejected</a>
+                </div>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th class="sortable"
+                            th:with="active=${listSort == 'title'}, nextDir=${listSort == 'title' and listDir == 'asc'} ? 'desc' : 'asc'">
+                            <a th:href="@{/dashboard(listSort='title', listDir=${nextDir}, listModeration=${listModeration}, favSort=${favSort}, favDir=${favDir})}"
+                               th:classappend="${active} ? 'sort-active' : ''">
+                                Title <span class="sort-icon" th:text="${active} ? (${listDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                            </a>
+                        </th>
+                        <th class="sortable"
+                            th:with="active=${listSort == 'location'}, nextDir=${listSort == 'location' and listDir == 'asc'} ? 'desc' : 'asc'">
+                            <a th:href="@{/dashboard(listSort='location', listDir=${nextDir}, listModeration=${listModeration}, favSort=${favSort}, favDir=${favDir})}"
+                               th:classappend="${active} ? 'sort-active' : ''">
+                                Location <span class="sort-icon" th:text="${active} ? (${listDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                            </a>
+                        </th>
+                        <th class="sortable"
+                            th:with="active=${listSort == 'price'}, nextDir=${listSort == 'price' and listDir == 'asc'} ? 'desc' : 'asc'">
+                            <a th:href="@{/dashboard(listSort='price', listDir=${nextDir}, listModeration=${listModeration}, favSort=${favSort}, favDir=${favDir})}"
+                               th:classappend="${active} ? 'sort-active' : ''">
+                                Price <span class="sort-icon" th:text="${active} ? (${listDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                            </a>
+                        </th>
+                        <th class="sortable"
+                            th:with="active=${listSort == 'createdat'}, nextDir=${listSort == 'createdat' and listDir == 'asc'} ? 'desc' : 'asc'">
+                            <a th:href="@{/dashboard(listSort='createdat', listDir=${nextDir}, listModeration=${listModeration}, favSort=${favSort}, favDir=${favDir})}"
+                               th:classappend="${active} ? 'sort-active' : ''">
+                                Created At <span class="sort-icon" th:text="${active} ? (${listDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                            </a>
+                        </th>
+                        <th>Moderation</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="l : ${myListings}">
+                        <td th:text="${l.title}">Title</td>
+                        <td th:text="${l.location}">Location</td>
+                        <td style="white-space: nowrap;"><span th:text="${#numbers.formatDecimal(l.price, 1, 'WHITESPACE', 2, 'COMMA')}"></span> €</td>
+                        <td style="white-space:nowrap; font-size:13px; color:var(--text-light);">
+                            <span th:if="${l.createdAt != null}" th:text="${#temporals.format(l.createdAt, 'dd MMM yyyy HH:mm', #locale.forLanguageTag('en'))}"></span>
+                            <span th:if="${l.createdAt == null}" style="color:#ccc;">—</span>
+                        </td>
+                        <td>
+                            <span th:if="${l.moderationStatus?.name() == 'PENDING'}"  class="badge badge-pending" style="white-space: nowrap;">Pending Review</span>
+                            <span th:if="${l.moderationStatus?.name() == 'APPROVED'}" class="badge badge-approved">Approved</span>
+                            <span th:if="${l.moderationStatus?.name() == 'REJECTED'}" class="badge badge-rejected">Rejected</span>
+                        </td>
+                        <td style="white-space:nowrap; vertical-align:middle;">
+                            <a th:href="@{/property/{id}(id=${l.id})}" class="btn-primary" style="padding:6px 12px; font-size:13px; margin-right:4px;">View</a>
+                            <a th:href="@{/properties/edit/{id}(id=${l.id}, redirectUrl='/property/' + ${l.id})}" class="btn-edit" style="padding:6px 12px; font-size:13px; margin-right:4px;">Edit</a>
+                            <form th:action="@{/properties/delete/{id}(id=${l.id})}" method="post" style="display:inline;"
+                                  onsubmit="return confirm('Delete this listing? This cannot be undone.');">
+                                <button type="submit" class="btn-danger" style="padding:6px 12px; font-size:13px;">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(myListings)}">
+                        <td colspan="6">You have no listings yet.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Admin Panel: visible only to ROLE_ADMIN -->
+            <div class="card" id="admin-panel" th:if="${user.role == 'ROLE_ADMIN'}" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+                <h2>
+                    All Property Listings
+                    <span th:if="${!#lists.isEmpty(pendingListings)}" class="pending-count" th:text="'Pending (' + ${#lists.size(pendingListings)} + ')'">Pending (0)</span>
+                </h2>
+
+                <!-- Filter bar -->
+                <div class="filter-bar">
+                    <span>Filter by Moderation Status:</span>
+                    <a th:href="@{/dashboard(moderation='',         sort=${sortField}, dir=${sortDir})}"
+                       th:classappend="${moderationFilter == null or moderationFilter == ''} ? 'active' : ''"
+                       class="filter-btn">All</a>
+                    <a th:href="@{/dashboard(moderation='PENDING',  sort=${sortField}, dir=${sortDir})}"
+                       th:classappend="${moderationFilter == 'PENDING'} ? 'active-pending' : ''"
+                       class="filter-btn">⏳ Pending</a>
+                    <a th:href="@{/dashboard(moderation='APPROVED', sort=${sortField}, dir=${sortDir})}"
+                       th:classappend="${moderationFilter == 'APPROVED'} ? 'active-approved' : ''"
+                       class="filter-btn">✅ Approved</a>
+                    <a th:href="@{/dashboard(moderation='REJECTED', sort=${sortField}, dir=${sortDir})}"
+                       th:classappend="${moderationFilter == 'REJECTED'} ? 'active-rejected' : ''"
+                       class="filter-btn">❌ Rejected</a>
+                </div>
+
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th class="sortable"
+                                th:with="active=${sortField == 'id'}, nextDir=${sortField == 'id' and sortDir == 'asc'} ? 'desc' : 'asc'">
+                                <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='id', dir=${nextDir})}"
+                                   th:classappend="${active} ? 'sort-active' : ''">
+                                    ID <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                                </a>
+                            </th>
+                            <th class="sortable"
+                                th:with="active=${sortField == 'title'}, nextDir=${sortField == 'title' and sortDir == 'asc'} ? 'desc' : 'asc'">
+                                <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='title', dir=${nextDir})}"
+                                   th:classappend="${active} ? 'sort-active' : ''">
+                                    Title <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                                </a>
+                            </th>
+                            <th class="sortable"
+                                th:with="active=${sortField == 'owner'}, nextDir=${sortField == 'owner' and sortDir == 'asc'} ? 'desc' : 'asc'">
+                                <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='owner', dir=${nextDir})}"
+                                   th:classappend="${active} ? 'sort-active' : ''">
+                                    Owner <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                                </a>
+                            </th>
+                            <th class="sortable"
+                                th:with="active=${sortField == 'location'}, nextDir=${sortField == 'location' and sortDir == 'asc'} ? 'desc' : 'asc'">
+                                <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='location', dir=${nextDir})}"
+                                   th:classappend="${active} ? 'sort-active' : ''">
+                                    Location <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                                </a>
+                            </th>
+                            <th class="sortable"
+                                th:with="active=${sortField == 'price'}, nextDir=${sortField == 'price' and sortDir == 'asc'} ? 'desc' : 'asc'">
+                                <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='price', dir=${nextDir})}"
+                                   th:classappend="${active} ? 'sort-active' : ''">
+                                    Price <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                                </a>
+                            </th>
+                            <th class="sortable"
+                                th:with="active=${sortField == 'status'}, nextDir=${sortField == 'status' and sortDir == 'asc'} ? 'desc' : 'asc'">
+                                <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='status', dir=${nextDir})}"
+                                   th:classappend="${active} ? 'sort-active' : ''">
+                                    Status <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                                </a>
+                            </th>
+                            <th class="sortable"
+                                th:with="active=${sortField == 'createdat'}, nextDir=${sortField == 'createdat' and sortDir == 'asc'} ? 'desc' : 'asc'">
+                                <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='createdat', dir=${nextDir})}"
+                                   th:classappend="${active} ? 'sort-active' : ''">
+                                    Created At <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                                </a>
+                            </th>
+                            <th>Moderation</th>
+                            <th>Actions</th>
+                            <th>Review</th>
+                            <th class="sortable"
+                                th:with="active=${sortField == 'featured'}, nextDir=${sortField == 'featured' and sortDir == 'asc'} ? 'desc' : 'asc'">
+                                <a th:href="@{/dashboard(moderation=${moderationFilter}, sort='featured', dir=${nextDir})}"
+                                   th:classappend="${active} ? 'sort-active' : ''">
+                                    Featured <span class="sort-icon" th:text="${active} ? (${sortDir == 'asc'} ? '▲' : '▼') : '⇅'">⇅</span>
+                                </a>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="p : ${allListings}">
+                            <td th:text="${p.id}"></td>
+                            <td th:text="${p.title}"></td>
+                            <td th:text="${p.username}"></td>
+                            <td th:text="${p.location}"></td>
+                            <td style="white-space: nowrap;"><span th:text="${#numbers.formatDecimal(p.price, 1, 'WHITESPACE', 2, 'COMMA')}"></span> €</td>
+                            <td th:text="${p.status}"></td>
+                            <td style="white-space:nowrap; font-size:13px; color:var(--text-light);">
+                                <span th:if="${p.createdAt != null}" th:text="${#temporals.format(p.createdAt, 'dd MMM yyyy HH:mm', #locale.forLanguageTag('en'))}"></span>
+                                <span th:if="${p.createdAt == null}" style="color:#ccc;">—</span>
+                            </td>
+                            <td>
+                                <span th:if="${p.moderationStatus?.name() == 'PENDING'}"  class="badge badge-pending">Pending</span>
+                                <span th:if="${p.moderationStatus?.name() == 'APPROVED'}" class="badge badge-approved">Approved</span>
+                                <span th:if="${p.moderationStatus?.name() == 'REJECTED'}" class="badge badge-rejected">Rejected</span>
+                            </td>
+                            <td style="white-space:nowrap; vertical-align:middle;">
+                                <a th:href="@{/property/{id}(id=${p.id})}" class="btn-primary" style="padding:6px 12px; font-size:13px; margin-right:4px;">View</a>
+                                <a th:href="@{/properties/edit/{id}(id=${p.id}, redirectUrl='/property/' + ${p.id})}" class="btn-edit" style="margin-right:4px;">Edit</a>
+                                <form th:action="@{/properties/delete/{id}(id=${p.id})}" method="post" style="display:inline;"
+                                      onsubmit="return confirm('Delete this listing? This cannot be undone.');">
+                                    <button type="submit" class="btn-danger">Delete</button>
+                                </form>
+                            </td>
+                            <td style="white-space:nowrap; vertical-align:middle;">
+                                <form th:if="${p.moderationStatus?.name() != 'APPROVED'}" th:action="@{/properties/approve/{id}(id=${p.id})}" method="post" style="display:inline; margin-right:4px;">
+                                    <input type="hidden" name="redirectUrl" value="/dashboard?approved">
+                                    <button type="submit" class="btn-approve">Approve</button>
+                                </form>
+                                <form th:if="${p.moderationStatus?.name() != 'REJECTED'}" th:action="@{/properties/reject/{id}(id=${p.id})}" method="post" style="display:inline;">
+                                    <input type="hidden" name="redirectUrl" value="/dashboard?rejected">
+                                    <button type="submit" class="btn-danger">Reject</button>
+                                </form>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle;">
+                                <form th:action="@{/properties/feature/{id}(id=${p.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn-feature"
+                                            th:title="${p.featured} ? 'Remove from home page' : 'Show on home page'"
+                                            th:text="${p.featured} ? '⭐' : '☆'">☆</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(allListings)}">
+                            <td colspan="11">No listings in the system.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+    </div>
+</div>
+
+<footer>
+    STOCKLAND - Real Estate Property Listing & Management System
+</footer>
+
+<div th:replace="~{fragments/chatbot :: chatbot}"></div>
+</body>
+</html>
