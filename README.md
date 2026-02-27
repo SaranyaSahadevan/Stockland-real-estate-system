@@ -12,6 +12,8 @@ A Spring Boot application for managing real estate properties.
 - Spring Boot 4.0.2
 - Maven
 - JPA/Hibernate
+- PostgreSQL (Neon service)
+- Cloudinary (Cloud service for managing media)
 
 
 ## Project installation
